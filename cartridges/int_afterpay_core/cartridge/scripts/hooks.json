@@ -1,0 +1,8 @@
+{
+	"hooks": [
+		{
+			"name": "app.payment.processor.AFTERPAY_CREDIT",
+			"script": "./payment/processor/AFTERPAY_CREDIT"
+		}
+	]
+}

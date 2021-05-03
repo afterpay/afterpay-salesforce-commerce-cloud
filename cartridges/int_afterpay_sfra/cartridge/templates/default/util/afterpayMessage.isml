@@ -1,0 +1,59 @@
+<iscontent type="text/html" charset="UTF-8" compact="true"/>
+
+<isif condition="${!empty(pdict.message)}">
+	<isif condition="${pdict.classname == 'checkout-afterpay-message'}">
+		<div class="afterpay-widget-message ${pdict.classname}">
+			<span class="afterpay-link" title="${Resource.msg('terms.conditions.label','afterpay',null)}" >
+				<div>${Resource.msg('checkout.content','afterpay',null)}</div>
+				<hr>
+				<div>
+					<span>
+						${Resource.msg('checkout.content.payments.label','afterpay',null)}
+						<isprint value="${pdict.message}"/>
+						${Resource.msg('checkout.content.week.label','afterpay',null)}
+					</span>
+					<a href="${URLUtils.url('AfterpayTerms-ShowTerms')}"> ${Resource.msg('learn.more.label','afterpay',null)}</a>
+				</div><br>
+				<isinclude template="util/afterpayInstallment"/>
+				<br>
+				<div>${Resource.msg('checkout.content.redirect.label','afterpay',null)}</div>
+			</span>
+		</div>
+	<iselse>
+		<div class="afterpay-widget-message ${pdict.classname}">
+			<span class="afterpay-link" title="${Resource.msg('terms.conditions.label','afterpay',null)}" >
+				<span>
+					${Resource.msg('payments.label','afterpay',null)}
+					<isprint value="${pdict.message}"/>
+					${Resource.msg('with.label','afterpay',null)}
+				</span>
+				<img class="afterpay-image" src="${URLUtils.httpStatic('/images/afterpay-logo.png')}" alt="Afterpay">
+				<a href="${URLUtils.url('AfterpayTerms-ShowTerms')}"> ${Resource.msg('learn.more.label','afterpay',null)}</a>
+			</span>
+		</div>
+	</isif>
+	
+<iselseif condition="${pdict.belowthreshold}" />
+	<div class="afterpay-widget-message ${pdict.classname}">
+		<span class="afterpay-link" >
+			${Resource.msgf('minimum.threshold.message','afterpay', null, new dw.value.Money(pdict.minthresholdamount, session.getCurrency().getSymbol()), new dw.value.Money(pdict.maxthresholdamount, session.getCurrency().getSymbol()))}
+			<img class="afterpay-image" src="${URLUtils.httpStatic('/images/afterpay-logo.png')}" alt="Afterpay">
+			<a href="${URLUtils.url('AfterpayTerms-ShowTerms')}"> ${Resource.msg('learn.more.label','afterpay',null)}</a>
+		</span>
+	</div>
+	
+<iselseif condition="${pdict.abovethreshold}" />
+	<div class="afterpay-widget-message ${pdict.classname}">
+		<span class="afterpay-link" >
+			<isif condition="${pdict.classname == 'cart-afterpay-message' || pdict.classname == 'checkout-afterpay-message'}"> 
+				${Resource.msgf('minimum.threshold.message','afterpay', null, new dw.value.Money(pdict.minthresholdamount, session.getCurrency().getSymbol()), new dw.value.Money(pdict.maxthresholdamount, session.getCurrency().getSymbol()))}
+			<iselse/>
+				${Resource.msg('maximum.threshold.message','afterpay',null)}
+			</isif>
+			<img class="afterpay-image" src="${URLUtils.httpStatic('/images/afterpay-logo.png')}" alt="Afterpay">
+			<a href="${URLUtils.url('AfterpayTerms-ShowTerms')}"> ${Resource.msg('learn.more.label','afterpay',null)}</a>
+		</span>
+	</div>
+	
+</isif>
+

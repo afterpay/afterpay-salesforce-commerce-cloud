@@ -1,0 +1,11 @@
+<iscontent type="text/html" charset="UTF-8" compact="true"/>
+
+<div>
+	<isif condition="${pdict.thresholdresponse && pdict.thresholdresponse.withInThreshold}"> 
+		<isafterpaymessage message="${pdict.message}" classname="${pdict.classname}"/>
+	<iselseif condition="${pdict.thresholdresponse && pdict.thresholdresponse.belowThreshold}" />
+		<isafterpaymessage belowthreshold=true minthresholdamount="${pdict.thresholdresponse.minAmount}" maxthresholdamount="${pdict.thresholdresponse.maxAmount}" classname="${pdict.classname}"/>
+	<iselseif condition="${pdict.thresholdresponse && pdict.thresholdresponse.aboveThreshold}" />
+		<isafterpaymessage abovethreshold=true minthresholdamount="${pdict.thresholdresponse.minAmount}" maxthresholdamount="${pdict.thresholdresponse.maxAmount}" classname="${pdict.classname}"/>
+	</isif>
+</div>

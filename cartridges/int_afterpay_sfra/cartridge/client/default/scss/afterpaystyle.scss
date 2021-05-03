@@ -1,0 +1,163 @@
+.product-detail .afterpay-widget-message .afterpay-link {
+    font-size: 0.75em;
+    padding: 0.375em 0.9375em;
+    border: 0.0625em solid #ccc;
+}
+
+.afterpay-widget-message.plp-afterpay-message .afterpay-link {
+    font-size: 0.75em;
+}
+
+.afterpay-image {
+    vertical-align: middle;
+    width: 5em;
+}
+
+.pdp-afterpay-message {
+    padding-top: 0.625em;
+    padding-bottom: 1.0625em;
+    text-align: center;
+}
+
+.cart-page .cart-afterpay-message .afterpay-link {
+    font-size: 0.75em;
+    padding: 0.375em 0.4375em;
+}
+
+.cart-afterpay-message {
+    margin-bottom: 0.9375em;
+    border: 0.0625em solid #ccc;
+}
+
+.modal.show {
+    display: block;
+}
+
+.afterpay-modal {
+    width: -webkit-fill-available;
+}
+
+.afterpayModal {
+    background: rgba(0, 0, 0, 0.3);
+
+    .quick-view-dialog {
+        max-width: 48em;
+    }
+
+    .modal-content {
+        border-radius: 0.8125em;
+        overflow: hidden;
+        position: absolute;
+
+        .modal-header {
+            border-bottom: medium none;
+            background-color: #fbfcfc;
+            height: 2em;
+
+            button {
+                border-radius: 50%;
+                width: 1.5em;
+                height: 1.5em;
+                border: 0.05em solid #999;
+                position: absolute;
+                right: 0.25em;
+                top: 0.25em;
+                padding: 0;
+
+                .close-button {
+                    position: relative;
+                    top: -0.35em;
+                    font-size: 1.5em;
+                    color: #999;
+                }
+
+                &:hover .close-button {
+                    color: #000;
+                }
+            }
+        }
+
+        .modal-body {
+            padding: 0;
+            max-height: initial;
+        }
+    }
+
+    &.modal.show .modal-dialog {
+        -webkit-transition: top 0.1s ease-out, -webkit-transform 0.3s ease-out;
+        transition: top 0.1s ease-out, -webkit-transform 0.3s ease-out;
+        transition: transform 0.3s ease-out, top 0.1s ease-out;
+        transition: transform 0.3s ease-out, top 0.1s ease-out, -webkit-transform 0.3s ease-out;
+    }
+}
+
+.cancel-symbol {
+    position: relative;
+    bottom: 0.4375em;
+    right: 0.3125em;
+    background-color: transparent;
+}
+
+.terms-content {
+    margin-left: 2.9375em;
+    color: #878787;
+    font-size: 0.9375em;
+    margin-bottom: 0.75em;
+}
+
+.copy-rights {
+    text-align: center;
+}
+
+.redirect-text {
+    text-align: center;
+    margin-top: 2.1875em;
+    font-size: 1.375em;
+}
+
+/* Afterpay checkout widget */
+#afterpaInstallmentChart th {
+    text-align: center;
+    border-bottom: 0.0625em solid #ccc;
+}
+
+#afterpaInstallmentChart td {
+    text-align: center;
+    padding-top: 0.9375em;
+}
+
+.pie {
+    width: 2.8125em;
+}
+
+.pie path {
+    fill: #0070d2;
+    stroke: none;
+}
+
+.pie .circle {
+    fill: #ccc;
+    stroke: #0070d2;
+    stroke-width: 0.3;
+}
+
+.link-us {
+    font-size: 0.9375em;
+    color: gray;
+    text-decoration: underline;
+}
+
+.terms-us {
+    font-size: 0.875em;
+    color: gray;
+    padding-left: 2.4375em;
+}
+
+.terms-us a {
+    font-size: 0.875em;
+}
+
+.terms-content-us {
+    padding-bottom: 0.75em;
+    background-color: #fbfcfc;
+}

@@ -1,0 +1,30 @@
+<script src="${dw.system.Site.getCurrent().getCustomPreferenceValue('apJavascriptURL')}" async></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<link rel="stylesheet" href="${URLUtils.staticURL('/css/global.css')}" />
+
+
+<script>
+	window.onload = function () {
+		$(".loader-image").fadeOut("slow");
+		
+		<isif condition = "${pdict.countryCode == 'US'}">
+			AfterPay.initialize({countryCode : 'US'});
+		</isif>
+
+		<isif condition = "${pdict.countryCode == 'AU'}">
+			AfterPay.initialize({countryCode : 'AU'});
+		</isif>
+
+		<isif condition = "${pdict.countryCode == 'NZ'}">
+			AfterPay.initialize({countryCode : 'NZ'});
+		</isif>
+
+        AfterPay.redirect({token: '${pdict.apToken}'});
+	}
+</script>
+
+<div class="loader-image"></div>
+
+<div class="redirect-text">
+	<p>${Resource.msg('redirect.notification','afterpay',null)}</p><p class="notify-message">${Resource.msg('redirect.message','afterpay',null)}</p>
+</div>

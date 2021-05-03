@@ -1,0 +1,11 @@
+<li class="nav-item" data-method-id="${paymentOption.ID}">
+	<a class="nav-link ${paymentOption.ID.toLowerCase() + '-tab'}" data-toggle="tab" href="${'#' + paymentOption.ID.toLowerCase() + '-content'}" role="tab">
+			<isprint value="${paymentOption.name.substring(0,8)}"/>
+			<img class="${paymentOption.ID.toLowerCase() + '-option'}"
+             src="${URLUtils.staticURL('/images/afterpay-logo.png')}"
+             height="32"
+             alt="${paymentOption.name}"
+             title="${paymentOption.name}"
+			>
+	</a>
+</li>

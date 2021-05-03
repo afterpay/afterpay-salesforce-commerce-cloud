@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library xmlns="http://www.demandware.com/xml/impex/library/2006-10-31" library-id="RefArchSharedLibrary">
+	<content content-id="afterpay-checkout-pbi">
+        <display-name xml:lang="x-default">Afterpay checkout PBI content</display-name>
+        <description xml:lang="x-default">Afterpay checkout PBI content</description>
+        <online-flag>true</online-flag>
+        <searchable-flag>false</searchable-flag>
+        <page-attributes/>
+        <custom-attributes>
+            <custom-attribute attribute-id="body" xml:lang="x-default">&lt;div class="afterpay-checkout-pbi"&gt;&#13;
+&lt;div&gt;&lt;span"&gt;&lt;strong&gt;Shop Now.&lt;/strong&gt;&lt;/span&gt; &lt;strong&gt;Enjoy Now. Pay Later. In Four Simple Payments.&lt;/strong&gt;&lt;/div&gt;&#13;
+&#13;
+&lt;ul&gt;&#13;
+	&lt;li&gt;&lt;img alt="" src="images/check.png?$staticlink$" title="" /&gt;4 equal payments every two weeks&lt;/li&gt;&#13;
+	&lt;li&gt;&lt;img alt="" src="images/check.png?$staticlink$" title="" /&gt;No account keeping fees&lt;/li&gt;&#13;
+	&lt;li&gt;&lt;img alt="" src="images/check.png?$staticlink$" title="" /&gt;Instant approval online&lt;/li&gt;&#13;
+	&lt;li&gt;&lt;u&gt;&lt;a href="https://www.afterpay.com.au/&#13;
+terms" style="color:#999999;" target="_blank" title="Terms &amp;amp; Conditions"&gt;&lt;span&gt;Terms &amp;amp; Conditions&lt;/span&gt;&lt;/a&gt;&lt;/u&gt;&lt;/li&gt;&#13;
+&lt;/ul&gt;&#13;
+&#13;
+&lt;div&gt;You'll be redirected to the Afterpay website when you place an order&lt;/div&gt;&#13;
+&lt;/div&gt;</custom-attribute>
+        </custom-attributes>
+    </content>
+	 <content content-id="afterpay-product-page">
+        <display-name xml:lang="x-default">Afterpay product page content</display-name>
+        <online-flag>true</online-flag>
+        <searchable-flag>false</searchable-flag>
+        <page-attributes/>
+        <custom-attributes>
+            <custom-attribute attribute-id="body" xml:lang="x-default">&lt;a href="https://www.afterpay.com.au/terms/" target="_blank"&gt;&#13;
+&lt;img width="780" height="600" class="afterpay-modal-image" src="images/banner-large.png?$staticlink$" alt="Afterpay" /&gt;&#13;
+&lt;div class = "terms-content"&gt;&#13;
+&lt;span class="complete-terms"&gt;To see Afterpay's complete terms, visit https://www.afterpay.com.au/terms&lt;/span&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&#13;
+&lt;span class="copy-rights"&gt;© 2017 Afterpay&lt;/span&gt;&#13;
+&lt;/div&gt;&#13;
+&lt;/a&gt;</custom-attribute>
+        </custom-attributes>
+    </content>
+</library>

@@ -1,0 +1,16 @@
+<html>
+<head>
+
+</head>
+<body>
+
+	<script src="https://www-sandbox.secure-afterpay.com.au/afterpay.js" async></script>
+    Your HTML here
+    <script>
+    window.onload = function() {
+        AfterPay.init();
+        AfterPay.display({token: "bgb2aic6ujmkk184hon5s4nsja0b5giume1i26hiec18i4088jkd"});
+    };
+    </script>
+</body>
+</html>

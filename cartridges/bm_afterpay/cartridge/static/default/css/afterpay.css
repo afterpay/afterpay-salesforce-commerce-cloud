@@ -1,0 +1,193 @@
+/******** AfterPay custom CSS *******/
+.afterpay-module * {
+	box-sizing: border-box;
+}
+
+afterpay-configs {
+	font-size: 0.8125em;
+	margin: 0 auto;
+	padding: 0.625em 0;
+}
+
+.afterpay-module h1 {
+	border-bottom: 0.0625em solid #dadada;
+	color: #84bd00;
+	font-size: 1.625em;
+	font-weight: 600;
+	line-height: 1.2em;
+	padding: 0.625em 0;
+}
+
+.afterpay-module h2 {
+	font-size: 0.875em;
+	font-weight: normal;
+	margin: 0.3125em;
+	text-transform: none;
+}
+.afterpay-module .infobox {
+	margin-bottom:0.625em;
+	border-top: 0.0625em solid #dadada;
+}
+.afterpay-module .popup-holder {
+	width: 100%;
+    text-align: center;
+}
+.afterpay-module .operations-holder input[type=text] {
+	width: 5em;
+	padding: 0 0.3125em;
+	text-align: right;
+}
+.afterpay-module .operations-holder input[type=radio] {
+	position: relative;
+    top: 0.125em;
+}
+.afterpay-module .operations-holder button {
+	border-radius: 0;
+    padding: 0.3125em 1.875em;
+    color: #fff;
+    background-color: #808080;
+    border-color: #808080;
+}
+.afterpay-module .operations-holder button:hover {
+	background-color: #000000;
+}
+.afterpay-module .operations-holder button[disabled]:hover {
+	color: #fff;
+}
+.afterpay-module .operations-holder table {
+	width: 15.3125em;
+}
+.afterpay-module .operations-holder table td {
+	padding: 0.3125em 0;
+}
+.afterpay-module .operations-holder table td label {
+	margin:0;
+}
+.afterpay-module .operations-container .title {
+	
+}
+.afterpay-module .current-status {
+	margin-bottom: 1.25em;
+}
+.afterpay-module .current-status span{
+	color: #84bd00;
+    font-size: 1.0625em;
+    font-weight: 600;
+}
+.afterpay-module .bulk-complete{
+    margin-top: 0.625em;
+    text-align: right;
+}
+.afterpay-module #button-bulk-complete{
+	border-radius: 0;
+    padding: 0.3125em 1.25em;
+    color: #fff;
+    background-color: #808080;
+    border-color: #808080;
+}
+.afterpay-module #button-bulk-complete:hover {
+	background-color: #000000;
+}
+#filtertableProjects tfoot {
+	display: table-header-group;
+}
+#filtertableProjects tfoot tr th {
+	border-bottom: 0.0625em solid #dadada;
+}
+.overview_documentation{
+	font-size: 1.25em;
+	padding-top: 1.375em;
+}
+table#documentation{
+	border-top: 0.0625em solid #dadada;
+}
+.overview_title_description p{
+	font-size: 0.625em;
+	font-style: italic;
+}
+.infobox_title_search {
+    padding: 0.3125em;
+}
+.order-list-content {
+    border-top: 0.0625em solid #dadada;
+}
+.order-list-empty td {
+	padding-top: 0.75em;
+}
+.pagecursortxt.hide-10 .ten {
+	display: none;
+}
+.pagecursortxt.hide-50 .fifty {
+	display: none;
+}
+.pagecursortxt.hide-100 .hundred {
+	display: none;
+}
+.pagecursorbtn {
+	text-decoration: none;
+}
+a.button.show-all{
+	margin-left: 5em;
+}
+.list-table{
+	background-color: #FFFFFF;
+}
+.table-column{
+	background:#e0e0e0;
+	padding:3.125em 0;
+}
+.table-data{
+	background:#ffffff;
+	border:0.0625em solid #999999;
+	width:42.5em;
+}
+.table-column2{
+	font-size:0.75em;
+	font-family:arial;
+	padding:1.25em 0.625em;
+	vertical-align:top;
+}
+.table-column3{
+	font-size:0.75em;
+	font-family:arial;
+	padding:1.25em 0.625em;
+	vertical-align:top;
+}
+.table-column4{
+	font-size:0.75em;
+	font-family:arial;
+	padding:1.25em 0.625em;
+	vertical-align:top;
+}
+.table-data2{
+	background:#ffffff;
+	border:0.0625em solid #999999;
+	width:42.5em;
+}
+.table-header{
+	background:#cccccc;
+	padding:0.3125em 1.25em;
+	font-size:0.75em;
+	font-family:arial;
+	text-align:left;
+}
+.table-column5{
+	font-size:0.75em;
+	font-family:arial;
+	padding:1.25em 0.625em;
+	vertical-align:top;
+}
+.table-column6{
+	font-size:0.75em;
+	font-family:arial;
+	padding:1.25em 0.625em;
+	vertical-align:top;
+}
+#http-result-cell{
+	color: #00BB00; 
+	font-weight: bold;
+	
+}
+#http-result-table{
+	display:none;
+}

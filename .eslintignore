@@ -1,0 +1,10 @@
+bin/
+cartridges/bm_afterpay/cartridge/static/default/lib/
+cartridges/int_afterpay_sfra/cartridge/static/
+documentation/
+metadata/
+node_modules/
+package-lock.json
+package.json
+test/
+webpack.config.js

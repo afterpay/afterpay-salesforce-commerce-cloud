@@ -1,0 +1,20 @@
+
+<isset name="afterpayTermsURL" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('apLearnMoreUrl')}" scope="page" />
+<div class= "open-afterpay">
+		<isif condition="${dw.system.Site.getCurrent().getDefaultCurrency() == 'USD'}"> 
+			<img  class="afterpay-modal" src="${URLUtils.httpsStatic('/images/us-popup.png')}" alt="Afterpay" />
+			<div class = "terms-content-us">
+				<span class="terms-us">${Resource.msg('terms.link.label.us','afterpay',null)}</span>
+				<a href="${afterpayTermsURL}" target="_blank">
+					<span class="link-us">${Resource.msg('terms.link.us','afterpay',null)}</span>
+				</a>
+			</div>
+		<iselse>
+			<a href="${afterpayTermsURL}" target="_blank">
+				<img  class="afterpay-modal" src="${URLUtils.httpsStatic('/images/desktop_banner.png')}" alt="Afterpay" />
+				<div class = "terms-content">
+					<span class="complete-terms">${Resource.msg('terms.link.label','afterpay',null)}<isprint value="${afterpayTermsURL}"></span>
+				</div>
+			</a>
+		</isif>
+</div>  
