@@ -1,0 +1,44 @@
+importPackage(dw.io);
+importPackage(dw.net);
+importPackage(dw.object);
+importPackage(dw.svc);
+importPackage(dw.system);
+importPackage(dw.util);
+importPackage(dw.web);
+
+var AfterpayApiContext = require("~/cartridge/scripts/context/AfterpayApiContext");
+var AfterpayHttpService = require("~/cartridge/scripts/logic/services/AfterpayHttpService");
+var Class = require('~/cartridge/scripts/util/Class').Class;
+
+var CapturePaymentService = Class.extend({
+
+	 _requestUrl : null,
+	 _requestBody : {},
+
+	init : function() {
+        this.afterpayHttpService = new AfterpayHttpService();
+        this.afterpayApiContext = new AfterpayApiContext();
+    },
+
+    generateRequest : function(id: string, requestID : String, orderNo : String) {
+        this._requestUrl = StringUtils.format(this.afterpayApiContext.getFlowApiUrls().get("capturePayment"), id);
+        this._generateRequestBody(requestID, merchantReference, amount);
+    },
+
+    getResponse : function () {
+        var response = this.afterpayHttpService.call(this._requestUrl, "CAPTURE_PAYMENT", this._requestBody);
+        return response;
+    },
+
+    _generateRequestBody : function (requestID, merchantReference, amount) {
+    	this._requestBody = {
+            "amount" : amount,
+    		"requestID" : requestID ? requestID : '',
+    		"merchantReference" : merchantReference ? merchantReference : '',
+    		"requestMethod" : 'POST'
+    	};
+    }
+});
+
+
+module.exports = new CapturePaymentService();

@@ -161,3 +161,44 @@
     padding-bottom: 0.75em;
     background-color: #fbfcfc;
 }
+
+.afterpay-checkout-button {
+    background-color: #000;
+    color: #fff !important;
+    background-image: url('../images/afterpay-checkout.png'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center;
+  }
+  
+  .afterpay-buynow-button {
+    background-color: #000;
+    color: #fff !important;
+    background-image: url('../images/afterpay-buynow.png'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center;
+    min-width: 250px;
+  }
+  
+  .afterpay-placeorder-button {
+    background-color: #000;
+    color: #fff !important;
+    background-image: url('../images/afterpay-placeorder.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center;
+    min-width: 250px;
+  }
+
+  .afterpay-hide {
+      display: none !important;
+  }
+
+  .afterpay-widget-hideuntilready {
+    visibility: hidden;
+  }
+  

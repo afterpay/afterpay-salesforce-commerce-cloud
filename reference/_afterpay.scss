@@ -1,0 +1,194 @@
+
+.afterpay-checkout-pbi {
+    margin-bottom: 40px;
+    padding-left: 200px;
+
+    ul {
+        list-style-type: none;
+        margin:  20px 0;
+        padding-left: 0;
+
+    }
+
+    li {
+        margin-top: 15px;
+
+        &:last-child {
+            padding-left: 20px;
+        }
+
+        img {
+            padding-right: 9px;
+        }
+    }
+}
+
+.payment-image{
+	height: 18px;
+    width: 97px;
+    padding: 0 0 4px 0;
+}
+
+.cart-afterpay-message{
+	border: 1px solid #efefef;
+    display: inline-block;
+    padding: 5px 10px;
+}
+.learn-more{
+    padding-bottom: 50px;
+}    
+
+.cart-afterpay-message{
+	    float: right;
+}
+
+.product-detail {
+    .product-afterpay-message {
+        .afterpay-link {
+            border: 1px solid $white-smoke;
+            display: inline-block;
+            padding: 5px 10px;
+        }
+    }
+}
+
+.afterpay-link a {
+  color: #1a0dab;
+  cursor: pointer;
+  padding-left: 10px;
+  font-size: 14px;
+   }
+  
+.terms-content {
+  margin-left: 46px;
+  color: #878787;
+  font-size: 15px;
+  margin-bottom: 12px; }
+      
+.afterpay-modal{
+ 	width : 780px;
+ 	height: 600px;
+ } 
+
+.product-afterpay-message {
+    a,
+    .afterpay-link {
+        color:  $nobel;
+    }
+
+    .afterpay-image {
+        height: 15px;
+        vertical-align: middle;
+        width: 70px;
+    }
+}
+ 
+.loader-image{
+	display: block;
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 101;
+	background: 50% 50% no-repeat white;
+	opacity: .8;
+	background: url('../images/Loading_icon.gif') 50% 50% no-repeat rgb(255, 255, 255);
+}
+
+.redirect-text{
+	padding: 80px 36px 80px 100px;
+	font-size: 23px;
+	font-style: italic;
+	margin: 0 auto;
+	float: right;
+}
+
+.notify-message{
+	padding-left: 122px;
+} 
+
+.link-us{
+	font-size: 11px;
+    color: gray;
+    text-decoration: underline;
+}
+.terms-us{
+	font-size: 11px;
+    color: gray;
+    padding-left: 39px;
+}
+.terms-content-us{
+    padding-bottom: 10px;
+    background-color: #FBFCFC;
+    }
+
+.afterpay-checkout-button {
+    width: 246px;
+    height: 37px;
+    margin-top: 20px;
+    background-image: url('../images/afterpay-checkout.png'); 
+    background-size: cover; 
+    background-color: #000000 !important;
+}
+
+.afterpay-placeorder-button {
+    width: 246px;
+    height: 37px;
+    background-image: url('../images/afterpay-placeorder.png'); 
+    background-size: cover; 
+    background-color: #000000 !important;
+}
+
+.afterpay-paynow-button {
+    width: 246px !important;
+    height: 37px;
+    background-image: url('../images/afterpay-buynow.png'); 
+    background-size: cover; 
+    margin-left: 10px;
+    background-color: #000000 !important;
+    /*border-style: none;*/
+}
+
+.afterpay-summary-button-container {
+    width: 100%;
+    position: relative;
+    margin-top: 30px;
+}
+
+.afterpay-hidden {
+    display: none;
+}
+
+.afterpay-paynow-pdp {
+    float: left;
+    padding-left: .5em;
+}
+
+@media only screen and (max-width: 960px) {
+    .afterpay-paynow-pdp {
+        margin-top: 10px;
+    }
+}
+
+
+.afterpay-summary {
+    margin-top: 0px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+.afterpay-back-button {
+    height: 37px;
+}
+.afterpay-paymethod-widget-div {
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.payment-method .afterpay-placeorder-button {
+    text-align: center;
+    align-items: flex-start;
+}

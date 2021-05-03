@@ -1,5 +1,5 @@
 'use strict';
-var apMessageService = require('*/cartridge/scripts/util/afterpayDisplayProductMessage');
+var apMessageService = require('*/cartridge/scripts/util/AfterpayDisplayProductMessage');
 
 var getTemplateSpecificWidget = {};
 
@@ -20,10 +20,14 @@ getTemplateSpecificWidget.getWidgetData = function (productObject, className) {
             totalPrice = productObject.price.sales.value;
         } else if (productObject.price.list) {
             totalPrice = productObject.price.list.value;
-        } else if (productObject.price.min.sales) {
+        } else if (productObject.price.min && productObject.price.min.sales) {
             totalPrice = productObject.price.min.sales.value;
-        } else if (productObject.price.min.list) {
+        } else if (productObject.price.min && productObject.price.min.list) {
             totalPrice = productObject.price.min.list.value;
+        } else if (productObject.price.tiers) {
+            if (productObject.price.tiers[0].price && productObject.price.tiers[0].price.sales) {
+                totalPrice = productObject.price.tiers[0].price.sales.value;
+            }
         }
         if (className === 'plp-afterpay-message') {
             installmentAmount = apMessageService.getPLPMessage(totalPrice);
@@ -90,7 +94,7 @@ getTemplateSpecificWidget.pushWidgetDataToProduct = function (singleSetProduct, 
 getTemplateSpecificWidget.getCheckoutWidgetData = function (currentBasket, className) {
     var priceContext;
     var totalPrice = 0.0;
-    totalPrice = currentBasket.totalGrossPrice;
+    totalPrice = currentBasket ? currentBasket.totalGrossPrice : 0.0;
     var installmentAmount = apMessageService.getPDPMessage(totalPrice);
     var thresholdResponse = apMessageService.getThresholdRange(totalPrice);
     if (thresholdResponse && thresholdResponse.withInThreshold) {

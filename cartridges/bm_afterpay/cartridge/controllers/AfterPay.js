@@ -1,5 +1,4 @@
 'use strict';
-/* global request */
 
 /**
  * Controller for Order management pages
@@ -9,44 +8,41 @@
 /* API Includes */
 var ISML = require('dw/template/ISML');
 
+
+/* Script Modules */
+var LogUtils = require('~/cartridge/scripts/util/LogUtils'),
+	Logger = LogUtils.getLogger("AfterPay");
+
 /**
  * AfterPay Order List page
  * */
-function orderList() {
-    var ResourceHelper = require('~/cartridge/scripts/util/resource.js');
-    var pageSize = request.httpParameterMap.pagesize.value;
-    var pageNumber = request.httpParameterMap.pagenumber.value;
-    var orderNumber = request.httpParameterMap.ordernumber.value || '';
-    var orderListResponse;
+function orderList(){
+	var pageSize = request.httpParameterMap.pagesize.value,
+	pageNumber = request.httpParameterMap.pagenumber.value,
+	orderNumber = request.httpParameterMap.ordernumber.value || "",
+	orderListResponse;
 
-    pageSize = pageSize ? parseInt(pageSize, 10) : 10;
-    pageNumber = pageNumber ? parseInt(pageNumber, 10) : 1;
-
-    orderListResponse = require('*/cartridge/scripts/getOrders').output({
-        pageSize: pageSize,
-        pageNumber: pageNumber,
-        orderNumber: orderNumber
-    });
-    orderListResponse.ResourceHelper = ResourceHelper;
-
-    ISML.renderTemplate('application/orderlist', orderListResponse);
+	pageSize = pageSize ? parseInt(pageSize, 10) : 10;
+	pageNumber = pageNumber ? parseInt(pageNumber, 10) : 1;
+	
+	orderListResponse = require('~/cartridge/scripts/getOrders').output({
+		pageSize: pageSize,
+		pageNumber: pageNumber,
+		orderNumber: orderNumber
+	});
+	ISML.renderTemplate('application/orderlist', orderListResponse);
 }
 
 
 /**
  * AfterPay Order Details page
  * */
-function orderDetails() {
-    var ResourceHelper = require('~/cartridge/scripts/util/resource.js');
-
-    ISML.renderTemplate('application/orderdetails', { ResourceHelper: ResourceHelper });
+function orderDetails(){
+	ISML.renderTemplate('application/orderdetails', {});
 }
 
-/**
- * Link to documentation page
- * */
-function documentation() {
-    ISML.renderTemplate('application/documentation', {});
+function documentation(){
+	ISML.renderTemplate('application/documentation', {});
 }
 
 /*

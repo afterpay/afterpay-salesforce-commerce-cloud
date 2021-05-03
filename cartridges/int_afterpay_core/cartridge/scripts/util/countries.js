@@ -1,7 +1,5 @@
-/* eslint consistent-return: 0 */
-var countries = require('*/cartridge/countries');
+var countries = require('~/cartridge/countries');
 var Locale = require('dw/util/Locale');
-var Site = require('dw/system/Site');
 
 /**
  * @description filter out the countries array to return only ones that are allowed in
@@ -9,7 +7,7 @@ var Site = require('dw/system/Site');
  * @return {array} allowedCountries array of countries that have allowed locales
  */
 function getCountries() {
-    var site = Site.getCurrent();
+    var site = dw.system.Site.getCurrent();
     var allowedLocales = site.getAllowedLocales();
     var allowedCountries = countries.filter(function (country) {
         var hasAllowedLocale = false;
@@ -26,18 +24,12 @@ function getCountries() {
     return allowedCountries;
 }
 
-
-/**
- * retrieves countries as grouped
- * @param {Object} group - group
- * @returns {Object} countriesGrouped
- */
 function getCountriesGroupedBy(group) {
-    var allCountries = getCountries();
+    var countries = getCountries();
     var countriesGrouped = {};
-    allCountries.forEach(function (country) {
-        var key = Object.prototype.hasOwnProperty.call(country, group) ? country[group] : undefined;
-        if (Object.prototype.hasOwnProperty.call(countriesGrouped, key)) {
+    countries.forEach(function (country) {
+        var key = country.hasOwnProperty(group) ? country[group] : undefined;
+        if (countriesGrouped.hasOwnProperty(key)) {
             countriesGrouped[key].push(country);
         } else {
             countriesGrouped[key] = [country];
@@ -47,9 +39,9 @@ function getCountriesGroupedBy(group) {
 }
 
 /**
- * iterate over the countries array, find the first country that has the current locale
- * @param {PipelineDictionary} pdict - the current pdict object
- * @returns {Object} country - the object containing the country's settings
+ * @description iterate over the countries array, find the first country that has the current locale
+ * @param {PipelineDictionary} pdict the current pdict object
+ * @return {object} country the object containing the country's settings
  */
 function getCurrent(pdict) {
     if (!countries || countries.length === 0) {
@@ -61,14 +53,14 @@ function getCurrent(pdict) {
         return countries[0]; // return the first in the list if the requested one is not available
     }
     for (var i = 0; i < countries.length; i++) {
-        var _country = countries[i]; // eslint-disable-line
+        var _country = countries[i];
         if (_country.countryCode === currentLocale.country) {
             country = _country;
             break;
         }
     }
     return country || countries[0];  // return the first in the list if the requested one is not available
-}
+};
 
 exports.getCountries = getCountries;
 exports.getCountriesGroupedBy = getCountriesGroupedBy;

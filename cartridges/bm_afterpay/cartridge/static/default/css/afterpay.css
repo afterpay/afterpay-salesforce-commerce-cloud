@@ -4,46 +4,46 @@
 }
 
 afterpay-configs {
-	font-size: 0.8125em;
+	font-size: 13px;
 	margin: 0 auto;
-	padding: 0.625em 0;
+	padding: 10px 0;
 }
 
 .afterpay-module h1 {
-	border-bottom: 0.0625em solid #dadada;
+	border-bottom: 1px solid #dadada;
 	color: #84bd00;
-	font-size: 1.625em;
+	font-size: 26px;
 	font-weight: 600;
 	line-height: 1.2em;
-	padding: 0.625em 0;
+	padding: 10px 0;
 }
 
 .afterpay-module h2 {
-	font-size: 0.875em;
+	font-size: 14px;
 	font-weight: normal;
-	margin: 0.3125em;
+	margin: 5px;
 	text-transform: none;
 }
 .afterpay-module .infobox {
-	margin-bottom:0.625em;
-	border-top: 0.0625em solid #dadada;
+	margin-bottom:10px;
+	border-top: 1px solid #dadada;
 }
 .afterpay-module .popup-holder {
 	width: 100%;
     text-align: center;
 }
 .afterpay-module .operations-holder input[type=text] {
-	width: 5em;
-	padding: 0 0.3125em;
+	width: 80px;
+	padding: 0 5px;
 	text-align: right;
 }
 .afterpay-module .operations-holder input[type=radio] {
 	position: relative;
-    top: 0.125em;
+    top: 2px;
 }
 .afterpay-module .operations-holder button {
 	border-radius: 0;
-    padding: 0.3125em 1.875em;
+    padding: 5px 30px;
     color: #fff;
     background-color: #808080;
     border-color: #808080;
@@ -55,10 +55,10 @@ afterpay-configs {
 	color: #fff;
 }
 .afterpay-module .operations-holder table {
-	width: 15.3125em;
+	width: 245px;
 }
 .afterpay-module .operations-holder table td {
-	padding: 0.3125em 0;
+	padding: 5px 0;
 }
 .afterpay-module .operations-holder table td label {
 	margin:0;
@@ -67,20 +67,20 @@ afterpay-configs {
 	
 }
 .afterpay-module .current-status {
-	margin-bottom: 1.25em;
+	margin-bottom: 20px;
 }
 .afterpay-module .current-status span{
 	color: #84bd00;
-    font-size: 1.0625em;
+    font-size: 17px;
     font-weight: 600;
 }
 .afterpay-module .bulk-complete{
-    margin-top: 0.625em;
+    margin-top: 10px;
     text-align: right;
 }
 .afterpay-module #button-bulk-complete{
 	border-radius: 0;
-    padding: 0.3125em 1.25em;
+    padding: 5px 20px;
     color: #fff;
     background-color: #808080;
     border-color: #808080;
@@ -92,27 +92,27 @@ afterpay-configs {
 	display: table-header-group;
 }
 #filtertableProjects tfoot tr th {
-	border-bottom: 0.0625em solid #dadada;
+	border-bottom: 1px solid #dadada;
 }
 .overview_documentation{
-	font-size: 1.25em;
-	padding-top: 1.375em;
+	font-size: 20Px;
+	padding-top: 22px;
 }
 table#documentation{
-	border-top: 0.0625em solid #dadada;
+	border-top: 1px solid #dadada;
 }
 .overview_title_description p{
-	font-size: 0.625em;
+	font-size: 10px;
 	font-style: italic;
 }
 .infobox_title_search {
-    padding: 0.3125em;
+    padding: 5px;
 }
 .order-list-content {
-    border-top: 0.0625em solid #dadada;
+    border-top: 1px solid #dadada;
 }
 .order-list-empty td {
-	padding-top: 0.75em;
+	padding-top: 12px;
 }
 .pagecursortxt.hide-10 .ten {
 	display: none;
@@ -127,67 +127,5 @@ table#documentation{
 	text-decoration: none;
 }
 a.button.show-all{
-	margin-left: 5em;
-}
-.list-table{
-	background-color: #FFFFFF;
-}
-.table-column{
-	background:#e0e0e0;
-	padding:3.125em 0;
-}
-.table-data{
-	background:#ffffff;
-	border:0.0625em solid #999999;
-	width:42.5em;
-}
-.table-column2{
-	font-size:0.75em;
-	font-family:arial;
-	padding:1.25em 0.625em;
-	vertical-align:top;
-}
-.table-column3{
-	font-size:0.75em;
-	font-family:arial;
-	padding:1.25em 0.625em;
-	vertical-align:top;
-}
-.table-column4{
-	font-size:0.75em;
-	font-family:arial;
-	padding:1.25em 0.625em;
-	vertical-align:top;
-}
-.table-data2{
-	background:#ffffff;
-	border:0.0625em solid #999999;
-	width:42.5em;
-}
-.table-header{
-	background:#cccccc;
-	padding:0.3125em 1.25em;
-	font-size:0.75em;
-	font-family:arial;
-	text-align:left;
-}
-.table-column5{
-	font-size:0.75em;
-	font-family:arial;
-	padding:1.25em 0.625em;
-	vertical-align:top;
-}
-.table-column6{
-	font-size:0.75em;
-	font-family:arial;
-	padding:1.25em 0.625em;
-	vertical-align:top;
-}
-#http-result-cell{
-	color: #00BB00; 
-	font-weight: bold;
-	
-}
-#http-result-table{
-	display:none;
+	margin-left: 80px;
 }

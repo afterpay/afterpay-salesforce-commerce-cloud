@@ -17,16 +17,16 @@
 
 <table width="100%" cellpadding="0" cellspacing="0">
 	<tr>
-		<td align="center" class ="table-column">
+		<td align="center" style="background:#e0e0e0;padding:50px 0;">
 			<center>
-				<table class ="table-data">
+				<table  style="background:#ffffff;border:1px solid #999999;width:680px;">
 					<tr>
-						<td class ="table-column2">
+						<td style="font-size:12px;font-family:arial;padding:20px 10px;vertical-align:top;">
 							<a href="${URLUtils.httpHome()}" title="${Resource.msg('global.storename','locale',null)}">
 								<img src="${URLUtils.httpStatic('/images/logo.gif')}" alt="${Resource.msg('global.storename','locale',null)}" style="border:none;"/>
 							</a>
 						</td>
-						<td class ="table-column3">
+						<td style="font-size:12px;font-family:arial;padding:20px 10px;vertical-align:top;">
 							<strong>${Resource.msg('global.storename','locale',null)}</strong><br />
 							${Resource.msg('order.orderconfirmation-email.storeaddress','order',null)}<br />
 							${Resource.msg('order.orderconfirmation-email.storelocation','order',null)}<br />
@@ -35,14 +35,14 @@
 						</td>
 					</tr>
 					<tr>
-						<td colspan="2" class ="table-column4">
+						<td colspan="2" style="font-size:12px;font-family:arial;padding:20px 10px;vertical-align:top;">
 						
-							<table class ="table-data2">
+							<table  style="background:#ffffff;border:1px solid #999999;width:680px;">
 								<tr>
-									<th class ="table-header">${Resource.msg('confirmation.thankyou','checkout',null)}</th>
+									<th style="background:#cccccc;padding:5px 20px;font-size:12px;font-family:arial;text-align:left;">${Resource.msg('confirmation.thankyou','checkout',null)}</th>
 								</tr>
 								<tr>
-									<td class ="table-column5">
+									<td style="font-size:12px;font-family:arial;padding:20px 10px;vertical-align:top;">
 										<p>${Resource.msg('confirmation.message','checkout',null)}</p>
 										<p>${Resource.msg('confirmation.contact','checkout',null)}</p>
 									</td>
@@ -52,7 +52,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td class ="table-column6" colspan="2">
+						<td style="font-size:12px;font-family:arial;padding:20px 10px;vertical-align:top;" colspan="2">
 							<isemailorderdetails order="${param.Order}"/>
 						</td>
 					</tr>

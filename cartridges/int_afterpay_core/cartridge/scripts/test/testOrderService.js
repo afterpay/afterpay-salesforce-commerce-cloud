@@ -2,12 +2,14 @@
 *	@input Basket : dw.order.LineItemCtnr
 *   @output HttpResult : Object
 */
-var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
+
+importPackage( dw.catalog );
+importPackage( dw.system );
+
+var LogUtils = require('~/cartridge/scripts/util/LogUtils');
 var Logger = LogUtils.getLogger("TestOrderService");
 
-/**
- *  pipeline call to execute token service
- */
+
 function execute( args : PipelineDictionary ) : Number
 {
 		var response  = getOrderService(args.Basket);
@@ -18,15 +20,12 @@ function execute( args : PipelineDictionary ) : Number
 
 }
 
-/**
- *  retrieves token 
- */
 function getOrderService(basket)
 {
 	var result = null;
 	var httpResult;
     try {
-        var OrderService = require("*/cartridge/scripts/order/orderService");
+        var OrderService = require("~/cartridge/scripts/order/OrderService");
 
         OrderService.generateRequest(basket);
 		
@@ -51,7 +50,7 @@ function getOrderService(basket)
  * Module exports
  */
 module.exports = {
-	getOrderService: function(basket){
+	GetOrderService: function(basket){
 		return getOrderService(basket);
 	}
 }

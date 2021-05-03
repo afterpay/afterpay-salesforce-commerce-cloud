@@ -1,0 +1,43 @@
+/*
+*	Get formatted amount currency value
+*/
+
+
+
+var Utils = {};
+
+/**
+* Hide sensitive details like customer details on request for logging purpose
+*/
+Utils.filterRequestForLog = function(requestJSON){
+	var request = JSON.parse(requestJSON), filteredResponse;
+	
+	if(request.orderDetails){
+		filteredResponse = Utils.maskDetails(request.orderDetails);
+	}else{
+		filteredResponse = Utils.maskDetails(request);
+	}
+	return filteredResponse;
+}
+
+Utils.maskDetails = function(requestJSON){
+	
+	if(requestJSON.shipping){
+		for(var index in requestJSON.shipping){
+			requestJSON.shipping[index] = "***";
+		}
+	}
+	
+	if(requestJSON.billing){
+		for(var index in requestJSON.billing){
+			requestJSON.billing[index] = "***";
+		}
+	}
+	
+	if(requestJSON.consumer && requestJSON.consumer.email){
+		requestJSON.consumer.email = "***";
+	}
+	return JSON.stringify(requestJSON);
+}
+
+module.exports = Utils;

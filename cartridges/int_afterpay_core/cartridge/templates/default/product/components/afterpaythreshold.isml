@@ -2,7 +2,7 @@
 
 <isscript>
 	//init script AfterpayDisplayProductMessage
-	var apMessageService = require("*/cartridge/scripts/product/afterpayDisplayProductMessage.js");
+	var apMessageService = require("int_afterpay_core/cartridge/scripts/product/AfterpayDisplayProductMessage.js");
 </isscript>
 
 <div>

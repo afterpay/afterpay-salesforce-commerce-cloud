@@ -1,16 +1,13 @@
 (function () {
     'use strict';
 
-/**
- *  builder class to build all request params
- */
     var Builder = function () {};
 
     var log = function (name) {
         return 'Abstract method "' + name + '" must be override';
     };
 
-    Builder.prototype.buildRequest = function () {
+    Builder.prototype.buildRequest = function (params) {
         throw new Error(log('buildRequest'));
     };
 
@@ -19,4 +16,5 @@
     };
 
     module.exports = Builder;
+
 }());

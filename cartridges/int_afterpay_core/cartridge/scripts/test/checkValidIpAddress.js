@@ -2,13 +2,13 @@
 * @input IpAddress : String
 *
 */
-var FlowRepository = require("*/cartridge/scripts/logic/repositories/flowRepository.js");
-var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
+importPackage( dw.system );
+importPackage( dw.util );
+
+var FlowRepository = require("~/cartridge/scripts/logic/repositories/FlowRepository.ds");
+var LogUtils = require('~/cartridge/scripts/util/LogUtils');
 var Logger = LogUtils.getLogger("CheckValidIpAddress");
 
-/**
- *  pipeline call to check valid IP address
- */
 function execute( pdict : PipelineDictionary ) : Number
 {
 		
@@ -18,9 +18,6 @@ function execute( pdict : PipelineDictionary ) : Number
 		return response.success ? PIPELET_NEXT : PIPELET_ERROR;
 }
 
-/**
- *  validated the IP address
- */
 function checkValidIPAddress(ipAddress)
 {
 	try {
@@ -49,7 +46,7 @@ function checkValidIPAddress(ipAddress)
  * Module exports
  */
 module.exports = {
-	checkValidIPAddress: function(ipAddress){
+	CheckValidIPAddress: function(ipAddress){
 		return checkValidIPAddress(ipAddress);
 	}
 }

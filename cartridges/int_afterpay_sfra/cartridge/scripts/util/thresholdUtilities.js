@@ -1,63 +1,73 @@
-'use strict';
-/* global session */
 var Transaction = require('dw/system/Transaction');
 
-var afterpaySitePreferencesUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
-var configurationService = require('*/cartridge/scripts/logic/services/afterpayConfigurationService');
-var configurationType = require('*/cartridge/scripts/util/afterpayConstants.js').CONFIGURATION_TYPE;
-var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
-var Logger = LogUtils.getLogger('thresholdUtilities');
+var AfterpaySitePreferencesUtilities = require('~/cartridge/scripts/util/AfterpayUtilities').getSitePreferencesUtilities();
+var configurationService = require('~/cartridge/scripts/logic/services/AfterpayConfigurationService');
+var configurationType = require('~/cartridge/scripts/util/AfterpayConstants.js')
+    .CONFIGURATION_TYPE;
+var LogUtils = require('~/cartridge/scripts/util/LogUtils');
+var Logger = LogUtils.getLogger('ThresholdUtilities');
 
-/**
- *  set threshold in session based either on the configuration or from API response
- */
-var thresholdUtilities = {
+var ThresholdUtilities = {
     setThresholdInSession: function () {
-        var minThresholdAmount = afterpaySitePreferencesUtilities.sitePreferencesUtilities.getMinThresholdAmount();
-        var maxThresholdAmount = afterpaySitePreferencesUtilities.sitePreferencesUtilities.getMaxThresholdAmount();
-        var isErrorOccured = false;
-        if (minThresholdAmount !== null && maxThresholdAmount !== null && (minThresholdAmount - maxThresholdAmount !== 0.0)) {
+        var minThresholdAmount = AfterpaySitePreferencesUtilities.getMinThresholdAmount();
+        var maxThresholdAmount = AfterpaySitePreferencesUtilities.getMaxThresholdAmount();
+        if (
+            minThresholdAmount != null &&
+            maxThresholdAmount != null &&
+            minThresholdAmount - maxThresholdAmount != 0.0
+        ) {
             Transaction.begin();
-            session.privacy.afterPayIsRangeAvailable = true;
-            session.privacy.afterPayMinAmount = minThresholdAmount;
-            session.privacy.afterPayMaxAmount = maxThresholdAmount;
+            session.custom.afterPayIsRangeAvailable = true;
+            session.custom.afterPayMinAmount = minThresholdAmount;
+            session.custom.afterPayMaxAmount = maxThresholdAmount;
             Transaction.commit();
         } else {
+            configurationService.init();
             configurationService.generateRequest();
             var thresholdResponse;
             try {
                 thresholdResponse = configurationService.getResponse();
-                Logger.debug('service response to get the threshold amount :' + JSON.stringify(thresholdResponse));
+                Logger.debug(
+                    'service response to get the threshold amount :' +
+                        JSON.stringify(thresholdResponse)
+                );
             } catch (e) {
-                Logger.debug('Exception occured to set the threshold amount in session :' + e);
-                isErrorOccured = {
+                Logger.debug(
+                    'Exception occured to set the threshold amount in session :' +
+                        e
+                );
+                return {
                     error: true
                 };
             }
 
-            if (thresholdResponse.length > 0) {
-                for (var i = 0; i < thresholdResponse.length; i++) {
-                    var threshold = thresholdResponse[i];
-                    if (threshold.type === configurationType.PAY_BY_INSTALLMENT && (parseFloat(threshold.minimumAmount.amount, 10) - parseFloat(threshold.maximumAmount.amount, 10)) !== 0.0) {
-                        Transaction.begin();
-                        session.privacy.afterPayIsRangeAvailable = true;
-                        session.privacy.afterPayMinAmount = parseFloat(threshold.minimumAmount.amount, 10);
-                        session.privacy.afterPayMaxAmount = parseFloat(threshold.maximumAmount.amount, 10);
-                        Transaction.commit();
-                        break;
-                    }
-                }
+            if (
+                thresholdResponse &&
+                parseFloat(thresholdResponse.minimumAmount.amount, 10) -
+                    parseFloat(thresholdResponse.maximumAmount.amount, 10) !=
+                    0.0
+            ) {
+                Transaction.begin();
+                session.custom.afterPayIsRangeAvailable = true;
+                session.custom.afterPayMinAmount = parseFloat(
+                    thresholdResponse.minimumAmount.amount,
+                    10
+                );
+                session.custom.afterPayMaxAmount = parseFloat(
+                    thresholdResponse.maximumAmount.amount,
+                    10
+                );
+                Transaction.commit();
             }
         }
-        return isErrorOccured;
     },
     getThreshold: function () {
         return {
-            isRangeAvailable: session.privacy.afterPayIsRangeAvailable || false,
-            minAmount: session.privacy.afterPayMinAmount || 0.0,
-            maxAmount: session.privacy.afterPayMaxAmount || 0.0
+            isRangeAvailable: session.custom.afterPayIsRangeAvailable || false,
+            minAmount: session.custom.afterPayMinAmount || 0.0,
+            maxAmount: session.custom.afterPayMaxAmount || 0.0
         };
     }
 };
 
-module.exports = thresholdUtilities;
+module.exports = ThresholdUtilities;

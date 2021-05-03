@@ -1,0 +1,13 @@
+@charset "UTF-8";
+
+@import "~base/homePage";
+
+.afterpay-checkout-button {
+    background-color: #000;
+    color: #fff !important;
+    background-image: url("../images/afterpay-checkout.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center; }
+  

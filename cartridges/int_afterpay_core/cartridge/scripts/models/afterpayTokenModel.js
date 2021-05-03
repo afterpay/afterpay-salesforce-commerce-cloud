@@ -1,12 +1,11 @@
 'use strict';
 
-var Class = require('*/cartridge/scripts/util/class').Class;
+var sitePreferences = require("~/cartridge/scripts/util/AfterpayUtilities.js").getSitePreferencesUtilities();
+var ctrlCartridgeName = sitePreferences.getControllerCartridgeName();
+var Class 		= require(ctrlCartridgeName + '/cartridge/scripts/util/Class').Class;
 
-/**
- *  calls TokenModel object
- */
 var TokenModel = Class.extend({
-    apToken: null
+	apToken: null
 });
 
 module.exports = TokenModel;

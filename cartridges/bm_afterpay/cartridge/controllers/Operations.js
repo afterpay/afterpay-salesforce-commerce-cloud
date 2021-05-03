@@ -1,28 +1,31 @@
 'use strict';
-/* global request */
+
+/**
+ * Controller for AfterPay payment
+ *
+ */
+
+var LogUtils = require('~/cartridge/scripts/util/LogUtils');
+var log = LogUtils.getLogger("Operations");
 
 /**
  * redirects to specific actions
  * */
-function performAction() {
-    var action = request.httpParameterMap.action.value;
-    var orderNo = request.httpParameterMap.orderno.value;
-    var amount = request.httpParameterMap.amount.value;
-    var transActions = require('*/cartridge/scripts/transActions');
-    var result;
-
-    switch (action) {
-        case 'refund':
-            result = transActions.refund(orderNo, amount);
-            break;
-        default:
-            result = { status: false, error: true };
-    }
-
-    var r = require('~/cartridge/scripts/util/response');
-    r.renderJSON(result);
-
-    return;
+function performAction(){
+	var action = request.httpParameterMap.action.value,
+		orderNo = request.httpParameterMap.orderno.value,
+		amount = request.httpParameterMap.amount.value,
+		bulkCompleteArray = request.httpParameterMap.bulkComplete.value,
+		transActions = require("~/cartridge/scripts/TransActions"),
+		result;
+	
+	switch(action){
+		case "refund":
+			result = transActions.refund(orderNo, amount);
+			break;
+	}
+	
+	response.getWriter().println(JSON.stringify(result));
 }
 
 /*

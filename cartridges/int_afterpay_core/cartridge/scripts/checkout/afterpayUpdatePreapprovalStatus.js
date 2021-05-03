@@ -1,72 +1,92 @@
-/* global empty, InternalError */
+/**
+*   @input PreapprovalParameterMap : dw.web.HttpParameterMap
+*   @input LineItemCtnr : dw.order.LineItemCtnr
+*   @output PreapprovalResult : Object
+*
+*/
+importPackage( dw.system );
+
 var Transaction = require('dw/system/Transaction');
-var PreapprovalModel = require('*/cartridge/scripts/models/preapprovalModel.js');
-var AfterpayUtilities = require('*/cartridge/scripts/util/afterpayUtilities.js').getAfterpayCheckoutUtilities();
+var PreapprovalModel = require("~/cartridge/scripts/models/PreapprovalModel.js");
+var AfterpayUtilities = require("~/cartridge/scripts/util/AfterpayUtilities.js").getAfterpayCheckoutUtilities();
 
-var Logger = require('dw/system/Logger');
-/**
- * retrieves payment status and order token from httpparameter
- * @param {Object} parameter - parameter map
- * @returns {Object} preapprovalModel - preapprovalModel
- */
-function parsePreapprovalResult(parameter) {
-    var preapprovalModel = new PreapprovalModel();
-
-    preapprovalModel.status = parameter.get('status').getStringValue();
-    preapprovalModel.apToken = parameter.get('orderToken').getStringValue();
-
-    return preapprovalModel;
+function execute( args : PipelineDictionary ) : Number
+{
+	
+	var lineItemCtnr = args.LineItemCtnr,
+		parameterMap = args.PreapprovalParameterMap;
+	
+	var preApprovalResult = getPreApprovalResult(lineItemCtnr, parameterMap);
+	if(preApprovalResult.error){
+		return PIPELET_ERROR;
+	}
+	args.PreapprovalResult = preApprovalResult;
+	
+    return PIPELET_NEXT;
 }
 
-/**
- * saves preapproved payment status in PaymentTransaction object
- * @param {Object} preapprovalModel - preapprovalModel
- * @param {Object} lineItemCtnr - lineItemCtnr
- */
-function updatePreapprovalStatus(preapprovalModel, lineItemCtnr) {
-    var paymentTransaction = AfterpayUtilities.getPaymentTransaction(lineItemCtnr);
-
-    if (empty(paymentTransaction)) {
-        throw new InternalError('Can not find payment transaction');
-    }
-
-    Logger.debug('Payment status after token generation : ' + preapprovalModel.status);
-    Transaction.begin();
-    paymentTransaction.custom.apInitialStatus = preapprovalModel.status;
-    paymentTransaction.custom.apToken = preapprovalModel.apToken;
-    Transaction.commit();
+function parsePreapprovalResult (parameter : dw.web.HttpParameterMap) {
+	var preapprovalModel = new PreapprovalModel();
+	preapprovalModel.status = parameter.get('status').getStringValue();
+	preapprovalModel.apToken = parameter.get('orderToken').getStringValue();
+	// Currently only used for express checkout, and not passed in via url
+	preapprovalModel.apExpressCheckout = false;
+	preapprovalModel.apExpressCheckoutChecksum = "";
+	
+	return preapprovalModel;
 }
 
-/**
- * retrieves preapproved payment status
- * @param {Object} lineItemCtnr - lineItemCtnr
- * @param {Object} parameterMap - parameterMap
- * @returns {Object} preapprovalModel - preapprovalModel
- */
-function getPreApprovalResult(lineItemCtnr, parameterMap) {
-    var preapprovalModel = parsePreapprovalResult(parameterMap);
+function parsePreapprovalResultFromObject (parameter) {
+	var preapprovalModel = new PreapprovalModel();
+	preapprovalModel.status = parameter.status;
+	preapprovalModel.apToken = parameter.apToken;
+	preapprovalModel.apExpressCheckout = parameter.apExpressCheckout || false;
+	preapprovalModel.apExpressCheckoutChecksum = parameter.apExpressCheckoutChecksum || "";
 
-    if (empty(preapprovalModel.status) || empty(preapprovalModel.apToken)) {
-        Logger.error('can not find order token and status in http parameter returned');
+	
+	return preapprovalModel;
+}
 
-        return { error: true };
-    } try {
-        updatePreapprovalStatus(preapprovalModel, lineItemCtnr);
-    } catch (exception) {
-        var e = exception;
-        Logger.error('Update payment transaction: ' + e);
+function updatePreapprovalStatus (preapprovalModel : PreapprovalModel, lineItemCtnr : dw.order.LineItemCtnr) {
+	var paymentTransaction = AfterpayUtilities.getPaymentTransaction (lineItemCtnr);
+	
+	if (empty (paymentTransaction)) {
+		throw new InternalError("Can not find payment transaction");
+	} 
+	Logger.debug("Payment status after token generation : " + preapprovalModel.status);
+	Transaction.begin();
+	paymentTransaction.custom.apInitialStatus = preapprovalModel.status;
+	paymentTransaction.custom.apToken = preapprovalModel.apToken;
+	paymentTransaction.custom.apExpressCheckout = preapprovalModel.apExpressCheckout;
+	paymentTransaction.custom.apExpressCheckoutChecksum = preapprovalModel.apExpressCheckoutChecksum;
+	Transaction.commit();
+}
 
-        return { error: true };
-    }
-
-    return preapprovalModel;
+function getPreApprovalResult(lineItemCtnr, parameterMap){
+	
+	var preapprovalModel = (parameterMap instanceof dw.web.HttpParameterMap) ? parsePreapprovalResult(parameterMap): parsePreapprovalResultFromObject(parameterMap);
+	
+	if (empty(preapprovalModel.status) || empty(preapprovalModel.apToken)) {
+		Logger.error("can not find order token and status in http parameter returned");
+		return {error:true};
+		
+	} 
+	try {
+		updatePreapprovalStatus(preapprovalModel, lineItemCtnr);
+		
+	} catch (exception) {
+		var e = exception;
+		Logger.error("Update payment transaction: " + e);
+		return {error:true};
+	}
+	return preapprovalModel;
 }
 
 /*
  * Module exports
  */
 module.exports = {
-    getPreApprovalResult: function (lineItemCtnr, parameterMap) {
-        return getPreApprovalResult(lineItemCtnr, parameterMap);
-    }
-};
+	GetPreApprovalResult: function(lineItemCtnr, parameterMap){
+		return getPreApprovalResult(lineItemCtnr, parameterMap);
+	}
+}

@@ -2,12 +2,14 @@
 *   @input path : String
 *   @output HttpResult : Object
 */
-var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
+
+importPackage( dw.catalog );
+importPackage( dw.system );
+importPackage( dw.util );
+
+var LogUtils = require('~/cartridge/scripts/util/LogUtils');
 var Logger = LogUtils.getLogger("TestAuthoriseService");
 
-/**
- *  pipeline call to authorise payment service
- */
 function execute( args : PipelineDictionary ) : Number
 {
 	var response  = authorisePaymentService(args.path);
@@ -17,10 +19,6 @@ function execute( args : PipelineDictionary ) : Number
     return response.errorCode ? PIPELET_ERROR : PIPELET_NEXT;
 }
 
-
-/**
- *  authorises the payment service
- */
 function authorisePaymentService(queryString)
 {
 	var httpResult;
@@ -37,7 +35,7 @@ function authorisePaymentService(queryString)
 	        }
 	    }
 	
-	    var AuthoriseService = require("~/cartridge/scripts/logic/services/afterpayAuthorisePaymentService.js");
+	    var AuthoriseService = require("~/cartridge/scripts/logic/services/AfterpayAuthorisePaymentService.ds");
 	    
 	    var token = queryParameters.get("token");
 	    
@@ -63,7 +61,7 @@ function authorisePaymentService(queryString)
  * Module exports
  */
 module.exports = {
-	authorisePaymentService: function(queryString){
+	AuthorisePaymentService: function(queryString){
 		return authorisePaymentService(queryString);
 	}
 }

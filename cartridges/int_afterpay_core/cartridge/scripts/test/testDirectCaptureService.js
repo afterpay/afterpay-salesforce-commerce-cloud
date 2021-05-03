@@ -2,13 +2,14 @@
 *   @input path : String
 *   @output HttpResult : Object
 */
-var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
+
+importPackage( dw.catalog );
+importPackage( dw.system );
+importPackage( dw.util );
+
+var LogUtils = require('~/cartridge/scripts/util/LogUtils');
 var Logger = LogUtils.getLogger("TestDirectCaptureService");
 
-
-/**
- *  pipeline call to invoke the direct capture payment services
- */
 function execute( args : PipelineDictionary ) : Number
 {
     var response  = directCaptureService(args.path);
@@ -18,9 +19,7 @@ function execute( args : PipelineDictionary ) : Number
     return response.errorCode ? PIPELET_ERROR : PIPELET_NEXT;
 }
 
-/**
- *  processes direct capture payment service
- */
+
 function directCaptureService(queryString)
 {
 	var httpResult;
@@ -37,7 +36,7 @@ function directCaptureService(queryString)
 	        }
 	    }
 	
-	    var captureService = require("*/cartridge/scripts/logic/services/afterpayDirectCapturePaymentService.ds");
+	    var captureService = require("~/cartridge/scripts/logic/services/AfterpayDirectCapturePaymentService.ds");
 	    
 	    var token = queryParameters.get("token");
 	    captureService.generateRequest(token);
@@ -62,7 +61,7 @@ function directCaptureService(queryString)
  * Module exports
  */
 module.exports = {
-	directCaptureService: function(queryString){
+	DirectCaptureService: function(queryString){
 		return directCaptureService(queryString);
 	}
 }

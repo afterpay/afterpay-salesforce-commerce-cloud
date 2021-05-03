@@ -10,7 +10,7 @@ var ProductMgr = require('dw/catalog/ProductMgr');
 server.get('GetUpdatedWidget',
     server.middleware.https,
     function (req, res, next) {
-        var apMessageService = require('*/cartridge/scripts/util/afterpayDisplayProductMessage');
+        var apMessageService = require('*/cartridge/scripts/util/AfterpayDisplayProductMessage');
         var renderTemplateHelper = require('*/cartridge/scripts/renderTemplateHelper');
         var updatedTemplate = 'util/afterpayMessage';
         var thresholdResponse;
@@ -20,7 +20,8 @@ server.get('GetUpdatedWidget',
         if (req.querystring.className === 'cart-afterpay-message' || req.querystring.className === 'checkout-afterpay-message') {
             var basketObject = BasketMgr.getCurrentBasket();
             totalPrice = basketObject.totalGrossPrice;
-            installmentAmount = apMessageService.getPLPMessage(totalPrice);
+            //installmentAmount = apMessageService.getPLPMessage(totalPrice);
+            installmentAmount = apMessageService.getCartMessage(totalPrice);
         } else {
             var productID = req.querystring.productID;
             var productObject = ProductMgr.getProduct(productID);

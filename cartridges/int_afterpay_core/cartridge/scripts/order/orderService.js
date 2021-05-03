@@ -1,42 +1,41 @@
 'use strict';
-/* eslint no-underscore-dangle: 0 */
 
-var AfterpayApiContext = require('*/cartridge/scripts/context/afterpayApiContext');
-var AfterpayHttpService = require('*/cartridge/scripts/logic/services/afterpayHttpService');
-var AfterpaySitePreferencesUtilities = require('*/cartridge/scripts/util/afterpayUtilities').getSitePreferencesUtilities();
-var Class = require('*/cartridge/scripts/util/class').Class;
-var OrderRequestBuilder = require('*/cartridge/scripts/order/orderRequestBuilder');
+var AfterpayApiContext = require("~/cartridge/scripts/context/AfterpayApiContext");
+var AfterpayHttpService = require("~/cartridge/scripts/logic/services/AfterpayHttpService.ds");
+var AfterpaySitePreferencesUtilities = require("~/cartridge/scripts/util/AfterpayUtilities").getSitePreferencesUtilities();
+var ctrlCartridgeName = AfterpaySitePreferencesUtilities.getControllerCartridgeName();
+var Class 		= require(ctrlCartridgeName + '/cartridge/scripts/util/Class').Class;
+var OrderRequestBuilder = require('~/cartridge/scripts/order/OrderRequestBuilder');
+var Site = require('dw/system/Site');
 
-/**
- *  request and response definitions for payment service type 'create orders'
- */
 var OrderService = Class.extend({
-    _requestUrl: null,
-    _requestBody: {},
 
-    init: function () {
+     _requestUrl : null,
+     _requestBody : {},
+
+    init : function() {
         this.afterpayHttpService = new AfterpayHttpService();
         this.afterpayApiContext = new AfterpayApiContext();
         this.afterpaySitePreferencesUtilities = AfterpaySitePreferencesUtilities;
     },
 
-    generateRequest: function (lineItemCtnr, url) {
-        this._requestUrl = this.afterpayApiContext.getFlowApiUrls().get('createOrders');
+    generateRequest : function(lineItemCtnr : dw.order.LineItemCtnr, url : String) {
+        this._requestUrl = this.afterpayApiContext.getFlowApiUrls().get("createOrders");
         this._generateRequestBody(lineItemCtnr, url);
     },
 
-    getResponse: function () {
-        var response = this.afterpayHttpService.call(this._requestUrl, 'CREATE_ORDER', this._requestBody);
+    getResponse : function () {
+        var response = this.afterpayHttpService.call(this._requestUrl, "CREATE_ORDER", this._requestBody);
         return response;
     },
 
-    _generateRequestBody: function (lineItemCtnr, url) {
+    _generateRequestBody : function (lineItemCtnr, url) {
         var orderRequestBuilder = new OrderRequestBuilder();
 
         this._requestBody = orderRequestBuilder.buildRequest({
             basket: lineItemCtnr,
             url: url,
-            requestMethod: 'POST'
+            "requestMethod" : 'POST'
         }).get();
     }
 });

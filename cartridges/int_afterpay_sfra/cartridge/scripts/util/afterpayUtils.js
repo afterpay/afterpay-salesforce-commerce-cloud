@@ -67,7 +67,7 @@ afterpayUtils.showAfterpayPayment = function () {
     var showAfterpay = Site.getCurrent().getCustomPreferenceValue('enableAfterpay');
     var basketObject = BasketMgr.getCurrentBasket();
     var orderGrandTotal = basketObject.totalGrossPrice;
-    var apMessageService = require('*/cartridge/scripts/util/afterpayDisplayProductMessage');
+    var apMessageService = require('*/cartridge/scripts/util/AfterpayDisplayProductMessage');
     var thresholdResponse = apMessageService.getThresholdRange(orderGrandTotal);
     var disableAfterpayPaymentMethod = false;
 

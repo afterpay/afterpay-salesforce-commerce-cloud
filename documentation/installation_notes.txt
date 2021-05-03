@@ -1,0 +1,22 @@
+2/23/2021
+===
+apCoreCartridge setting in custom preferences needs to be set to "app_storefront_core".
+
+Basically afterpayredirect.isml contains:
+
+	var coreCartridge = sitePreferences.getCoreCartridgeName();
+	var Countries = require(coreCartridge+'/cartridge/scripts/util/Countries');
+
+So the cartridge needs to be the one that contains the Countries.ds file
+
+===
+The modification to util/modules.isml					
+
+<isinclude template="util/afterpay/modules" /> 
+
+Should be:						
+
+<isinclude template="util/modulesafterpay" /> 
+
+===
+

@@ -44,7 +44,7 @@
 	    	</tr>
 	    	<isset name="paymentInstrument" value="${null}" scope="page"/>
 	    	<isloop items="${pdict.orders}" var="order" status="loopstate">
-		    	<tr class="list-table">
+		    	<tr style="background-color: #FFFFFF">
 		        	<td class="table_detail w e s" nowrap="nowrap">
 		        		<a href="${URLUtils.url('AfterPay-OrderDetails', 'OrderNo', order.orderNo)}" target="_blank">${order.orderNo}</a>
 		        	</td>
@@ -60,7 +60,7 @@
 		            <td class="table_detail left e s" nowrap="nowrap">${order.getCustomerEmail()}</td>
 		            <td class="table_detail right e s" nowrap="nowrap">${order.getTotalGrossPrice()}</td>
 		            
-		            <isset name="canRefund" value="${paymentTransaction && paymentTransaction.custom && paymentTransaction.custom.apDirectPaymentStatus && paymentTransaction.custom.apDirectPaymentStatus.toLowerCase() == 'approved' && empty(paymentTransaction.custom.apRefundID)}" scope="page" />
+		            <isset name="canRefund" value="${paymentTransaction && paymentTransaction.custom.apDirectPaymentStatus.toLowerCase() == 'approved' && empty(paymentTransaction.custom.apRefundID)}" scope="page" />
 					<isset name="currentStatus" value="${canRefund ? (paymentTransaction ? paymentTransaction.custom.apDirectPaymentStatus : paymentTransaction.custom.apAuthoriseStatus) : Resource.msg('option.refunded','afterpay',null)}" scope="page" />
 		            
 		            <td class="table_detail left e s" nowrap="nowrap">${currentStatus}</td>

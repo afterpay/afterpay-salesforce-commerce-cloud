@@ -28,9 +28,9 @@
      } else {
          var tokenErrorMessage;
          if (invalidEmailError.equals(errorMessage)) {
-             tokenErrorMessage = require('*/cartridge/scripts/util/afterpayErrors').getErrorResponses('TOKEN_ERROR');
+             tokenErrorMessage = require('*/cartridge/scripts/util/AfterpayErrors').GetErrorResponses('TOKEN_ERROR');
          } else {
-             tokenErrorMessage = require('*/cartridge/scripts/util/afterpayErrors').getErrorResponses(errorCode);
+             tokenErrorMessage = require('*/cartridge/scripts/util/AfterpayErrors').GetErrorResponses(errorCode);
          }
          Logger.error('Error while generating Token: ' + tokenErrorMessage);
          res.redirect(URLUtils.url('Checkout-Begin', 'stage', 'payment', 'afterpayErrorMessage', tokenErrorMessage));
@@ -160,7 +160,7 @@
              return next();
          }
          var redirectUrl = URLUtils.https('AfterpayRedirect-PrepareRedirect').toString();
-         var afterPayTokenResponse = require('*/cartridge/scripts/checkout/afterpayGetToken').getToken(currentBasket);
+         var afterPayTokenResponse = require('*/cartridge/scripts/checkout/AfterpayGetToken').GetToken(currentBasket);
          var countryCode = currentBasket.billingAddress.countryCode ? currentBasket.billingAddress.countryCode.value.toUpperCase() : '';
          res.json({
              error: false,
@@ -183,13 +183,14 @@
      var currentBasket = BasketMgr.getCurrentBasket();
      switch (paymentStatus) {
          case 'SUCCESS':
-             productExists = require('*/cartridge/scripts/checkout/afterpayTokenConflict').checkTokenConflict(currentBasket, req.querystring.orderToken);
-             require('*/cartridge/scripts/checkout/afterpayUpdatePreapprovalStatus').getPreApprovalResult(currentBasket, req.querystring);
+             productExists = require('*/cartridge/scripts/checkout/AfterpayTokenConflict').CheckTokenConflict(currentBasket, req.querystring.orderToken);
+             require('*/cartridge/scripts/checkout/AfterpayUpdatePreapprovalStatus').GetPreApprovalResult(currentBasket, req.querystring);
              if (!productExists || productExists.error) {
                  res.redirect(URLUtils.url('Checkout-Begin', 'stage', 'payment', 'afterpayErrorMessage', Resource.msg('apierror.token.conflict', 'afterpay', null)));
              } else {
                  var order = COHelpers.createOrder(currentBasket);
-                 paymentStatusUpdated = require('*/cartridge/scripts/checkout/updatePaymentStatus').handlePaymentStatus(order);
+                 // auth/capture payment
+                 paymentStatusUpdated = require('*/cartridge/scripts/checkout/UpdatePaymentStatus').HandlePaymentStatus(order);
                  if (paymentStatusUpdated.authorized) {
                      Transaction.begin();
                      orderPlacementStatus = OrderMgr.placeOrder(order);

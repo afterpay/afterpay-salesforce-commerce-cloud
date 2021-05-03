@@ -1,35 +1,42 @@
 'use strict';
 
-var afterpayHttpService = require('*/cartridge/scripts/logic/services/afterpayHttpService');
-var afterpayUtils = require('*/cartridge/scripts/util/afterpayUtils');
-var OrderRequestBuilder = require('*/cartridge/scripts/order/orderRequestBuilder');
+var AfterpayApiContext = require("~/cartridge/scripts/context/AfterpayApiContext");
+var AfterpayHttpService = require("~/cartridge/scripts/logic/services/AfterpayHttpService");
+var AfterpaySitePreferencesUtilities = require("~/cartridge/scripts/util/AfterpayUtilities").getSitePreferencesUtilities();
+var OrderRequestBuilder = require('~/cartridge/scripts/order/OrderRequestBuilder');
+var Class = require('~/cartridge/scripts/util/Class').Class;
+var Site = require('dw/system/Site');
 
-/**
- *  request and response definitions for payment service type 'create orders'
- */
-var requestUrl = null;
-var requestBody = {};
-var orderService = {
-    generateRequest: function (lineItemCtnr, url) {
-        requestUrl = afterpayUtils.getEndpoint('createOrders');
-        this.generateRequestBody(lineItemCtnr, url);
+var OrderService = Class.extend({
+
+     _requestUrl : null,
+     _requestBody : {},
+
+    init : function() {
+        this.afterpayHttpService = new AfterpayHttpService();
+        this.afterpayApiContext = new AfterpayApiContext();
+        this.afterpaySitePreferencesUtilities = AfterpaySitePreferencesUtilities;
     },
 
-    getResponse: function () {
-        var result = afterpayHttpService.call(requestUrl, requestBody);
-        var response = afterpayUtils.handleServiceResponses(requestUrl, 'CREATE_ORDER', result, { requestMethod: 'GET' });
+    generateRequest : function(lineItemCtnr : dw.order.LineItemCtnr, url : String) {
+        this._requestUrl = this.afterpayApiContext.getFlowApiUrls().get("createOrders");
+        this._generateRequestBody(lineItemCtnr, url);
+    },
+
+    getResponse : function () {
+        var response = this.afterpayHttpService.call(this._requestUrl, "CREATE_ORDER", this._requestBody);
         return response;
     },
 
-    generateRequestBody: function (lineItemCtnr, url) {
+    _generateRequestBody : function (lineItemCtnr, url) {
         var orderRequestBuilder = new OrderRequestBuilder();
 
-        requestBody = orderRequestBuilder.buildRequest({
+        this._requestBody = orderRequestBuilder.buildRequest({
             basket: lineItemCtnr,
             url: url,
-            requestMethod: 'POST'
+            "requestMethod" : 'POST'
         }).get();
     }
-};
+});
 
-module.exports = orderService;
+module.exports = new OrderService();

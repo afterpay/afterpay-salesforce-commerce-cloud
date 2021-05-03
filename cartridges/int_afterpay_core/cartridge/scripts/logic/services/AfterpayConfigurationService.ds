@@ -1,0 +1,30 @@
+importPackage(dw.util);
+importPackage(dw.system);
+
+var AfterpayApiContext = require("~/cartridge/scripts/context/AfterpayApiContext");
+var AfterpayHttpService = require("~/cartridge/scripts/logic/services/AfterpayHttpService.ds");
+var sitePreferences = require("~/cartridge/scripts/util/AfterpayUtilities.js").getSitePreferencesUtilities();
+var ctrlCartridgeName = sitePreferences.getControllerCartridgeName();
+var Class 		= require(ctrlCartridgeName + '/cartridge/scripts/util/Class').Class;
+
+var ConfigurationService = Class.extend({
+
+	 _requestUrl : null,
+
+	init : function() {
+        this.afterpayHttpService = new AfterpayHttpService();
+        this.afterpayApiContext = new AfterpayApiContext();
+    },
+
+    generateRequest : function() {
+        this._requestUrl = this.afterpayApiContext.getFlowApiUrls().get("getConfiguration");
+    },
+
+    getResponse : function () {
+        var response = this.afterpayHttpService.call(this._requestUrl, "GET_CONFIGURATION", { requestMethod: 'GET' });
+        return response;
+    }
+});
+
+
+module.exports = new ConfigurationService();

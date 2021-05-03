@@ -11,6 +11,10 @@
 			AfterPay.initialize({countryCode : 'US'});
 		</isif>
 
+		<isif condition = "${pdict.countryCode == 'CA'}">
+			AfterPay.initialize({countryCode : 'CA'});
+		</isif>
+
 		<isif condition = "${pdict.countryCode == 'AU'}">
 			AfterPay.initialize({countryCode : 'AU'});
 		</isif>

@@ -40,7 +40,7 @@
     	  
     	  var initalExecution = function (resultTag) {
               $("#http-result-table").show();
-              $("#http-result-row").html('<td id="http-result-cell">EXECUTING...</td>');
+              $("#http-result-row").html('<td id="http-result-cell" style="color: #00BB00; font-weight: bold;">EXECUTING...</td>');
               $("input[type='submit']").attr("disabled", "disabled"); 
               resultTag.empty();
           };
@@ -57,7 +57,7 @@
       
 </script>
 
-<table id="http-result-table">
+<table id="http-result-table" style="display:none;">
     <tr>
         <th scope="col">Result</th>
     </tr>

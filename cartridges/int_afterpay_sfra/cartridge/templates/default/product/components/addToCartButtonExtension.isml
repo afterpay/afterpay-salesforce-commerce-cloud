@@ -1,0 +1,25 @@
+<isif condition="${dw.system.Site.current.preferences.custom.enableAfterpay &&
+    dw.system.Site.current.preferences.custom.apEnableExpressCheckout &&
+    dw.system.Site.current.preferences.custom.apEnableExpressCheckoutPdp}">
+    <isset name="afterpayExpressCheckoutPage" value="product_detail" scope="page" />
+    <isinclude template="product/components/afterpayexpresscheckout" />
+    <isif condition="${!disableAfterpayPaymentMethod}">
+        <div class="col-12 pdp-checkout-button">
+            <isif condition="${isExpressCheckoutFinalize}">
+                <button id="afterpay-continue-finalize-button" class="afterpay-buynow-button add-to-cart btn"
+                    data-toggle="modal"
+                    data-pid="${product.id}"
+                    ${!product.readyToOrder || !product.available ? "disabled" : ""}>
+                    &nbsp;
+                </button>            
+            <iselse/>
+                <button id="afterpay-express-pdp-button" class="afterpay-buynow-button add-to-cart btn"
+                    data-toggle="modal"
+                    data-pid="${product.id}"
+                    ${!product.readyToOrder || !product.available ? "disabled" : ""}>
+                    &nbsp;
+                </button>
+            </isif>
+        </div>
+    </isif>
+</isif>

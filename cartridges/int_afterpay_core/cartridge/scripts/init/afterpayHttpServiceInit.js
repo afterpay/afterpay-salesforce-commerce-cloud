@@ -1,60 +1,37 @@
 'use strict';
-/* global empty */
 
-var AfterpayWebServiceUtilities = require('~/cartridge/scripts/util/afterpayUtilities').getAfterpayWebServiceUtilities();
-var AfterpaySitePreferencesUtilities = require('~/cartridge/scripts/util/afterpayUtilities').getSitePreferencesUtilities();
-var AfterpayHttpMockService = require('~/cartridge/scripts/logic/services/afterpayHttpMockService');
-var LocalServiceRegistry = require('dw/svc/LocalServiceRegistry');
+require('dw/io');
+require('dw/net');
+importPackage(dw.svc);
 
-/**
- * returns the service verb
- * @param {Object} service - service
- * @param {Object} response - response
- * @returns {Object} response - response
- */
-var parseAllVerbResponse = function (service, response) {
+var AfterpayWebServiceUtilities = require("~/cartridge/scripts/util/AfterpayUtilities").getAfterpayWebServiceUtilities();
+var AfterpaySitePreferencesUtilities = require("~/cartridge/scripts/util/AfterpayUtilities").getSitePreferencesUtilities();
+var AfterpayHttpMockService = require("~/cartridge/scripts/logic/services/AfterpayHttpMockService");
+
+var parseAllVerbResponse = function(service : HTTPService, response : Object) {
     return response;
 };
 
-/**
- * calls mock service
- * @param {Object} service - service
- * @param {Object} response - response
- * @returns {Object} response - response
- */
-var mockResponse = function (service, response) {
+var mockResponse = function(service : HTTPService, response : Object){
     var afterpayHttpMockService = new AfterpayHttpMockService();
 
     return afterpayHttpMockService.call(service, response);
 };
 
-/**
- * filters log message
- * @param {string} msg - message
- * @returns {string} message
- */
-var filterGetLogMessage = function (msg) {
-    return msg.replace('headers', 'OFFWITHTHEHEADERS');
+var filterGetLogMessage = function(msg:String) {
+    return msg.replace("headers", "OFFWITHTHEHEADERS");
 };
 
-/**
- * creates service request
- * @param {Object} service - service
- * @param {Object} args - arguments
- * @returns {string} response - response
- */
-var createRequest = function (service, args) {
-    var requestMethod = !empty(args) && !empty(args.requestMethod) ? args.requestMethod : 'POST';
-
-    service.addHeader('Content-Type', 'application/json;charset=utf-8');
-    service.setRequestMethod(requestMethod);
-    AfterpayWebServiceUtilities.setSASAuthorization(service);
-
-    if (!empty(args)) {
-        return JSON.stringify(args);
-    }
-
-    return '{}';
+var createRequest = function (service : HTTPService, args) {
+	var requestMethod = !empty(args) && !empty(args.requestMethod) ? args.requestMethod : 'POST';
+	
+	service.addHeader("Content-Type", "application/json;charset=utf-8");
+	service.setRequestMethod(requestMethod);
+	AfterpayWebServiceUtilities.setSASAuthorization(service);
+	
+	if (!empty(args)) {
+		return JSON.stringify(args);
+	}
 };
 
 var httpConfiguration = {
@@ -64,4 +41,4 @@ var httpConfiguration = {
     filterLogMessage: filterGetLogMessage
 };
 
-LocalServiceRegistry.createService(AfterpaySitePreferencesUtilities.getServiceName(), httpConfiguration);
+ServiceRegistry.configure(AfterpaySitePreferencesUtilities.getServiceName(), httpConfiguration );

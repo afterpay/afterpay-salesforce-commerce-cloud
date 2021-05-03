@@ -1,6 +1,6 @@
 {
   "name": "Afterpay",
-  "version": "20.1.0",
+  "version": "21.1.0",
   "description": "Afterpay cartridge",
   "main": "index.js",
   "engines": {
@@ -9,7 +9,13 @@
   "scripts": {
     "test": "sgmf-scripts --test test/unit/**/*.js",
     "cover": "sgmf-scripts --cover 'test/unit'",
-    "test:integration": "sgmf-scripts --integration 'test/integration/**/*.js'",
+    "test:integration": "sgmf-scripts --integration 'test/integration/afterPay/*.js'",
+    "test:integration:sfra-deferred-nonbuynow": "sgmf-scripts --integration 'test/integration/sfra/deferredNonBuyNow.js'",
+    "test:integration:sfra-integrated-nonbuynow": "sgmf-scripts --integration 'test/integration/sfra/integratedNonBuyNow.js'",
+    "test:integration:sfra-integrated-buynow": "sgmf-scripts --integration 'test/integration/sfra/integratedBuyNow.js'",
+    "test:integration:sg-deferred-nonbuynow": "sgmf-scripts --integration 'test/integration/sitegenesis/deferredNonBuyNow.js'",
+    "test:integration:sg-integrated-nonbuynow": "sgmf-scripts --integration 'test/integration/sitegenesis/integratedNonBuyNow.js'",
+    "test:integration:sg-integrated-buynow": "sgmf-scripts --integration 'test/integration/sitegenesis/integratedBuyNow.js'",
     "test:acceptance:custom": "npx codeceptjs run --plugins retryFailedStep --profile",
     "test:acceptance:deep": "npx codeceptjs run --plugins retryFailedStep --grep '(?=.*)^(?!.*@mobile)^(?!.*@tablet)^(?!.*@pageDesigner)' --profile",
     "test:acceptance:smoke": "npx codeceptjs run --plugins retryFailedStep --grep @happyPath --profile",
@@ -103,7 +109,8 @@
     "cleave.js": "^1.5.3",
     "flag-icon-css": "^2.9.0",
     "font-awesome": "^4.7.0",
-    "jquery": "^3.4.1"
+    "jquery": "^3.4.1",
+    "puppeteer": "^8.0.0"
   },
   "browserslist": [
     "last 2 versions",

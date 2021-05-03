@@ -1,0 +1,649 @@
+Date: Tue, 23 Feb 2021 21:20:40 -0800
+Subject: [PATCH] added Afterpay link cartridge modifications
+
+---
+ .../cartridge/controllers/COBilling.js        |  10 ++
+ .../cartridge/controllers/COPlaceOrder.js     |   4 +
+ .../cartridge/controllers/COSummary.js        |   4 +-
+ .../cartridge/controllers/Product.js          |   6 +
+ .../cartridge/controllers/Search.js           |   7 +
+ .../cartridge/scripts/views/CartView.js       |   7 +
+ .../app_storefront_core/cartridge/js/app.js   |   9 ++
+ .../cartridge/js/bonus-products-view.js       |  62 +++++++++
+ .../cartridge/scripts/util/Resource.ds        |   3 +
+ .../cartridge/scss/default/_afterpay.scss     | 124 ++++++++++++++++++
+ .../cartridge/scss/default/style.scss         |   3 +
+ .../default/checkout/billing/billing.isml     |  13 ++
+ .../checkout/billing/paymentmethods.isml      |  60 ++++++++-
+ .../templates/default/checkout/cart/cart.isml |  18 ++-
+ .../default/product/components/pricing.isml   |  15 +++
+ .../default/product/producttile.isml          |  27 +++-
+ .../templates/default/util/modules.isml       |   7 +
+ 17 files changed, 372 insertions(+), 7 deletions(-)
+ create mode 100644 cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/scss/default/_afterpay.scss
+
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/COBilling.js b/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/COBilling.js
+index 4b38f4c..774134d 100644
+--- a/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/COBilling.js
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/COBilling.js
+@@ -352,11 +352,18 @@ function resetPaymentForms() {
+ 
+             cart.removePaymentInstruments(cart.getPaymentInstruments(PaymentInstrument.METHOD_CREDIT_CARD));
+             cart.removePaymentInstruments(cart.getPaymentInstruments(PaymentInstrument.METHOD_BML));
++
++                 // remove Afterpay PaymentInstrument
++            cart.removePaymentInstruments( cart.getPaymentInstruments('AFTERPAY_PBI'));
+         } else if (app.getForm('billing').object.paymentMethods.selectedPaymentMethodID.value.equals(PaymentInstrument.METHOD_CREDIT_CARD)) {
+             app.getForm('billing').object.paymentMethods.bml.clearFormElement();
+ 
+             cart.removePaymentInstruments(cart.getPaymentInstruments(PaymentInstrument.METHOD_BML));
+             cart.removePaymentInstruments(cart.getPaymentInstruments('PayPal'));
++
++                 // remove Afterpay PaymentInstrument
++            cart.removePaymentInstruments( cart.getPaymentInstruments('AFTERPAY_PBI'));
++
+         } else if (app.getForm('billing').object.paymentMethods.selectedPaymentMethodID.value.equals(PaymentInstrument.METHOD_BML)) {
+             app.getForm('billing').object.paymentMethods.creditCard.clearFormElement();
+ 
+@@ -366,6 +373,9 @@ function resetPaymentForms() {
+ 
+             cart.removePaymentInstruments(cart.getPaymentInstruments(PaymentInstrument.METHOD_CREDIT_CARD));
+             cart.removePaymentInstruments(cart.getPaymentInstruments('PayPal'));
++
++            // remove Afterpay PaymentInstrument
++            cart.removePaymentInstruments( cart.getPaymentInstruments('AFTERPAY_PBI'));
+         }
+         return true;
+     });
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/COPlaceOrder.js b/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/COPlaceOrder.js
+index 884d579..dc7a0bc 100644
+--- a/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/COPlaceOrder.js
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/COPlaceOrder.js
+@@ -66,6 +66,8 @@ function handlePayments(order) {
+ 
+                 if (authorizationResult.not_supported || authorizationResult.error) {
+                     return {
++                        // added for Afterpay
++                        authorizeError: authorizationResult.authorizationResponse,
+                         error: true
+                     };
+                 }
+@@ -157,6 +159,8 @@ function start() {
+             OrderMgr.failOrder(order);
+             return {
+                 error: true,
++                // added for Afterpay
++                afterpayOrderAuthorizeError: handlePaymentsResult.authorizeError,
+                 PlaceOrderError: new Status(Status.ERROR, 'confirm.error.technical')
+             };
+         });
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/COSummary.js b/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/COSummary.js
+index b84c604..6466f84 100644
+--- a/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/COSummary.js
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/COSummary.js
+@@ -50,7 +50,9 @@ function start(context) {
+             Basket: cart.object
+         });
+         pageMeta.update({pageTitle: Resource.msg('summary.meta.pagetitle', 'checkout', 'SiteGenesis Checkout')});
+-        app.getView(viewContext).render('checkout/summary/summary');
++        // Afterpay - commented out
++        //app.getView(viewContext).render('checkout/summary/summary');
++        require("int_afterpay_core/cartridge/scripts/util/AfterpayUtilities.js").disableSummaryForAfterpay(cart, viewContext);
+     }
+ }
+ 
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/Product.js b/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/Product.js
+index 9407220..b7265da 100644
+--- a/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/Product.js
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/Product.js
+@@ -29,6 +29,12 @@ function show() {
+     product = product.isVariationGroup() ? product : getSelectedProduct(product);
+ 
+     if (product.isVisible()) {
++        var sitePreferences = require('int_afterpay_core/cartridge/scripts/util/AfterpayUtilities.js').getSitePreferencesUtilities();
++        var afterpayEnable = sitePreferences.isAfterpayEnabled();
++        if (afterpayEnable) {
++            require('int_afterpay_core/cartridge/scripts/util/AfterpayCallThreshold.js').SetThreshold();
++        }
++
+         meta.update(product);
+         meta.updatePageMetaTags(product);
+         app.getView('Product', {
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/Search.js b/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/Search.js
+index 9ffb4c0..e0722a0 100644
+--- a/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/Search.js
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/controllers/Search.js
+@@ -68,6 +68,13 @@ function show() {
+     if (productSearchModel.emptyQuery && contentSearchModel.emptyQuery) {
+         response.redirect(URLUtils.abs('Home-Show'));
+     } else if (productSearchModel.count > 0) {
++        // Added for Afterpay
++        var sitePreferences = require('int_afterpay_core/cartridge/scripts/util/AfterpayUtilities.js').getSitePreferencesUtilities();
++        var afterpayEnable = sitePreferences.isAfterpayEnabled();
++        if (afterpayEnable) {
++            require('int_afterpay_core/cartridge/scripts/util/AfterpayCallThreshold.js').SetThreshold();
++        }
++        // End of add for Afterpay
+ 
+         if ((productSearchModel.count > 1) || productSearchModel.refinedSearch || (contentSearchModel.count > 0)) {
+             var productPagingModel = new PagingModel(productSearchModel.productSearchHits, productSearchModel.count);
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/scripts/views/CartView.js b/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/scripts/views/CartView.js
+index 10a9bae..c95e6d2 100644
+--- a/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/scripts/views/CartView.js
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_controllers/cartridge/scripts/views/CartView.js
+@@ -37,6 +37,13 @@ var CartView = View.extend({
+             Transaction.wrap(function () {
+                 Cart.get(cart).calculate();
+             });
++            // Added for Afterpay
++            var sitePreferences = require('int_afterpay_core/cartridge/scripts/util/AfterpayUtilities.js').getSitePreferencesUtilities();
++            var afterpayEnable = sitePreferences.isAfterpayEnabled();
++            if (afterpayEnable) {
++                require('int_afterpay_core/cartridge/scripts/util/AfterpayCallThreshold.js').SetThreshold();
++            }
++            // End of Add for Afterpay
+ 
+             var validationResult = Cart.get(cart).validateForCheckout();
+             this.EnableCheckout = validationResult.EnableCheckout;
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/js/app.js b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/js/app.js
+index 0853b7e..d3c760d 100644
+--- a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/js/app.js
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/js/app.js
+@@ -121,6 +121,15 @@ function initializeEvents() {
+         $(e.target).toggleClass('fa-chevron-right fa-chevron-up active');
+     });
+     $('.user-account').on('click', function (e) {
++        // Start of Afterpay
++        $(document).on('click', '.afterpay-link', function (e) {
++            e.preventDefault();
++
++            dialog.open({
++                url: $(e.target).attr('href')
++            });
++        });
++        // End of Afterpay
+         e.preventDefault();
+         $(this).parent('.user-info').toggleClass('active');
+     });
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/js/bonus-products-view.js b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/js/bonus-products-view.js
+index 6c113e9..bcd70f3 100644
+--- a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/js/bonus-products-view.js
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/js/bonus-products-view.js
+@@ -8,6 +8,68 @@ var selectedList = [];
+ var maxItems = 1;
+ var bliUUID = '';
+ 
++// Start of Afterpay
++function createOrder() {
++    var url = util.ajaxUrl(Urls.createAfterpayOrder);
++    ajax.getJson({
++        url: url,
++        callback: function (data) {
++            if (data) {
++                checkAuthorize(data);
++            }
++        } 
++    });
++}
++
++function checkAuthorize(data) {
++    if (window.AfterPay) {
++        AfterPay.init();
++        AfterPay.display({token: data.token});
++    } else {
++        setTimeout(checkAuthorize.bind(null, data), 3000);
++    }
++}
++
++function initScript() {
++    var script = document.createElement('script');
++    script.src = SitePreferences.AFTERPAY_PORTAL;
++    script.async = true;
++    document.body.appendChild(script);
++}
++
++function initSubmitOrderEvent() {
++    var $form = $('.checkout-billing');
++    var $paymentMethods = $form.find('input[name$="_selectedPaymentMethodID"]');
++    var $btnContinue = $form.find('button[name$="_billing_save"]');
++    $btnContinue.on('click', function(e) {
++        if ($paymentMethods.filter(':checked').val() === 'AFTERPAY_PBI') {
++            e.preventDefault();
++            createOrder();
++            return false;
++        }
++    });
++    var $declined = $('.ap-declined'),
++    $form = $('.submit-order');
++    if ($declined.length > 0) {
++       $form.on('submit', function (e) {
++        e.preventDefault();
++        window.location = window.Urls.billing;
++        });
++    } else {
++        $form.off('submit').on('submit', function (e) {
++          return true;
++        });
++    }
++}
++exports.init = function () { initScript();
++    initEvent();
++};
++module.exports.initSubmitOrderEvent = function () {
++    initSubmitOrderEvent();
++};
++// End of Afterpay
++
++
+ /**
+  * @private
+  * @function
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/scripts/util/Resource.ds b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/scripts/util/Resource.ds
+index ca1b9d4..021b5aa 100644
+--- a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/scripts/util/Resource.ds
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/scripts/util/Resource.ds
+@@ -215,6 +215,9 @@ ResourceHelper.getPreferences = function(pageContext) {
+     var cookieHintAsset = ContentMgr.getContent('cookie_hint');
+     var consentTrackingHintAsset = ContentMgr.getContent('consent_tracking_hint');
+     return {
++        // Start of Afterpay
++        AFTERPAY_PORTAL : Site.getCurrent().getCustomPreferenceValue('apJavascriptURL'),
++        // End of Afterpay
+         LISTING_INFINITE_SCROLL: (Site.getCurrent().getCustomPreferenceValue('enableInfiniteScroll') ? true : false),
+         LISTING_REFINE_SORT: true,
+         STORE_PICKUP: Site.getCurrent().getCustomPreferenceValue('enableStorePickUp'),
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/scss/default/_afterpay.scss b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/scss/default/_afterpay.scss
+new file mode 100644
+index 0000000..351995a
+--- /dev/null
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/scss/default/_afterpay.scss
+@@ -0,0 +1,124 @@
++
++.afterpay-checkout-pbi {
++    margin-bottom: 40px;
++    padding-left: 200px;
++
++    ul {
++        list-style-type: none;
++        margin:  20px 0;
++        padding-left: 0;
++
++    }
++
++    li {
++        margin-top: 15px;
++
++        &:last-child {
++            padding-left: 20px;
++        }
++
++        img {
++            padding-right: 9px;
++        }
++    }
++}
++
++.payment-image{
++	height: 18px;
++    width: 97px;
++    padding: 0 0 4px 0;
++}
++
++.cart-afterpay-message{
++	border: 1px solid #efefef;
++    display: inline-block;
++    padding: 5px 10px;
++}
++.learn-more{
++    padding-bottom: 50px;
++}    
++
++.cart-afterpay-message{
++	    float: right;
++}
++
++.product-detail {
++    .product-afterpay-message {
++        .afterpay-link {
++            border: 1px solid $white-smoke;
++            display: inline-block;
++            padding: 5px 10px;
++        }
++    }
++}
++
++.afterpay-link a {
++  color: #1a0dab;
++  cursor: pointer;
++  padding-left: 10px;
++  font-size: 14px;
++   }
++  
++.terms-content {
++  margin-left: 46px;
++  color: #878787;
++  font-size: 15px;
++  margin-bottom: 12px; }
++      
++.afterpay-modal{
++ 	width : 780px;
++ 	height: 600px;
++ } 
++
++.product-afterpay-message {
++    a,
++    .afterpay-link {
++        color:  $nobel;
++    }
++
++    .afterpay-image {
++        height: 15px;
++        vertical-align: middle;
++        width: 70px;
++    }
++}
++ 
++.loader-image{
++	display: block;
++	position: fixed;
++	left: 0px;
++	top: 0px;
++	width: 100%;
++	height: 100%;
++	z-index: 101;
++	background: 50% 50% no-repeat white;
++	opacity: .8;
++	background: url('../images/Loading_icon.gif') 50% 50% no-repeat rgb(255, 255, 255);
++}
++
++.redirect-text{
++	padding: 80px 36px 80px 100px;
++	font-size: 23px;
++	font-style: italic;
++	margin: 0 auto;
++	float: right;
++}
++
++.notify-message{
++	padding-left: 122px;
++} 
++
++.link-us{
++	font-size: 11px;
++    color: gray;
++    text-decoration: underline;
++}
++.terms-us{
++	font-size: 11px;
++    color: gray;
++    padding-left: 39px;
++}
++.terms-content-us{
++    padding-bottom: 10px;
++    background-color: #FBFCFC;
++    }
+\ No newline at end of file
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/scss/default/style.scss b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/scss/default/style.scss
+index 88f2870..810672c 100644
+--- a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/scss/default/style.scss
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/scss/default/style.scss
+@@ -43,3 +43,6 @@
+ @import "multi_inventory";
+ @import "responsive";
+ @import "print";
++// Start of Afterpay
++@import "afterpay";
++// End of Afterpay
+\ No newline at end of file
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/checkout/billing/billing.isml b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/checkout/billing/billing.isml
+index a712b07..3eefd38 100644
+--- a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/checkout/billing/billing.isml
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/checkout/billing/billing.isml
+@@ -28,6 +28,19 @@
+     <iscomment> ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+         billing address
+      ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</iscomment>
++     <iscomment>Start of added for Afterpay</iscomment>
++    <isset name="afterpayError"
++        value="${!empty(pdict.AfterpayApiError) ? pdict.AfterpayApiError :
++            (!empty(request.httpParameterMap.get('afterpay'))
++                .stringValue ? request.httpParameterMap.get('afterpay').stringValue : null)}"
++        scope="page" />
++    <isif condition="${!empty(afterpayError)}">
++        <div class="error-form">
++            <isprint value="${afterpayError}" encoding="off" />
++        </div>
++    </isif>
++     <iscomment>End of added for Afterpay</iscomment>
++
+ 
+     <fieldset>
+ 
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/checkout/billing/paymentmethods.isml b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/checkout/billing/paymentmethods.isml
+index 5fa0dfb..a2abe50 100644
+--- a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/checkout/billing/paymentmethods.isml
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/checkout/billing/paymentmethods.isml
+@@ -1,6 +1,20 @@
+ <iscontent type="text/html" charset="UTF-8" compact="true"/>
+ <iscomment> TEMPLATENAME: paymentmethods.isml </iscomment>
+ <isinclude template="util/modules"/>
++
++<iscomment>Start of added for Afterpay</iscomment>
++<isscript>
++var sitePreferences = require("int_afterpay_core/cartridge/scripts/util/AfterpayUtilities.js").getSitePreferencesUtilities();
++var afterpayEnable = sitePreferences.isAfterpayEnabled(); var basketObject = dw.order.BasketMgr.getCurrentBasket(); var orderGrandTotal = basketObject.totalGrossPrice;
++var apMessageService = require("int_afterpay_core/cartridge/scripts/product/AfterpayDisplayProductMessage");
++var thresholdResponse = apMessageService.getThresholdRange(orderGrandTotal);
++var disableAfterpayPaymentMethod = false;
++if(thresholdResponse && (thresholdResponse.belowThreshold || thresholdResponse.aboveThreshold)){
++	disableAfterpayPaymentMethod = true;
++}
++</isscript>
++<iscomment>End of added for Afterpay</iscomment>
++
+ <isif condition="${pdict.OrderTotal > 0}">
+ 	<fieldset>
+ 
+@@ -14,7 +28,20 @@
+ 
+ 				<iscomment>Ignore GIFT_CERTIFICATE method, GCs are handled separately before other payment methods.</iscomment>
+ 				<isif condition="${paymentMethodType.value.equals(dw.order.PaymentInstrument.METHOD_GIFT_CERTIFICATE)}"><iscontinue/></isif>
+-
++				<iscomment>Start of added for Afterpay</iscomment>
++				<iscomment>Ignore the payment method AFTERPAY_PBI if Afterpay payment method is disabled in
++				configuration</iscomment>
++				<isif
++					condition="${paymentMethodType.value.equals('AFTERPAY_PBI') && afterpayEnable == false}"><iscontinue/>
++				</isif>
++				<isif condition="${paymentMethodType.value.equals('AFTERPAY_PBI') && disableAfterpayPaymentMethod}">
++					<isset name="disableAfterpay" value="${true}" scope="page" />
++				<iselse>
++					<isset name="disableAfterpay" value="${false}" scope="page" />
++				</isif>
++				<iscomment>End of added for Afterpay</iscomment>
++
++				<iscomment>Replacing for Afterpay
+ 				<div class="form-row label-inline">
+ 					<isset name="radioID" value="${paymentMethodType.value}" scope="page"/>
+ 					<div class="field-wrapper">
+@@ -22,6 +49,26 @@
+ 					</div>
+ 					<label for="is-${radioID}"><isprint value="${Resource.msg(paymentMethodType.label,'forms',null)}"/></label>
+ 				</div>
++				</iscomment>
++				<iscomment>Start of added for Afterpay</iscomment>
++				<isif condition="${!disableAfterpay}">
++					<div class="form-row label-inline">
++					<isset name="radioID" value="${paymentMethodType.value}" scope="page"/>
++					<div class="field-wrapper">
++						<input id="is-${radioID}" type="radio" class="input-radio" name="${pdict.CurrentForms.billing.paymentMethods.selectedPaymentMethodID.htmlName}" value="${paymentMethodType.htmlValue}"
++						<isif condition="${paymentMethodType.value == pdict.CurrentForms.billing.paymentMethods.selectedPaymentMethodID.htmlValue}">checked="checked"</isif> />
++					</div>
++					<label for="is-${radioID}">
++					<isset name="paymentObject" value="${paymentMethodType.object}" scope="page"/>
++					<isif condition="${empty(paymentObject.image)}">
++						<isprint value="${Resource.msg(paymentMethodType.label,'forms',null)}"/>
++					<iselse>
++						<img src="${paymentObject.image.URL}" class="payment-image ${radioID.toLowerCase()}-image" alt="${Resource.msg('billing.logo','afterpay',null)}"/>
++      				</isif>
++					</label>
++					</div>
++				</isif>
++				<iscomment>End of added for Afterpay</iscomment>
+ 
+ 			</isloop>
+ 		</div>
+@@ -135,10 +182,17 @@
+ 		</div>
+ 
+ 
+-		<iscomment>
+-			Custom processor
++		<iscomment>Afterpay Pay Over Time
+ 			--------------------------------------------------------------
+ 		</iscomment>
++		<iscomment>Start of Afterpay</iscomment>
++		<isif condition="${afterpayEnable == true}">
++			<div class="payment-method <isif condition="${!empty(pdict.selectedPaymentID) &&
++				pdict.selectedPaymentID=='AFTERPAY_PBI'}">payment-method-expanded</isif>" data-method="AFTERPAY_PBI">
++			<isslot id="afterpay-checkout-pbi" description="Afterpay checkout PBI content" context="global" />
++			</div>
++		</isif>
++		<iscomment>End of Afterpay</iscomment>
+ 
+ 		<div class="payment-method <isif condition="${!empty(pdict.selectedPaymentID) && pdict.selectedPaymentID=='PayPal'}">payment-method-expanded</isif>" data-method="Custom">
+ 			<!-- Your custom payment method implementation goes here. -->
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/checkout/cart/cart.isml b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/checkout/cart/cart.isml
+index 4410787..bcd12b3 100644
+--- a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/checkout/cart/cart.isml
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/checkout/cart/cart.isml
+@@ -851,7 +851,23 @@
+ 
+ 			</fieldset>
+ 		</form>
+-
++		<iscomment>Start of Afterpay</iscomment>
++		<isscript>
++			var sitePreferences = require("int_afterpay_core/cartridge/scripts/util/AfterpayUtilities.js").getSitePreferencesUtilities();
++			var afterpayEnable = sitePreferences.isAfterpayEnabled();
++		</isscript>
++		<isif condition="${afterpayEnable == true}">
++			<div class="learn-more">
++				<isif condition="${pdict.Basket.totalGrossPrice.available}">
++					<isset name="orderTotalValue" value="${pdict.Basket.totalGrossPrice}" scope="page"/>
++				<iselse/>
++					<isset name="orderTotalValue" value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(true).add(pdict.Basket.giftCertific ateTotalPrice)}" scope="page"/>
++				</isif>
++				<iscomment>Afterpay message</iscomment>
++				<isafterpaythreshold totalprice="${orderTotalValue}" classname="cart-afterpay-message" />
++			</div>
++		</isif>
++		<iscomment>End of Afterpay</iscomment>
+ 		<div class="cart-actions">
+ 
+ 			<iscomment>continue shop url is a non-secure but checkout needs a secure and that is why separate forms!</iscomment>
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/product/components/pricing.isml b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/product/components/pricing.isml
+index 0e9b1c1..7a0f31d 100644
+--- a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/product/components/pricing.isml
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/product/components/pricing.isml
+@@ -30,6 +30,10 @@ if ( pdict.Product && pdict.Product.variationGroup )
+ 
+ <isinclude template="product/components/standardprice"/>
+ 
++<iscomment>Start of Afterpay</iscomment>
++<isinclude template="util/modules">
++<iscomment>End of Afterpay</iscomment>
++
+ <isset name="PriceTable" value="${PriceModel.getPriceTable()}" scope="page"/>
+ <isset name="SalesPrice" value="${PriceModel.getPrice()}" scope="page"/>
+ <isset name="BasePriceQuantity" value="${PriceModel.getBasePriceQuantity()}" scope="page"/>
+@@ -157,8 +161,19 @@ if ( pdict.Product && pdict.Product.variationGroup )
+ 
+ 	</div>
+ 
++<iscomment>Start of Afterpay</iscomment>
++<isscript>
++var sitePreferences = require("int_afterpay_core/cartridge/scripts/util/AfterpayUtilities.js").getSitePreferen cesUtilities();
++var afterpayEnable = sitePreferences.isAfterpayEnabled();
++</isscript>
++<isif condition="${afterpayEnable == true}">
++	<isafterpaythreshold totalprice="${(SalesPrice ? SalesPrice : StandardPrice)}" classname="pdp-afterpay-message" />
++</isif>
++<iscomment>End of Afterpay</iscomment>
+ <isif condition="${!empty(pdict.OrgProduct)}">
+ 	<iscomment>Restore current product instance</iscomment>
+ 	<isset name="Product" value="${pdict.OrgProduct}" scope="pdict"/>
+ 	<isset name="OrgProduct" value="${null}" scope="pdict"/>
+ </isif>
++
++
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/product/producttile.isml b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/product/producttile.isml
+index 68bb7e7..57cab48 100644
+--- a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/product/producttile.isml
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/product/producttile.isml
+@@ -2,6 +2,11 @@
+ <isif condition="${(pdict.cache != null) ? pdict.cache : true}">
+ 	<iscache type="relative" hour="24" varyby="price_promotion"/>
+ </isif>
++
++<iscomment>Start of Afterpay</iscomment>
++<isinclude template="util/modules"></isinclude>
++<iscomment>End of Afterpay</iscomment>
++
+ <iscomment>
+ 	This template is best used via a **remote** include (Product-HitTile) and _not_ local include.
+ 	This template renders a product tile using a product. The following parameters
+@@ -236,8 +241,15 @@
+ 							price.value = StandardPrice;
+ 						}
+ 					}
+-					prices.push(price);
+-					if (extraPrice) {prices.push(extraPrice);}
++					// Start of Afterpay
++					if (price && price.value) {prices.push(price);}
++					if (extraPrice && extraPrice.value) {prices.push(extraPrice);}
++					// End of Afterpay
++
++					// Removed for Afterpay
++					//prices.push(price);
++					//if (extraPrice) {prices.push(extraPrice);}
++					
+ 				</isscript>
+ 				<isloop items="${prices}" var="productPrice">
+ 					<span class="${productPrice.class}" title="${productPrice.title}"><isprint value="${productPrice.value}"/></span>
+@@ -245,6 +257,17 @@
+ 			</div>
+ 		</isif>
+ 
++		<iscomment>Start of Afterpay</iscomment>
++		<iscomment>Afterpay message</iscomment>
++		<isscript>
++			var sitePreferences = require("int_afterpay_core/cartridge/scripts/util/AfterpayUtilities.js").getSitePreferencesUtilities();
++			var afterpayEnable = sitePreferences.isAfterpayEnabled();
++		</isscript>
++		<isif condition="${afterpayEnable == true}">
++			<isafterpaythreshold totalprice="${(prices[prices.length-1].value)}" classname="plp-afterpay-message" />
++		</isif>
++		<iscomment>End of Afterpay</iscomment>
++
+ 		<iscomment>Promotion</iscomment>
+ 		<iscomment>++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</iscomment>
+ 		<isif condition="${showpromotion}">
+diff --git a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/util/modules.isml b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/util/modules.isml
+index 93fdce0..c3f46fb 100644
+--- a/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/util/modules.isml
++++ b/cartridge_sitegenesis-105.1.0/app_storefront_core/cartridge/templates/default/util/modules.isml
+@@ -378,3 +378,10 @@
+ 	attribute="p_alert_text"
+ 	attribute="p_discount_line_item"
+ />
++
++<iscomment>Start of Afterpay</iscomment>
++<iscomment>
++ Render the Afterpay modules
++</iscomment>
++<isinclude template="util/modulesafterpay" />
++<iscomment>End of Afterpay</iscomment>
+-- 
+2.24.3 (Apple Git-128)
+

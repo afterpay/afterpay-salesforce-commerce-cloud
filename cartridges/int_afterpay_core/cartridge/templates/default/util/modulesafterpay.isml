@@ -23,3 +23,12 @@
     attribute="totalprice"
     attribute="classname" 
 />
+
+<ismodule template="product/components/afterpaywidget"
+    name="afterpaywidget"
+/>
+
+<ismodule template="product/components/afterpayexpresscheckout"
+    name="afterpayexpresscheckout"
+    attribute="pagetype"
+/>

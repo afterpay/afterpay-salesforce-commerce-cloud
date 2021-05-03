@@ -1,12 +1,9 @@
 'use strict';
 
+var Class = require('~/cartridge/scripts/util/Class').Class;
 
-/**
- *  calls TokenModel object
- */
-function TokenModel() {
-    var apToken = null;
-    this.TokenModel = apToken;
-}
+var TokenModel = Class.extend({
+	apToken: null
+});
 
 module.exports = TokenModel;

@@ -8,10 +8,10 @@ server.extend(Search);
  * appends Search-Show method to show afterpay widget
  */
 server.append('Show', function (req, res, next) {
-    var sitePreferences = require('*/cartridge/scripts/util/afterpayUtilities').sitePreferencesUtilities;
+    var sitePreferences = require('*/cartridge/scripts/util/AfterpayUtilities').getSitePreferencesUtilities();
     var afterpayEnable = sitePreferences.isAfterpayEnabled();
     if (afterpayEnable) {
-        require('~/cartridge/scripts/util/afterpayCallThreshold').setThreshold();
+        require('~/cartridge/scripts/util/AfterpayCallThreshold').SetThreshold();
     }
     next();
 });

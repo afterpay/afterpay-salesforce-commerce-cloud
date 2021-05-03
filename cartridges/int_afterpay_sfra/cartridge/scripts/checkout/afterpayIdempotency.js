@@ -1,53 +1,58 @@
-'use strict';
-/* global empty */
-var Site = require('dw/system/Site');
+/**
+*   @input ApInitialStatus : String
+*   @input Order : dw.order.Order
+*   @output FinalPaymentStatus : String   
+*
+*/
 
-var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
-var Logger = LogUtils.getLogger('afterpayIdempotency');
+importPackage( dw.system );
+
+var LogUtils = require('~/cartridge/scripts/util/LogUtils');
+var Logger = LogUtils.getLogger("AfterpayIdempotency");
 
 /**
-* checks the current timestamp against initial timestamp
-* @param {number} milliseconds - timestamp
-*/
+ * Delays the payment retry by 5 secs. 
+ */
+
 function sleep(milliseconds) {
-    var adjustedMilliseconds = milliseconds * 1000;
-    var initialTimestamp = new Date().getTime();
-    var checkTimestamp;
-    var presentTimestamp;
+	milliseconds = milliseconds*1000;
+	var initialTimestamp = new Date().getTime();
+	var checkTimestamp, presentTimestamp;
 
-    checkTimestamp = true;
-    while (checkTimestamp) {
-        presentTimestamp = new Date().getTime();
-        if (presentTimestamp - initialTimestamp > adjustedMilliseconds) {
-            checkTimestamp = false;
-        }
-    }
+	checkTimestamp = true;
+	while(checkTimestamp){
+	    presentTimestamp = new Date().getTime();
+	    if(presentTimestamp-initialTimestamp > milliseconds) 
+	    {
+	    	checkTimestamp = false;
+	    }
+	}
 }
 
-/**
-* Delays the payment retry by 5 secs.
-* @param {Object} Order - order
-* @param {number} initialStatus - initial status
-* @returns {number} - payment status
-*/
-function delayPayment(Order, initialStatus) {
-    var paymentStatus;
-    if (empty(Order) || empty(initialStatus)) {
-        Logger.error('Either of the Parameters provided -Order or Paymentstatus or finalPaymentStatus is empty');
-        return { error: true };
-    }
-    for (var i = 0; i < 4; i++) {
-        Logger.debug('Payment retry Execution count ' + i + ' -and intial payment status :' + initialStatus);
-        Logger.debug('Before time delay : ' + new Date());
-        sleep(Site.getCurrent().getCustomPreferenceValue('apDelayRetry'));
-        Logger.debug('After 5 secs time delay : ' + new Date());
-        paymentStatus = require('*/cartridge/scripts/checkout/afterpayHandlePaymentOrder').getPaymentStatus(Order, initialStatus);
-        if (paymentStatus === 'APPROVED') {
-            break;
-        }
-        Logger.debug('Final Payment Status : ' + paymentStatus);
-    }
-    return paymentStatus;
+function delayPayment(Order, initialStatus, expressCheckoutModel) {
+	var paymentStatus;
+	if(empty(Order) || empty(initialStatus)){
+		Logger.error("Either of the Parameters provided -Order or Paymentstatus or finalPaymentStatus is empty ");
+		return {error:true};
+	}
+	
+	 for (var i = 0; i < 4; i++) { 
+    	Logger.debug("Payment retry Execution count "+i+ " -and intial payment status :"+ initialStatus);
+		Logger.debug("Before time delay : "+ new Date());
+			
+    	sleep(Site.getCurrent().getCustomPreferenceValue('apDelayRetry'));
+    	Logger.debug("After 5 secs time delay : "+ new Date());
+		paymentStatus = require('~/cartridge/scripts/checkout/AfterpayHandlePaymentOrder').GetPaymentStatus(Order, initialStatus, expressCheckoutModel);
+		if(paymentStatus == 'APPROVED'){
+			break;
+		}
+		Logger.debug("Final Payment Status : "+ paymentStatus);
+	}
+	return paymentStatus;
 }
 
-module.exports.delayPayment = delayPayment;
+
+/*
+ * Module exports
+ */
+module.exports.DelayPayment = delayPayment;

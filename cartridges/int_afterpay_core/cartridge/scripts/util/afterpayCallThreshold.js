@@ -1,29 +1,39 @@
-var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
-var Logger = LogUtils.getLogger('AfterpayCallThreshold');
 
-/**
- * calls 'ThresholdUtilities' module to set threshold amount
- * @returns {Object} errorStatus - error status
- */
-function setThreshold() {
-    try {
-        require('*/cartridge/scripts/util/thresholdUtilities').setThresholdInSession();
+importPackage( dw.system );
 
-        return { error: false };
-    } catch (exception) {
-        Logger.error('Exception to set threshold in session: ' + exception);
+var LogUtils = require('~/cartridge/scripts/util/LogUtils');
+var Logger = LogUtils.getLogger("AfterpayCallThreshold");
 
-        return {
-            error: true
-        };
-    }
+function execute( args : PipelineDictionary ) : Number
+{
+	var response = setThreshold();
+	
+	if(response.error){
+		return PIPELET_ERROR;
+	}
+    	
+   return PIPELET_NEXT;
 }
+
+function setThreshold(){
+	
+	try{
+		require('~/cartridge/scripts/util/ThresholdUtilities').setThresholdInSession();
+		return {error : false};	
+	}catch (exception) {
+		Logger.error("Exception to set threshold in session: "+exception);
+		return {
+			error : true
+		};
+	}
+}
+
 
 /*
  * Module exports
  */
 module.exports = {
-    SetThreshold: function () {
-        return setThreshold();
-    }
-};
+	SetThreshold: function(){
+		return setThreshold();
+	}
+}

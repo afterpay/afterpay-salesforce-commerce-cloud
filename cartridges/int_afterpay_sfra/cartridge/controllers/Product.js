@@ -11,11 +11,11 @@ server.extend(Product);
 * prepends Product-Show method to show afterpay widget
 */
 server.append('Show', function (req, res, next) {
-    var sitePreferences = require('*/cartridge/scripts/util/afterpayUtilities').sitePreferencesUtilities;
+    var sitePreferences = require('*/cartridge/scripts/util/AfterpayUtilities').getSitePreferencesUtilities();
     var afterpayEnable = sitePreferences.isAfterpayEnabled();
 
     if (afterpayEnable) {
-        require('*/cartridge/scripts/util/afterpayCallThreshold.js').setThreshold();
+        require('*/cartridge/scripts/util/AfterpayCallThreshold.js').SetThreshold();
     }
     var productTileParams = res.getViewData();
     var priceContext;

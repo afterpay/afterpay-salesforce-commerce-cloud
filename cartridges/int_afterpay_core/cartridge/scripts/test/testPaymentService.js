@@ -2,13 +2,14 @@
 *   @input path : String
 *   @output HttpResult : Object
 */
-var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
+
+importPackage( dw.catalog );
+importPackage( dw.system );
+importPackage( dw.util );
+
+var LogUtils = require('~/cartridge/scripts/util/LogUtils');
 var Logger = LogUtils.getLogger("TestPaymentService");
 
-
-/**
- *  pipeline call to invoke the payment service
- */
 function execute( args : PipelineDictionary ) : Number
 {
     var response  = getPaymentService(args.path);
@@ -19,10 +20,6 @@ function execute( args : PipelineDictionary ) : Number
 	
 }
 
-
-/**
- *  processes payment service
- */
 function getPaymentService(queryString)
 {
     var httpResult;
@@ -39,7 +36,7 @@ function getPaymentService(queryString)
 	        }
 	    }
 	
-	    var PaymentService = require("~/cartridge/scripts/payment/paymentService");
+	    var PaymentService = require("~/cartridge/scripts/payment/PaymentService");
 	    
 	    var token = queryParameters.get("token");
 	    var paymentID = queryParameters.get("paymentid");
@@ -65,7 +62,7 @@ function getPaymentService(queryString)
  * Module exports
  */
 module.exports = {
-	getPaymentService: function(queryString){
+	GetPaymentService: function(queryString){
 		return getPaymentService(queryString);
 	}
 }

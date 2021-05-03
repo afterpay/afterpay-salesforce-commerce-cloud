@@ -1,0 +1,15 @@
+importPackage( dw.system );
+
+var FlowRepository = function () {
+};
+	
+FlowRepository.prototype.getWhiteListedAddresses = function () {
+
+	var flowIPAddresses = null;
+	if (!empty(System.preferences.custom.flowIPAddresses)) {
+		flowIPAddresses = System.preferences.custom.flowIPAddresses;
+	}
+	return flowIPAddresses;
+}
+		
+module.exports = FlowRepository

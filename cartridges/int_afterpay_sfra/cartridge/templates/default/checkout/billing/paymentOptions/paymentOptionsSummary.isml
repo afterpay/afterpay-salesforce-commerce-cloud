@@ -2,8 +2,9 @@
     <isloop items="${pdict.order.billing.payment.selectedPaymentInstruments}" var="payment">
         <isif condition="${payment.paymentMethod === 'CREDIT_CARD'}">
             <isinclude template="checkout/billing/paymentOptions/creditCardSummary" />
-        <iselse>
-        	<isprint value="${payment.paymentMethod}" encoding="on" />
+        </isif>
+        <isif condition="${payment.paymentMethod === 'AFTERPAY_PBI'}">
+            <isinclude template="checkout/billing/paymentOptions/afterpaySummary" />
         </isif>
     </isloop>
 </div>
