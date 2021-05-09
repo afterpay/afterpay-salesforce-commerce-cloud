@@ -32,8 +32,8 @@
     }
 
     var basket = params.basket,
-      url = params.url;
-    requestMethod = params.requestMethod;
+      url = params.url,
+      requestMethod = params.requestMethod;
 
     return this.init()
       .buildConsumer(basket)
