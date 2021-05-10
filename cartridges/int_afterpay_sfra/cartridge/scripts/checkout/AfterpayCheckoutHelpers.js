@@ -133,7 +133,7 @@ var checkoutTools = {
     getInStorePickupsMap: function(basket) {
         //let lineItems = cart.object.getProductLineItems();
         //let storeMap = new Map();
-        storeMap = {};
+        let storeMap = {};
         let lineItemsIter = basket.allProductLineItems.iterator();
         while(lineItemsIter.hasNext()) {
             let lineItem = lineItemsIter.next();
