@@ -477,7 +477,7 @@ function IntegratedShippingFlow(afterPayOrderResponse) {
         Transaction.wrap(function () {
             COHelpers.removeAllNonGiftCertificatePayments(cart);
 
-            paymentInstrument = cart.object.createPaymentInstrument('AFTERPAY_PBI', new Money(amount, currency));
+            var paymentInstrument = cart.object.createPaymentInstrument('AFTERPAY_PBI', new Money(amount, currency));
             COHelpers.addShippingAddressToBasket(cart.object, afterPayOrderResponse.shipping);
         });
 
