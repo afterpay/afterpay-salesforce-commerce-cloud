@@ -32,7 +32,7 @@
         }
 
         var basket = params.basket,
-            url = params.url;
+            url = params.url,
             requestMethod = params.requestMethod;
 
         return this.init()
