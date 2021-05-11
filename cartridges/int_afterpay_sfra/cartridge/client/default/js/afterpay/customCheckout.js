@@ -35,7 +35,6 @@ function handleStateChange() {
     // Always do removeClass after addClass in case same element has multiple classes
     if (stage === "shipping") {
         hideAllStates();
-        console.log("Unhiding: ap-checkout-ship");
         $('.ap-checkout-ship').removeClass('afterpay-hide');
     }
     else if (stage === "payment") {
@@ -43,21 +42,17 @@ function handleStateChange() {
         hideAllStates();
         if (isAfterpayTab) {
             if (ec_finalize) {
-                console.log("Unhiding: ap-checkout-pay-tab-ecf");
                 $('.ap-checkout-pay-tab-ecf').removeClass('afterpay-hide');
             }
             else {
-                console.log("Unhiding: ap-checkout-pay-tab-noecf");
                 $('.ap-checkout-pay-tab-noecf').removeClass('afterpay-hide');
             }
         }
         else {
             if (ec_finalize) {
-                console.log("Unhiding: ap-checkout-pay-notab-ecf");
                 $('.ap-checkout-pay-notab-ecf').removeClass('afterpay-hide');
             }
             else {
-                console.log("Unhiding: ap-checkout-pay-notab-noecf");
                 $('.ap-checkout-pay-notab-noecf').removeClass('afterpay-hide');                
             }
         }
@@ -67,11 +62,9 @@ function handleStateChange() {
 
         hideAllStates();
         if (isAfterpayPayment) {
-            console.log("Unhiding: ap-checkout-po-ecf");
             $('.ap-checkout-po-ecf').removeClass('afterpay-hide');
         }
         else {
-            console.log("Unhiding: ap-checkout-po-noecf");
             // If there's no Afterpay payment on the placeOrder stage, just cancel express checkout finalize flow
             $('#afterpay-express-checkout-finalize').val(false);
             $('.ap-checkout-po-noecf').removeClass('afterpay-hide');
@@ -119,6 +112,11 @@ var exports = {
                     }
                 });
                 observer.observe(cm_elem, { attributes: true });
+            } else {
+                // If no MutationObserver support, just use interval to poll state
+                var checkState = setInterval(function () {
+                    handleStateChange();
+                }, 500);
             }
 
             // Call handleStage with new stage whenever afterpay payment tab is pressed
@@ -132,13 +130,11 @@ var exports = {
 
 
             if (typeof createAfterpayWidget === "function") {
-                console.log("Calling createAfterpayWidget");
                 createAfterpayWidget();
             }
 
             // Handle place-order button click
             $("#afterpay-placeorder-button").on('click', function() {
-                console.log("Placeorder clicked");
                 if(typeof afterpayWidget !== 'undefined') {
                     let url = $("#afterpay-express-url-finalize").val();
                     let checksum = afterpayWidget.paymentScheduleChecksum;
