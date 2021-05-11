@@ -8,14 +8,12 @@ function initAfterpay(settings) {
 
     let productIdSelector = settings.productIdSelector || null;
     let productQuantitySelector = settings.productQuantitySelector || null;
-    console.log("Called initAfterpay: ", settings);
     AfterPay.initializeForPopup({
         countryCode: $('#afterpay-express-countrycode').val(),
         pickup: pickupflag,
         buyNow: $('#afterpay-express-buynow').val() === "true",
         shippingOptionRequired: $('#afterpay-express-shipping-option-required').val() === "true",
         onCommenceCheckout: function(actions) {
-            console.log('onCommenceCheckout(). Actions=', actions);
             var afterpayExpressTokenUrl = $('#afterpay-express-url-createtoken').val() + "?s_url=" + encodeURIComponent(window.location.href);
             // This is to support Afterpay Express from product details page. Add product to cart and checkout.
             if (productIdSelector && productQuantitySelector) {
@@ -24,8 +22,6 @@ function initAfterpay(settings) {
                 afterpayExpressTokenUrl += "&cartAction=add&pid=" + (p_elem.value || "") + "&Quantity=" + (q_elem.value || "");
             }
 
-            //var afterpayExpressTokenUrl = $('#afterpay-express-url-createtoken').val() + "?s_url=" + encodeURIComponent(window.location.href + "&format=ajax&Quantity=1&cartAction=add&pid=640188017003");
-            console.log("onCommenceCheckout(). TokenUrl: ", afterpayExpressTokenUrl);
             var currentLocation = window.location.href;
             sleep(commenceDelay).then(() => {
                 $.ajax({
@@ -33,10 +29,7 @@ function initAfterpay(settings) {
                     url: afterpayExpressTokenUrl,
                     success: function(res) {
                         if (res.status == 'SUCCESS') {
-                            console.log("Result of CreateToken: ", res);
-                            //var afterpaytoken = res.response.afterpaytoken;
                             var afterpaytoken = res.token.apToken;
-                            console.log("Got token from afterpay: ", afterpaytoken);
                             actions.resolve(afterpaytoken);
                         }
                         else {
@@ -54,12 +47,10 @@ function initAfterpay(settings) {
         },
         // NOTE: onShippingAddressChange only needed if shippingOptionRequired is true
         onShippingAddressChange: function(data, actions) {
-            console.log("onShippingAddressChange called. data=",data);
             if (data.countryCode && data.countryCode !== "US") {
                 actions.reject(AfterPay.CONSTANTS.SHIPPING_ADDRESS_UNSUPPORTED);
             } else {
                 var shippingMetthodsUrl = $('#afterpay-express-url-getshippingmethods').val();
-                console.log("Calling this to get shipping methods: " + shippingMetthodsUrl);
                 $.ajax({
                     type: 'POST',
                     url: shippingMetthodsUrl,
@@ -77,8 +68,6 @@ function initAfterpay(settings) {
                         phoneNumber: data.phoneNumber
                     }),
                     success: function(response) {
-                        console.log("shipping method computed successfully. Returning data to Afterpay portal via resolve. shippingMethods=", response);
-                        // Need to handle case where address is unsupported/invalid
                         if (response.length == 0) {
                             actions.reject(AfterPay.CONSTANTS.SHIPPING_ADDRESS_UNSUPPORTED);
                         }
@@ -94,13 +83,9 @@ function initAfterpay(settings) {
         },
         onComplete: function(event) {
             if (event.data.status == "SUCCESS") {
-                console.log("onComplete called with SUCCESS");
-                console.log(event.data);
                 var afterpayExpressProcessUrl = $('#afterpay-express-url-processorder').val() + "?orderToken=" + event.data.orderToken + "&merchantReference=" + event.data.merchantReference;
                 $(location).attr('href', afterpayExpressProcessUrl);
             } else {
-                console.log("onComplete failed");
-                console.log(event.data);
                 var errorUrl = $('#afterpay-express-url-cancelorder').val() + "?orderToken=" + event.data.orderToken + "&merchantReference=" + event.data.merchantReference;
                 $(location).attr('href', errorUrl);    
             }
@@ -123,7 +108,6 @@ function reinitializeAfterpayPopup() {
         url: getCartStatusUrl,
         success: function(res) {
             var instorepickup = res.instorepickup;
-            console.log("Instorepickup setting: ", instorepickup);
             initAfterpay({pickupflag: instorepickup});
         },
         error: function(){
@@ -144,14 +128,24 @@ function initializeDeliveryOptionChangeListener() {
     let elements = document.querySelectorAll(".delivery-option");
     for (var i = 0; i < elements.length; i++) {
         elements[i].addEventListener("change", function() {
-            let loadingElement = document.querySelector(".item-delivery-options");
-            let observer = new MutationObserver(function(entries) {
-                if (!document.querySelector(".item-delivery-options.loading")) {
-                    reinitializeAfterpayPopup();                    
-                    observer.disconnect();
-                }
-            });
-            observer.observe(loadingElement, {attributeFilter: ['class']});
+            if ("MutationObserver" in window) {
+                let loadingElement = document.querySelector(".item-delivery-options");
+                let observer = new MutationObserver(function(entries) {
+                    if (!document.querySelector(".item-delivery-options.loading")) {
+                        reinitializeAfterpayPopup();                    
+                        observer.disconnect();
+                    }
+                });
+                observer.observe(loadingElement, {attributeFilter: ['class']});
+            } else {
+                // If no MutationObserver support, just use timer to poll state
+                var checkLoading = setInterval(function () {
+                    if (!document.querySelector(".item-delivery-options.loading")) {
+                        reinitializeAfterpayPopup();
+                        clearInterval(checkLoading);
+                    }
+                }, 500);
+            }
         });
     }
 }
