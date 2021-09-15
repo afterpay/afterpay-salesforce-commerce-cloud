@@ -1,12 +1,14 @@
 'use strict';
 
-var sitePreferences = require("~/cartridge/scripts/util/AfterpayUtilities.js").getSitePreferencesUtilities();
-var ctrlCartridgeName = sitePreferences.getControllerCartridgeName();
-var Class 		= require(ctrlCartridgeName + '/cartridge/scripts/util/Class').Class;
-
-var PreapprovalModel = Class.extend({
-	apToken: null,
-	status : null
-});
+/**
+ *  calls PreapprovalModel object
+ */
+function PreapprovalModel() {
+    var approvalModelObject = {
+        apToken: null,
+        status: null
+    };
+    this.PreapprovalModel = approvalModelObject;
+}
 
 module.exports = PreapprovalModel;

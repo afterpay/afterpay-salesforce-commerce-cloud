@@ -5,17 +5,17 @@
 <isinclude template="custom/modules" /> 
 <isinclude template="inc/Modules">
 <isbreadcrumbs bcurl1="${URLUtils.url('AfterPay-OrderList')}" 
-	bctext1="${Resource.msg('order.list.label','afterpay',null)}" />
+    bctext1="${Resource.msg('order.list.label','afterpay',null)}" />
 
 <table width="100%" cellspacing="0" cellpadding="0" border="0">
-	<tbody>
-		<tr>
-			<td colspan="5" class="overview_title">${Resource.msg('order.list.title','afterpay',null)}</td>
-		</tr>
-		<tr>
-			<td colspan="5" class="overview_title_description"></td>
-		</tr>
-	</tbody>
+    <tbody>
+        <tr>
+            <td colspan="5" class="overview_title">${Resource.msg('order.list.title','afterpay',null)}</td>
+        </tr>
+        <tr>
+            <td colspan="5" class="overview_title_description"></td>
+        </tr>
+    </tbody>
 </table>
 
 <isinclude template="application/orderlistsearch" />
@@ -33,43 +33,50 @@
    </tbody>
 </table>
 <iselse>
-	<table width="100%" border="0" cellspacing="0" cellpadding="0" id="filtertableProjects">
-	    <tbody>
-	      	<tr>
-		    	<th class="table_header left n e s w" nowrap="nowrap" width="13%">${Resource.msg('orderid','afterpay',null)}</th>
-		    	<th class="table_header left n e s" nowrap="nowrap" width="13%">${Resource.msg('orderdate','afterpay',null)}</th>
-				<th class="table_header left n e s" nowrap="nowrap" width="21%">${Resource.msg('email','afterpay',null)}</th>
-		    	<th class="table_header right n e s" nowrap="nowrap" width="13%">${Resource.msg('total','afterpay',null)}</th>
-				<th class="table_header left n e s" nowrap="nowrap" width="17%">${Resource.msg('order.list.status','afterpay',null)}</th>
-	    	</tr>
-	    	<isset name="paymentInstrument" value="${null}" scope="page"/>
-	    	<isloop items="${pdict.orders}" var="order" status="loopstate">
-		    	<tr style="background-color: #FFFFFF">
-		        	<td class="table_detail w e s" nowrap="nowrap">
-		        		<a href="${URLUtils.url('AfterPay-OrderDetails', 'OrderNo', order.orderNo)}" target="_blank">${order.orderNo}</a>
-		        	</td>
-		        	<isloop items="${order.getPaymentInstruments()}" var="paymentInstr" status="loopstate">
-		        		<isif condition="${paymentInstr.paymentMethod == 'AFTERPAY_PBI'}">
-		        			<isset name="paymentInstrument" value="${paymentInstr}" scope="page"/>
-		        		</isif>
-					</isloop>
-					<isset name="paymentTransaction" value="${paymentInstrument ? paymentInstrument.getPaymentTransaction() : null}" scope="page"/>
-		        	<isset name="calendarDate" value="${dw.util.Calendar(order.getCreationDate())}" scope="page"/>
-		            <isset name="creationDate" value="${dw.util.StringUtils.formatCalendar(dw.util.Calendar(calendarDate), 'yyyy-MM-dd HH:mm')}" scope="page"/>
-		        	<td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="">${creationDate}</label></td>
-		            <td class="table_detail left e s" nowrap="nowrap">${order.getCustomerEmail()}</td>
-		            <td class="table_detail right e s" nowrap="nowrap">${order.getTotalGrossPrice()}</td>
-		            
-		            <isset name="canRefund" value="${paymentTransaction && paymentTransaction.custom.apDirectPaymentStatus.toLowerCase() == 'approved' && empty(paymentTransaction.custom.apRefundID)}" scope="page" />
-					<isset name="currentStatus" value="${canRefund ? (paymentTransaction ? paymentTransaction.custom.apDirectPaymentStatus : paymentTransaction.custom.apAuthoriseStatus) : Resource.msg('option.refunded','afterpay',null)}" scope="page" />
-		            
-		            <td class="table_detail left e s" nowrap="nowrap">${currentStatus}</td>
-		        </tr>
-			</isloop>
-	    </tbody>
-	</table>
-	<isinclude template="application/orderlistpagination" />
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" id="filtertableProjects">
+        <tbody>
+              <tr>
+                <th class="table_header left n e s w" nowrap="nowrap" width="13%">${Resource.msg('orderid','afterpay',null)}</th>
+                <th class="table_header left n e s" nowrap="nowrap" width="13%">${Resource.msg('orderdate','afterpay',null)}</th>
+                <th class="table_header left n e s" nowrap="nowrap" width="21%">${Resource.msg('email','afterpay',null)}</th>
+                <th class="table_header right n e s" nowrap="nowrap" width="13%">${Resource.msg('total','afterpay',null)}</th>
+                <th class="table_header left n e s" nowrap="nowrap" width="17%">${Resource.msg('order.list.status','afterpay',null)}</th>
+            </tr>
+            <isset name="paymentInstrument" value="${null}" scope="page"/>
+            <isloop items="${pdict.orders}" var="order" status="loopstate">
+                <tr class="list-table">
+                    <td class="table_detail w e s" nowrap="nowrap">
+                        <a href="${URLUtils.url('AfterPay-OrderDetails', 'OrderNo', order.orderNo)}" target="_blank">${order.orderNo}</a>
+                    </td>
+                    <isloop items="${order.getPaymentInstruments()}" var="paymentInstr" status="loopstate">
+                        <isif condition="${paymentInstr.paymentMethod == 'AFTERPAY' || paymentInstr.paymentMethod == 'CLEARPAY'}">
+                            <isset name="paymentInstrument" value="${paymentInstr}" scope="page"/>
+                        </isif>
+                    </isloop>
+                    <isset name="paymentTransaction" value="${paymentInstrument ? paymentInstrument.getPaymentTransaction() : null}" scope="page"/>
+                    <isset name="calendarDate" value="${dw.util.Calendar(order.getCreationDate())}" scope="page"/>
+                    <isset name="creationDate" value="${dw.util.StringUtils.formatCalendar(dw.util.Calendar(calendarDate), 'yyyy-MM-dd HH:mm')}" scope="page"/>
+                    <td class="table_detail left e s" nowrap="nowrap"><label class="item-label" for="">${creationDate}</label></td>
+                    <td class="table_detail left e s" nowrap="nowrap">${order.getCustomerEmail()}</td>
+                    <td class="table_detail right e s" nowrap="nowrap">${order.getTotalGrossPrice()}</td>
 
-	</isif>
+                    <isset name="currentStatus" value="${Resource.msg('option.refunded','afterpay',null)}" scope="page" />
+                    <isif condition="${paymentInstrument && paymentInstrument.custom && paymentInstrument.paymentTransaction}">
+                        <isset name="paymentTransaction" value="${paymentInstrument.paymentTransaction}" scope="page" />
+                        <isset name="isDirectPayment" value="${paymentTransaction.custom.apPaymentMode === 'DIRECT_CAPTURE'}" scope="page" />
+                        <isset name="apPaymentStatus" value="${isDirectPayment ? paymentTransaction.custom.apDirectPaymentStatus : paymentTransaction.custom.apAuthoriseStatus}" scope="page" />
+                        <isset name="canRefund" value="${isDirectPayment && apPaymentStatus.toLowerCase() == 'approved' && empty(paymentTransaction.custom.apRefundID)}" scope="page" />
+                        <isif condition="${!(isDirectPayment && !canRefund)}">
+                            <isset name="currentStatus" value="${apPaymentStatus}" scope="page" />
+                        </isif>
+                    </isif>
+                    <td class="table_detail left e s" nowrap="nowrap">${currentStatus}</td>
+                </tr>
+            </isloop>
+        </tbody>
+    </table>
+    <isinclude template="application/orderlistpagination" />
+
+    </isif>
 <script type="text/javascript"><isinclude template="application/appresources"/></script>
 </isdecorate>

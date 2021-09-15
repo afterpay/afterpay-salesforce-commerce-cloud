@@ -61,8 +61,8 @@
                 <isinclude template="checkout/shipping/shipping" />
                 <div class="card shipping-summary">
                     <div class="card-header clearfix">
-                        <h2 class="pull-left card-header-custom">${Resource.msg('heading.checkout.shipping', 'checkout', null)}</h2>
-                        <button class="edit-button pull-right" aria-label="${Resource.msg('action.edit.step.msg.shipping', 'checkout', null)}">${Resource.msg('action.edit.step', 'checkout', null)}</button>
+                        <h4 class="pull-left">${Resource.msg('heading.checkout.shipping', 'checkout', null)}</h4>
+                        <span class="edit-button pull-right">${Resource.msg('action.edit.step', 'checkout', null)}</span>
                     </div>
                     <div class="card-body">
                         <isinclude template="checkout/shipping/shippingSummary" />
@@ -73,8 +73,8 @@
                 <isinclude template="checkout/billing/billing" />
                 <div class="card payment-summary">
                     <div class="card-header clearfix">
-                        <h2 class="pull-left card-header-custom">${Resource.msg('heading.payment', 'checkout', null)}</h2>
-                        <button class="edit-button pull-right" aria-label="${Resource.msg('action.edit.step.msg.payment', 'checkout', null)}">${Resource.msg('action.edit.step', 'checkout', null)}</button>
+                        <h4 class="pull-left">${Resource.msg('heading.payment', 'checkout', null)}</h4>
+                        <span class="edit-button pull-right">${Resource.msg('action.edit.step', 'checkout', null)}</span>
                     </div>
 
                     <div class="card-body">
@@ -83,13 +83,10 @@
                 </div>
 
                 <!-- Display Afterpay Widget during Express Checkout finalization -->
-                <isif condition="${dw.system.Site.current.preferences.custom.enableAfterpay}">
-                    <div class="ap-checkout-pay-tab-ecf ap-checkout-pay-tab-noecf ap-checkout-po-ecf">
-                        <isinclude template="product/components/afterpaywidget" />
-                        <div id="afterpay-widget-container"></div>
-                    </div>
-                </isif>
-
+                <div class="ap-checkout-pay-tab-ecf ap-checkout-pay-tab-noecf ap-checkout-po-ecf">
+                    <isinclude template="product/components/afterpaywidget" />
+                    <div id="afterpay-widget-container"></div>
+                </div>
                 <!----------------------------------------------------------------------------------->
                 <!-- Checkout Workflow Buttons -->
                 <!----------------------------------------------------------------------------------->
@@ -112,14 +109,13 @@
                             </button>
                             <iscomment>Start of Afterpay</iscomment>
                             </div>
-                            <input id="afterpay-placeorder-button" class="afterpay-widget-hideuntilready afterpay-placeorder-button btn btn-block ap-checkout-pay-tab-ecf ap-checkout-po-ecf"
+                            <input id="afterpay-placeorder-button" class="afterpay-widget-hideuntilready ${buttonPlaceOrderClass} btn btn-block ap-checkout-pay-tab-ecf ap-checkout-po-ecf"
                                     type="button">&nbsp;
                             </input>
                             <iscomment>End of Afterpay</iscomment>
                         </div>
                     </div>
                 </div>
-
 
             </div>
 
@@ -130,7 +126,7 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-header-custom">${Resource.msg('heading.order.summary', 'checkout', null)}</h2>
+                        <h4>${Resource.msg('heading.order.summary', 'checkout', null)}</h4>
                     </div>
                     <div class="card-body order-total-summary">
                         <isinclude template="checkout/orderTotalSummary" />

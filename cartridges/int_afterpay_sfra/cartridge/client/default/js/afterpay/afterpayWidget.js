@@ -15,12 +15,20 @@ function getWidget(updatedProductID, updatedProductPrice, className, $productCon
         url: getUpdatedWidgetUrl + queryString,
         method: 'GET',
         success: function (data) {
-            if (data.updatedWidget) {
+            if (data.apApplicable && data.updatedWidget) {
                 if (typeof $productContainer !== 'undefined') {
                     $productContainer.find('.afterpay-widget').html(data.updatedWidget);
                     $productContainer.find('.afterpay-widget').show();
                 } else if (typeof $productContainer === 'undefined') {
                     $('.afterpay-widget').html(data.updatedWidget);
+                    $('.afterpay-widget').show();
+                }
+            } else {
+                if (typeof $productContainer !== 'undefined') {
+                    $productContainer.find('.afterpay-widget').html('');
+                    $productContainer.find('.afterpay-widget').show();
+                } else if (typeof $productContainer === 'undefined') {
+                    $('.afterpay-widget').html('');
                     $('.afterpay-widget').show();
                 }
             }

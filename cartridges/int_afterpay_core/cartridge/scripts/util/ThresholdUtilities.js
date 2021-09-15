@@ -1,70 +1,112 @@
-var Transaction = require('dw/system/Transaction');
+/* global session */
+var PaymentMgr = require('dw/order/PaymentMgr');
 
-var AfterpaySitePreferencesUtilities = require('~/cartridge/scripts/util/AfterpayUtilities').getSitePreferencesUtilities();
-var configurationService = require('~/cartridge/scripts/logic/services/AfterpayConfigurationService');
-var LogUtils = require('~/cartridge/scripts/util/LogUtils');
-var Logger = LogUtils.getLogger('ThresholdUtilities');
+var AfterpayUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
+var configurationService = require('*/cartridge/scripts/logic/services/afterpayConfigurationService');
+var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
+var Logger = LogUtils.getLogger('thresholdUtilities');
 
-var ThresholdUtilities = {
-  setThresholdInSession: function() {
-    var minThresholdAmount = AfterpaySitePreferencesUtilities.getMinThresholdAmount();
-    var maxThresholdAmount = AfterpaySitePreferencesUtilities.getMaxThresholdAmount();
-    if (
-      minThresholdAmount != null &&
-      maxThresholdAmount != null &&
-      minThresholdAmount - maxThresholdAmount != 0.0
-    ) {
-      Transaction.begin();
-      session.custom.afterPayIsRangeAvailable = true;
-      session.custom.afterPayMinAmount = minThresholdAmount;
-      session.custom.afterPayMaxAmount = maxThresholdAmount;
-      Transaction.commit();
-    } else {
-      configurationService.init();
-      configurationService.generateRequest();
-      var thresholdResponse;
-      try {
-        thresholdResponse = configurationService.getResponse();
-        Logger.debug(
-          'service response to get the threshold amount :' +
-            JSON.stringify(thresholdResponse)
-        );
-      } catch (e) {
-        Logger.debug(
-          'Exception occured to set the threshold amount in session :' + e
-        );
-        return {
-          error: true,
+/**
+ * @abstract
+ * @description set threshold in session based either on the configuration or from API response
+ */
+var thresholdUtilities = {
+    // eslint-disable-next-line no-unused-vars
+    parseConfigurationResponse: function (thresholdResponse) {
+        var configuration = {
+            minAmount: 0,
+            maxAmount: 0
         };
-      }
+    
+        if (thresholdResponse) {
+            var minThresholdObj = thresholdResponse.minimumAmount;
+            var maxThresholdObj = thresholdResponse.maximumAmount;
+    
+            if (minThresholdObj) {
+                configuration.minAmount = parseFloat(minThresholdObj.amount, 10);
+            }
+    
+            if (maxThresholdObj) {
+                configuration.maxAmount = parseFloat(maxThresholdObj.amount, 10);
+            }
+        }
+    
+        return configuration;
+    },
+    getThresholdAmounts: function (afterpayBrand) {
+        var prefix = request.getLocale() + afterpayBrand.toUpperCase();
+        var result = {
+            minAmount: session.privacy[prefix + 'MinAmount'],
+            maxAmount: session.privacy[prefix + 'MaxAmount']
+        };
 
-      if (
-        thresholdResponse &&
-        parseFloat(thresholdResponse.minimumAmount.amount, 10) -
-          parseFloat(thresholdResponse.maximumAmount.amount, 10) !=
-          0.0
-      ) {
-        Transaction.begin();
-        session.custom.afterPayIsRangeAvailable = true;
-        session.custom.afterPayMinAmount = parseFloat(
-          thresholdResponse.minimumAmount.amount,
-          10
-        );
-        session.custom.afterPayMaxAmount = parseFloat(
-          thresholdResponse.maximumAmount.amount,
-          10
-        );
-        Transaction.commit();
-      }
+        var thresholdResponse;
+
+        if (empty(result.minAmount) || empty(result.maxAmount)) {
+            configurationService.generateRequest();
+            try {
+                thresholdResponse = configurationService.getResponse();
+                Logger.debug('service response to get the threshold amount :' + JSON.stringify(thresholdResponse));
+            } catch (e) {
+                Logger.debug('Exception occured to set the threshold amount in session :' + e);
+
+                return {
+                    error: true
+                };
+            }
+
+            result = this.parseConfigurationResponse(thresholdResponse);
+        }
+
+        return result;
+    },
+    saveThresholds: function (afterpayBrand, thresholds) {
+        var prefix = request.getLocale() + afterpayBrand.toUpperCase();
+        if (thresholds.minAmount) {
+            session.privacy[prefix + 'MinAmount'] = thresholds.minAmount;
+        } else {
+            session.privacy[prefix + 'MinAmount'] = 0;
+        }
+        if (thresholds.maxAmount) {
+            session.privacy[prefix + 'MaxAmount'] = thresholds.maxAmount;
+        } else {
+            session.privacy[prefix + 'MaxAmount'] = 0;
+        }
+    },
+    checkThreshold: function (price) {
+        var BrandUtilities = AfterpayUtilities.brandUtilities;
+        var CheckoutUtilities = AfterpayUtilities.checkoutUtilities;
+
+        var afterpayBrand = BrandUtilities.getBrand();
+        var countryCode = BrandUtilities.getCountryCode();
+        var result = {
+            status: false
+        };
+
+        if (afterpayBrand && (price && price.value)) {
+            var threshold = this.getThresholdAmounts(afterpayBrand);
+            this.saveThresholds(afterpayBrand, threshold);
+            var paymentMethodName = CheckoutUtilities.getPaymentMethodName();
+            var paymentMethod;
+            var isApplicable;
+
+            if (paymentMethodName) {
+                paymentMethod = PaymentMgr.getPaymentMethod(paymentMethodName);
+                isApplicable = paymentMethod.isApplicable(session.customer, countryCode, price.value);
+
+                result.status = isApplicable;
+
+                if (isApplicable) {
+                    result.belowThreshold = price.value <= threshold.minAmount;
+                    result.aboveThreshold = price.value >= threshold.maxAmount;
+                    result.minThresholdAmount = threshold.minAmount;
+                    result.maxThresholdAmount = threshold.maxAmount;
+                }
+            }
+        }
+
+        return result;
     }
-  },
-  getThreshold: function() {
-    return {
-      isRangeAvailable: session.custom.afterPayIsRangeAvailable || false,
-      minAmount: session.custom.afterPayMinAmount || 0.0,
-      maxAmount: session.custom.afterPayMaxAmount || 0.0,
-    };
-  },
 };
 
-module.exports = ThresholdUtilities;
+module.exports = thresholdUtilities;

@@ -1,7 +1,9 @@
 <isloop items="${pdict.order.billing.payment.applicablePaymentMethods}" var="paymentOption">
     <isif condition="${paymentOption.ID === 'CREDIT_CARD'}">
         <isinclude template="checkout/billing/paymentOptions/creditCardContent" />
-    <iselseif condition="${paymentOption.ID ==='AFTERPAY_PBI'}">
+    <iselseif condition="${paymentOption.ID ==='AFTERPAY' && pdict.priceContext.apApplicable}">
      	<isinclude template="checkout/billing/paymentOptions/afterpayContent" />
+    <iselseif condition="${paymentOption.ID ==='CLEARPAY' && pdict.priceContext.apApplicable}">
+     	<isinclude template="checkout/billing/paymentOptions/clearpayContent" />
     </isif>
 </isloop>

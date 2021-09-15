@@ -3,7 +3,7 @@ function createAfterpayWidget () {
         token: $('#afterpay-token').val(),
         amount: { amount: $('#afterpay-widget-amount').val(), currency: $('#afterpay-widget-currency').val() },
         target: '#afterpay-widget-container',
-        locale: 'en-US', 
+        locale: $('#afterpay-widget-locale').val().replace("_", "-"), 
         onReady: function (event) {
             console.log("onReady() called. event=", event);
             afterpayWidget.update({

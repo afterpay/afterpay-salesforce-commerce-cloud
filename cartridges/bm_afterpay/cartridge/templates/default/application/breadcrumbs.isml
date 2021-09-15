@@ -7,7 +7,7 @@ text and one for the URL to call. </iscomment>
 	<a class="breadcrumb-element"
 		href="${URLUtils.url('ViewApplication-CompressMenuGroup','MenuGroupID','','OverviewPage','SiteNavigationBar-ShowSiteOverview')}">Merchant
 		Tools</a> > <a class="breadcrumb-element"
-		href="${URLUtils.url('SiteNavigationBar-ShowMenuitemOverview','CurrentMenuItemId','customadminmenuextension_id101')}">After Pay</a>
+		href="${URLUtils.url('SiteNavigationBar-ShowMenuitemOverview','CurrentMenuItemId','customadminmenuextension_id101')}">Afterpay</a>
 
 	<iscomment>FIRST BREADCRUMB</iscomment>
 	<isif condition="${pdict.bctext1 != null}"> > <a

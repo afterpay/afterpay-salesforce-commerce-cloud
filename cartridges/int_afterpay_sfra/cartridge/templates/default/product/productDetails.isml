@@ -3,14 +3,12 @@
     <isscript>
         var assets = require('*/cartridge/scripts/assets');
         assets.addJs('/js/productDetail.js');
-        // added for Afterpay
         assets.addJs('/js/afterpay.js');
         assets.addCss('/css/product/detail.css');
-        // added for Afterpay
         assets.addCss('/css/afterpaystyle.css');
     </isscript>
 
-    <isset name="product" value="${pdict.product}" scope="page" />
+<isset name="product" value="${pdict.product}" scope="page" />
     <isset name="isQuickView" value="${false}" scope="page" />
     <isset name="isProductSet" value="${pdict.product.productType === 'set'}" scope="page" />
     <isobject object="${product.raw}" view="detail" />
@@ -124,15 +122,17 @@
                                 </div>
                             </div>
 
-							<iscomment>Start of Afterpay</iscomment>
-							<isif condition="${dw.system.Site.current.preferences.custom.enableAfterpay == true}">
-								<input type="hidden" class="updated-widget" value="${URLUtils.https('AfterpayWidget-GetUpdatedWidget')}">
-								<div class="afterpay-widget">
-										<isinclude template="util/modulesAfterpay"/>
-		                        		<isafterpaythreshold message="${pdict.message}" classname="${pdict.classname}" thresholdresponse="${pdict.thresholdResponse}"  />
-		                        </div>
-		                    </isif>
-							<iscomment>End of Afterpay</iscomment>
+                            <iscomment>Afterpay</iscomment>
+                            <input type="hidden" class="updated-widget" value="${URLUtils.https('AfterpayWidget-GetUpdatedWidget')}">
+                            <isscript>
+                                var sitePreferences = require("*/cartridge/scripts/util/afterpayUtilities.js").sitePreferencesUtilities;
+                                var afterpayPDPEnable = sitePreferences.isDisplayPdpInfo();
+                            </isscript>
+                            <isif condition="${afterpayPDPEnable}">
+                                <div class="afterpay-widget">
+                                    <isinclude url="${URLUtils.url('Product-IncludeAfterpayMessage', 'pid', product.id)}" />
+                                </div>
+                            </isif>
 
                             <!-- Cart and [Optionally] Apple Pay -->
                             <isinclude template="product/components/addToCartProduct" />

@@ -8,9 +8,21 @@
     font-size: 0.75em;
 }
 
+.afterpay_pbi-image.payment-image {
+    margin-top: -3px;
+    position: relative;
+}
+
+.afterpay-link a {
+    text-decoration: underline;
+    color: #999;
+    font-size: 0.85em;
+}
+
 .afterpay-image {
     vertical-align: middle;
-    width: 5em;
+    width: 7em;
+    margin: 5px 0;
 }
 
 .pdp-afterpay-message {
@@ -19,14 +31,25 @@
     text-align: center;
 }
 
+.pdp-afterpay-message a {
+    text-decoration: underline;
+    color: #999;
+    font-size: 0.85em;
+}
+
+.product-detail .pdp-afterpay-message {
+    text-align: left;
+}
+
 .cart-page .cart-afterpay-message .afterpay-link {
     font-size: 0.75em;
     padding: 0.375em 0.4375em;
 }
 
 .cart-afterpay-message {
+    text-align: right;
     margin-bottom: 0.9375em;
-    border: 0.0625em solid #ccc;
+    border: 0;
 }
 
 .modal.show {
@@ -34,7 +57,7 @@
 }
 
 .afterpay-modal {
-    width: -webkit-fill-available;
+    width: 100%;
 }
 
 .afterpayModal {
@@ -99,10 +122,10 @@
 }
 
 .terms-content {
-    margin-left: 2.9375em;
+    text-align: center;
     color: #878787;
     font-size: 0.9375em;
-    margin-bottom: 0.75em;
+    margin: 0.75em 0;
 }
 
 .copy-rights {
@@ -115,30 +138,64 @@
     font-size: 1.375em;
 }
 
+.checkout-afterpay-message {
+    text-align: center;
+}
+
+.afterpay-widget-message-text {
+    color: #9bcee8;
+}
+
+.afterpay-widget-message-text strong {
+    color: #333;
+}
+
+.afterpay-widget-redirect-label {
+    margin: 20px 0;
+}
+
+.checkout-afterpay-message {
+    background: #f9f9f9;
+    padding: 25px;
+}
+
+#afterpaInstallmentChart {
+    margin: 20px 0;
+}
+
 /* Afterpay checkout widget */
+.checkout-afterpay-message {
+    background: #f9f9f9;
+    padding: 25px;
+    @media screen and (max-width: 767px) {
+        padding: 25px 10px;
+    }
+}
+
 #afterpaInstallmentChart th {
     text-align: center;
-    border-bottom: 0.0625em solid #ccc;
+    color: #9bcee8;
+    font-size: 1em;
+    width: 25%;
+    @media screen and (max-width: 767px) {
+        font-size: .85em;
+    }
 }
 
 #afterpaInstallmentChart td {
     text-align: center;
     padding-top: 0.9375em;
+    padding-bottom: 0;
+    color: #999;
+    font-size: .85em;
+    @media screen and (max-width: 767px) {
+        font-size: .75em;
+    }
 }
 
-.pie {
-    width: 2.8125em;
-}
-
-.pie path {
-    fill: #0070d2;
-    stroke: none;
-}
-
-.pie .circle {
-    fill: #ccc;
-    stroke: #0070d2;
-    stroke-width: 0.3;
+.afterpay-circle {
+    min-width: 24px;
+    height: auto;
 }
 
 .link-us {
@@ -165,7 +222,17 @@
 .afterpay-checkout-button {
     background-color: #000;
     color: #fff !important;
-    background-image: url('../images/afterpay-checkout.png'); 
+    background-image: url('https://static.afterpay.com/button/checkout-with-afterpay/white-on-black.svg'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center;
+  }
+
+  .clearpay-checkout-button {
+    background-color: #000;
+    color: #fff !important;
+    background-image: url('https://static.afterpay.com/button/checkout-with-clearpay/white-on-black.svg'); 
     background-size: contain;
     background-repeat: no-repeat;
     background-position-x: center;
@@ -175,7 +242,18 @@
   .afterpay-buynow-button {
     background-color: #000;
     color: #fff !important;
-    background-image: url('../images/afterpay-buynow.png'); 
+    background-image: url('https://static.afterpay.com/button/buy-now-with-afterpay/white-on-black.svg'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center;
+    min-width: 250px;
+  }
+
+  .clearpay-buynow-button {
+    background-color: #000;
+    color: #fff !important;
+    background-image: url('https://static.afterpay.com/button/buy-now-with-clearpay/white-on-black.svg'); 
     background-size: contain;
     background-repeat: no-repeat;
     background-position-x: center;
@@ -186,7 +264,18 @@
   .afterpay-placeorder-button {
     background-color: #000;
     color: #fff !important;
-    background-image: url('../images/afterpay-placeorder.png');
+    background-image: url('https://static.afterpay.com/button/place-order-with-afterpay/white-on-black.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center;
+    min-width: 250px;
+  }
+
+  .clearpay-placeorder-button {
+    background-color: #000;
+    color: #fff !important;
+    background-image: url('https://static.afterpay.com/button/place-order-with-clearpay/white-on-black.svg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position-x: center;
@@ -200,5 +289,10 @@
 
   .afterpay-widget-hideuntilready {
     visibility: hidden;
+  }
+  
+  .cart-and-ipay .add-to-cart{
+      width:100%;
+      display: block;
   }
   

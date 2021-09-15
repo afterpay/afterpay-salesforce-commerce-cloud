@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns="http://www.demandware.com/xml/impex/services/2014-09-26">
+    <service-credential service-credential-id="afterpay.credentials.AU.v2">
+        <url>https://api-sandbox.afterpay.com/v2/</url>
+        <user-id/>
+        <password masked="true">********</password>
+    </service-credential>
+
+    <service-credential service-credential-id="afterpay.credentials.CA.v2">
+        <url>https://api.us-sandbox.afterpay.com/v2/</url>
+        <user-id/>
+        <password masked="true">********</password>
+    </service-credential>
+
+    <service-credential service-credential-id="afterpay.credentials.NZ.v2">
+        <url>https://api-sandbox.afterpay.com/v2/</url>
+        <user-id/>
+        <password masked="true">********</password>
+    </service-credential>
+
+    <service-credential service-credential-id="afterpay.credentials.US.v2">
+        <url>https://api.us-sandbox.afterpay.com/v2/</url>
+        <user-id/>
+        <password masked="true">********</password>
+    </service-credential>
+
+    <service-credential service-credential-id="clearpay.credentials.EU.v2">
+        <url>https://api.sandbox.clearpay.com/v2/</url>
+        <user-id/>
+        <password masked="true">********</password>
+    </service-credential>
+
+    <service-credential service-credential-id="clearpay.credentials.GB.v2">
+        <url>https://api.eu-sandbox.afterpay.com/v2/</url>
+        <user-id/>
+        <password masked="true">********</password>
+    </service-credential>
+
+    <service-profile service-profile-id="afterpay.profile">
+        <timeout-millis>30000</timeout-millis>
+        <rate-limit-enabled>false</rate-limit-enabled>
+        <rate-limit-calls>0</rate-limit-calls>
+        <rate-limit-millis>0</rate-limit-millis>
+        <cb-enabled>true</cb-enabled>
+        <cb-calls>10</cb-calls>
+        <cb-millis>15000</cb-millis>
+    </service-profile>
+
+    <service service-id="afterpay.service.AU.v2">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix>Afterpay</log-prefix>
+        <comm-log-enabled>true</comm-log-enabled>
+        <force-prd-enabled>false</force-prd-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>afterpay.profile</profile-id>
+        <credential-id>afterpay.credentials.AU.v2</credential-id>
+    </service>
+
+    <service service-id="afterpay.service.CA.v2">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix>Afterpay</log-prefix>
+        <comm-log-enabled>true</comm-log-enabled>
+        <force-prd-enabled>false</force-prd-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>afterpay.profile</profile-id>
+        <credential-id>afterpay.credentials.CA.v2</credential-id>
+    </service>
+
+    <service service-id="afterpay.service.NZ.v2">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix>Afterpay</log-prefix>
+        <comm-log-enabled>true</comm-log-enabled>
+        <force-prd-enabled>false</force-prd-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>afterpay.profile</profile-id>
+        <credential-id>afterpay.credentials.NZ.v2</credential-id>
+    </service>
+
+    <service service-id="afterpay.service.US.v2">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix>Afterpay</log-prefix>
+        <comm-log-enabled>true</comm-log-enabled>
+        <force-prd-enabled>false</force-prd-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>afterpay.profile</profile-id>
+        <credential-id>afterpay.credentials.US.v2</credential-id>
+    </service>
+
+    <service service-id="clearpay.service.EU.v2">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix>Clearpay</log-prefix>
+        <comm-log-enabled>true</comm-log-enabled>
+        <force-prd-enabled>false</force-prd-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>afterpay.profile</profile-id>
+        <credential-id>clearpay.credentials.EU.v2</credential-id>
+    </service>
+
+    <service service-id="clearpay.service.GB.v2">
+        <service-type>HTTP</service-type>
+        <enabled>true</enabled>
+        <log-prefix>Clearpay</log-prefix>
+        <comm-log-enabled>true</comm-log-enabled>
+        <force-prd-enabled>false</force-prd-enabled>
+        <mock-mode-enabled>false</mock-mode-enabled>
+        <profile-id>afterpay.profile</profile-id>
+        <credential-id>clearpay.credentials.GB.v2</credential-id>
+    </service>
+
+</services>

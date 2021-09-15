@@ -1,48 +1,89 @@
 'use strict';
 
+/* API Includes */
+var Money = require('dw/value/Money');
+var BasketMgr = require('dw/order/BasketMgr');
+
+/* Script Modules */
 var server = require('server');
+var apUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
+var apBrandUtilities = apUtilities.brandUtilities;
+var thresholdUtilities = require('*/cartridge/scripts/util/thresholdUtilities');
+
+server.get('IncludeAfterpayLibrary',
+    server.middleware.https,
+    server.middleware.include,
+    function (req, res, next) {
+        var scope = {
+            isAfterpayEnabled: apUtilities.sitePreferencesUtilities.isAfterpayEnabled()
+        };
+
+        if (scope.isAfterpayEnabled) {
+            scope.thresholdAmounts = thresholdUtilities.getThresholdAmounts(apBrandUtilities.getBrand());
+        }
+
+        res.render('util/afterpayLibraryInclude', scope);
+        next();
+    }
+);
 
 /**
  *  Retrieve Updated Afterpay widgets
  */
-var BasketMgr = require('dw/order/BasketMgr');
-var ProductMgr = require('dw/catalog/ProductMgr');
 server.get('GetUpdatedWidget',
     server.middleware.https,
     function (req, res, next) {
-        var apMessageService = require('*/cartridge/scripts/util/AfterpayDisplayProductMessage');
+        var ProductFactory = require('*/cartridge/scripts/factories/product');
         var renderTemplateHelper = require('*/cartridge/scripts/renderTemplateHelper');
+
         var updatedTemplate = 'util/afterpayMessage';
-        var thresholdResponse;
         var priceContext;
-        var installmentAmount;
         var totalPrice = 0;
+
         if (req.querystring.className === 'cart-afterpay-message' || req.querystring.className === 'checkout-afterpay-message') {
             var basketObject = BasketMgr.getCurrentBasket();
             totalPrice = basketObject.totalGrossPrice;
-            //installmentAmount = apMessageService.getPLPMessage(totalPrice);
-            installmentAmount = apMessageService.getCartMessage(totalPrice);
         } else {
             var productID = req.querystring.productID;
-            var productObject = ProductMgr.getProduct(productID);
-            totalPrice = productObject.priceModel.price.available ? productObject.priceModel.price.decimalValue : req.querystring.updatedProductPrice;
-            installmentAmount = apMessageService.getPDPMessage(totalPrice);
+            var currencyCode = req.session.currency.currencyCode;
+            var productObject = ProductFactory.get({
+                pid: productID
+            });
+
+            if (productObject.price.sales) {
+                totalPrice = productObject.price.sales.value;
+            } else if (productObject.price.list) {
+                totalPrice = productObject.price.list.value;
+            } else if (productObject.price.min.sales) {
+                totalPrice = productObject.price.min.sales.value;
+            } else if (productObject.price.min.list) {
+                totalPrice = productObject.price.min.list.value;
+            }
+
+            if (!empty(totalPrice)) {
+                totalPrice = new Money(totalPrice, currencyCode);
+            }
         }
-        priceContext = { message: installmentAmount, classname: req.querystring.className };
-        thresholdResponse = apMessageService.getThresholdRange(totalPrice);
-        if (thresholdResponse && thresholdResponse.belowThreshold) {
-            priceContext = { belowthreshold: thresholdResponse.belowThreshold, minthresholdamount: thresholdResponse.minAmount, maxthresholdamount: thresholdResponse.maxAmount, classname: req.querystring.className };
-        } else if (thresholdResponse && thresholdResponse.aboveThreshold) {
-            priceContext = { abovethreshold: thresholdResponse.aboveThreshold, minthresholdamount: thresholdResponse.minAmount, maxthresholdamount: thresholdResponse.maxAmount, classname: req.querystring.className };
-        }
+
+        priceContext = {
+            classname: req.querystring.className,
+            totalprice: totalPrice.value,
+            brand: apBrandUtilities.getBrand()
+        };
+
         var updatedWidget = renderTemplateHelper.getRenderedHtml(
-                priceContext,
-                updatedTemplate
+            priceContext,
+            updatedTemplate
         );
+
+        var isWithinThreshold = thresholdUtilities.checkThreshold(totalPrice);
+
         res.json({
+            apApplicable: apBrandUtilities.isAfterpayApplicable() && isWithinThreshold.status,
             error: false,
             updatedWidget: updatedWidget
         });
+
         next();
     });
 

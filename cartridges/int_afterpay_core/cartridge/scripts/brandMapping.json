@@ -1,0 +1,10 @@
+{
+    "afterpay": {
+        "paymentMethod": "AFTERPAY",
+        "paymentProcessor": "*/cartridge/scripts/payment/processor/AFTERPAY"
+    },
+    "clearpay": {
+        "paymentMethod": "CLEARPAY",
+        "paymentProcessor": "*/cartridge/scripts/payment/processor/CLEARPAY"
+    }
+}

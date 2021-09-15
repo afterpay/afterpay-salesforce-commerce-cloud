@@ -6,7 +6,8 @@ var sinon = require('sinon');
 var ArrayList = require('../../../../../../mocks/dw.util.Collection.js');
 var collections = require('../../../../../../mocks/afterpayCollections');
 
-function MockBasket() {}
+function MockBasket() {
+}
 
 MockBasket.prototype.getPaymentInstruments = function () {
     return new ArrayList([null, null, null]);
@@ -14,26 +15,28 @@ MockBasket.prototype.getPaymentInstruments = function () {
 
 MockBasket.prototype.removePaymentInstrument = function () {
     return true;
- };
+};
 
 MockBasket.prototype.createPaymentInstrument = function () {
     return {
         paymentMethod: "AFTERPAY",
         paymentTransaction:
-        {
-            amount: {
+            {
+                amount: {
                     value: "300.00"
-                    }
-        }
+                }
+            }
     };
- };
+};
 
 var transaction = {
     wrap: function (callBack) {
         return callBack.call();
     },
-    begin: function () { },
-    commit: function () { }
+    begin: function () {
+    },
+    commit: function () {
+    }
 };
 
 var item = {
@@ -41,26 +44,33 @@ var item = {
     paymentTransaction:
         {
             amount: {
-                    value: "300.00"
-                    }
+                value: "300.00"
+            }
         }
 };
 
-describe('afterpay_credit', function () {
-    describe('#Handle', function() {
+var afterpayUtilities = {
+    checkoutUtilities: {
+        getPaymentMethodName: function () {
+            return 'AFTERPAY';
+        }
+    }
+};
 
-		it('handle afterpay payment processor', function() {
+describe('afterpay_credit', function () {
+    describe('#Handle', function () {
+        it('handle afterpay payment processor', function () {
             var currentBasket = new MockBasket();
 
 
             var afterpayCredit = proxyquire('../../../../../../../cartridges/int_afterpay_sfra/cartridge/scripts/hooks/payment/processor/afterpay_credit.js', {
-				'*/cartridge/scripts/util/collections': collections,
-				'dw/system/Transaction': transaction
-			});
+                '*/cartridge/scripts/util/collections': collections,
+                '*/cartridge/scripts/util/afterpayUtilities': afterpayUtilities,
+                'dw/system/Transaction': transaction
+            });
 
-			var result = afterpayCredit.Handle(currentBasket);
+            var result = afterpayCredit.Handle(currentBasket);
             expect(result).to.be.an('object');
         });
-
-	});
+    });
 });

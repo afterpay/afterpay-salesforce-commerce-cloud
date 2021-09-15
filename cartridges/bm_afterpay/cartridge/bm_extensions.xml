@@ -23,12 +23,12 @@
 		of the site main menu) -->
 	<menuitem id="customadminmenuextension_id101" position="99999"
 		site="true">
-		<name xml:lang="x-default">After Pay</name>
+		<name xml:lang="x-default">Afterpay</name>
 		<short_description xml:lang="x-default">
-			After Pay Payment Solution.
+			Afterpay Payment Solution.
 		</short_description>
 		<description xml:lang="x-default">
-			After Pay Payment Solution.
+			Afterpay Payment Solution.
 		</description>
 		<icon>icons/star_yellow_add.gif</icon>
 	</menuitem>

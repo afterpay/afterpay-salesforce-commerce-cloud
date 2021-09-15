@@ -1,50 +1,42 @@
 'use strict';
 
-var AfterpayApiContext = require("~/cartridge/scripts/context/AfterpayApiContext");
-var AfterpayHttpService = require("~/cartridge/scripts/logic/services/AfterpayHttpService.ds");
-var AfterpaySitePreferencesUtilities = require("~/cartridge/scripts/util/AfterpayUtilities").getSitePreferencesUtilities();
-var ctrlCartridgeName = AfterpaySitePreferencesUtilities.getControllerCartridgeName();
-var Class 		= require(ctrlCartridgeName + '/cartridge/scripts/util/Class').Class;
-var OrderRequestBuilder = require('~/cartridge/scripts/order/ExpressOrderRequestBuilder');
-var Site = require('dw/system/Site');
-var LogUtils = require('~/cartridge/scripts/util/LogUtils');
-var Logger = LogUtils.getLogger('AfterpayGetToken');
+var afterpayHttpService = require('*/cartridge/scripts/logic/services/afterpayHttpService');
+var afterpayUtils = require('*/cartridge/scripts/util/afterpayUtils');
+var OrderRequestBuilder = require('*/cartridge/scripts/order/expressOrderRequestBuilder');
+var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
+var Logger = LogUtils.getLogger('expressOrderService');
 
-var ExpressOrderService = Class.extend({
-
-     _requestUrl : null,
-     _requestBody : {},
-
-    init : function() {
-        this.afterpayHttpService = new AfterpayHttpService();
-        this.afterpayApiContext = new AfterpayApiContext();
-        this.afterpaySitePreferencesUtilities = AfterpaySitePreferencesUtilities;
+/**
+ *  request and response definitions for payment service type 'create orders'
+ */
+var requestUrl = null;
+var requestBody = {};
+var expressOrderService = {
+    generateRequest: function (basket, checkoutPrice, sourceUrl, merchantReference, store) {
+        requestUrl = afterpayUtils.getEndpoint('createOrders');
+        this.generateRequestBody(basket, checkoutPrice, sourceUrl, merchantReference, store);
     },
 
-    generateRequest : function(cart, checkoutPrice: dw.value.Money, sourceUrl: String, merchantReference: String, store: dw.catalog.Store) {
-        this._requestUrl = this.afterpayApiContext.getFlowApiUrls().get("createOrders");
-        this._generateRequestBody(cart, checkoutPrice, sourceUrl, merchantReference, store);
-    },
-
-    getResponse : function () {
-        Logger.debug("RequestBody: " + JSON.stringify(this._requestBody));
-        var response = this.afterpayHttpService.call(this._requestUrl, "CREATE_ORDER", this._requestBody);
-        Logger.debug("Response: " + JSON.stringify(response));
+    getResponse: function () {
+        var service = afterpayHttpService.getAfterpayHttpService();
+        var result = service.call(requestUrl, requestBody);
+        Logger.debug('RequestBody: ' + JSON.stringify(requestBody));
+        var response = afterpayUtils.handleServiceResponses(requestUrl, 'CREATE_ORDER', result, { requestMethod: 'GET' });
+        Logger.debug('Response: ' + JSON.stringify(response));
         return response;
     },
 
-    _generateRequestBody : function (cart, checkoutPrice, sourceUrl: String, merchantReference: String, store: dw.catalog.Store) {
+    generateRequestBody: function (basket, checkoutPrice, sourceUrl, merchantReference, store) {
         var orderRequestBuilder = new OrderRequestBuilder();
-
-        this._requestBody = orderRequestBuilder.buildRequest({
-            cart: cart,
+        requestBody = orderRequestBuilder.buildRequest({
+            basket: basket,
             checkoutPrice: checkoutPrice,
             merchantReference: merchantReference,
             sourceUrl: sourceUrl,
             store: store,
-            "requestMethod" : 'POST'
+            requestMethod: 'POST'
         }).get();
     }
-});
+};
 
-module.exports = new ExpressOrderService();
+module.exports = expressOrderService;

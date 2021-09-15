@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<payment-settings xmlns="http://www.demandware.com/xml/impex/paymentsettings/2009-09-15">
+    <payment-method method-id="CLEARPAY">
+        <name xml:lang="x-default">Clearpay</name>
+        <image>logo-clearpay-colour.png</image>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>AFTERPAY_CREDIT</processor-id>
+        <countries>
+            <country country-code="ES"/>
+            <country country-code="FR"/>
+            <country country-code="GB"/>
+            <country country-code="IT"/>
+        </countries>
+        <currencies>
+            <currency>EUR</currency>
+            <currency>GBP</currency>
+        </currencies>
+        <ranges>
+            <range currency="EUR">
+                <min-purchase-amount>1</min-purchase-amount>
+                <max-purchase-amount>800</max-purchase-amount>
+            </range>
+            <range currency="GBP">
+                <min-purchase-amount>0.03</min-purchase-amount>
+                <max-purchase-amount>1000</max-purchase-amount>
+            </range>
+        </ranges>
+    </payment-method>
+
+    <payment-method method-id="AFTERPAY">
+        <name xml:lang="x-default">Afterpay</name>
+        <image>logo-afterpay-colour.png</image>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>AFTERPAY_CREDIT</processor-id>
+        <countries>
+            <country country-code="AU"/>
+            <country country-code="CA"/>
+            <country country-code="NZ"/>
+            <country country-code="US"/>
+        </countries>
+        <currencies>
+            <currency>AUD</currency>
+            <currency>CAD</currency>
+            <currency>NZD</currency>
+            <currency>USD</currency>
+        </currencies>
+        <ranges>
+            <range currency="AUD">
+                <min-purchase-amount>0.03</min-purchase-amount>
+                <max-purchase-amount>2000</max-purchase-amount>
+            </range>
+            <range currency="CAD">
+                <min-purchase-amount>0.03</min-purchase-amount>
+                <max-purchase-amount>2000</max-purchase-amount>
+            </range>
+            <range currency="NZD">
+                <min-purchase-amount>0.03</min-purchase-amount>
+                <max-purchase-amount>2000</max-purchase-amount>
+            </range>
+            <range currency="USD">
+                <min-purchase-amount>0.03</min-purchase-amount>
+                <max-purchase-amount>1000</max-purchase-amount>
+            </range>
+        </ranges>
+    </payment-method>
+</payment-settings>

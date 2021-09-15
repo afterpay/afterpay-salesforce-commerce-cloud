@@ -15,7 +15,7 @@ function getWidget(updatedProductID, updatedProductPrice, className, $productCon
         url: getUpdatedWidgetUrl + queryString,
         method: 'GET',
         success: function (data) {
-            if (data.updatedWidget) {
+            if (data.apApplicable && data.updatedWidget) {
                 if (typeof $productContainer !== 'undefined') {
                     $productContainer.find('.afterpay-widget').html(data.updatedWidget);
                     $productContainer.find('.afterpay-widget').show();
@@ -23,11 +23,31 @@ function getWidget(updatedProductID, updatedProductPrice, className, $productCon
                     $('.afterpay-widget').html(data.updatedWidget);
                     $('.afterpay-widget').show();
                 }
+            } else if (typeof $productContainer !== 'undefined') {
+                $productContainer.find('.afterpay-widget').html('');
+                $productContainer.find('.afterpay-widget').show();
+            } else if (typeof $productContainer === 'undefined') {
+                $('.afterpay-widget').html('');
+                $('.afterpay-widget').show();
             }
         }
     });
 }
 
+/**
+ * @description Update widget for PDP specifically
+ */
+function updatePpdWidget() {
+    var productID = $('.product-id').text();
+    var productPrice = $('.prices-add-to-cart-actions .prices .price .sales .value').attr('content');
+    var productContainer = $('.product-detail');
+
+    getWidget(productID, productPrice, 'pdp-afterpay-message', productContainer);
+}
+
+/**
+ * @description Update Pickup Store
+ */
 function updateStorePickupState() {
     var getCartStatusUrl = $('#afterpay-express-url-cartstatus').val();
     if (getCartStatusUrl) {
@@ -36,19 +56,23 @@ function updateStorePickupState() {
             method: 'GET',
             success: function (data) {
                 if (data.instorepickup) {
-                    console.log("In store pickup: ", data.instorepickup);
                     $('#afterpay-express-storepickup').val(data.instorepickup.toString());
-                    initAfterpay({pickupflag: data.instorepickup});
+                    initAfterpay({ pickupflag: data.instorepickup });
                 }
             }
         });
     }
 }
 
+
 $(document).ready(function () {
     processInclude(require('./afterpay/afterpayContent'));
 
-    var cartTotal;
+    var cartTotal = '';
+
+    $('body').on('product:afterAttributeSelect', function () {
+        updatePpdWidget();
+    });
 
     $(document).ajaxStart(function () {
         if (!$('.afterpay-widget').hasClass('loading')) {
@@ -59,30 +83,8 @@ $(document).ready(function () {
             }
         }
 
-        // guard against nested calls
         if (!$('#afterpay-express-url-cartstatus').hasClass('loading')) {
             $('#afterpay-express-url-cartstatus').addClass('loading');
-        }
-    });
-
-    $(document).ajaxComplete(function () {
-        var newCartTotal = $('.grand-total').text();
-
-        if ($('.afterpay-widget').hasClass('loading')) {
-            $('.afterpay-widget').removeClass('loading');
-
-            if ($('.afterpay-widget .cart-afterpay-message').length && cartTotal !== newCartTotal) {
-                // for cart, messaging comes directly from current basket
-                getWidget(null, null, 'cart-afterpay-message');
-            }
-
-            if ($('.afterpay-widget .pdp-afterpay-message').length) {
-                var productID = $('.product-id').text();
-                var productPrice = $('.prices-add-to-cart-actions .prices .price .sales .value').attr('content');
-                var productContainer = $('.product-detail');
-
-                getWidget(productID, productPrice, 'pdp-afterpay-message', productContainer);
-            }
         }
     });
 
@@ -102,13 +104,27 @@ $(document).ready(function () {
     }
 
     $(document).ajaxComplete(function () {
+        var newCartTotal = $('.grand-total').text();
+
+        if ($('.afterpay-widget').hasClass('loading')) {
+            $('.afterpay-widget').removeClass('loading');
+
+            if ($('.afterpay-widget').length && cartTotal !== newCartTotal) {
+                $('afterpay-placement').attr('data-amount', newCartTotal);
+            }
+
+            if ($('.afterpay-widget .pdp-afterpay-message').length) {
+                updatePpdWidget();
+            }
+        }
+
         // make sure we call initAfterpay after the minicart loads so checkout click will work
         if ($('.minicart #afterpay-express-button').length > 0) {
             let cnt = 0;
-            let sid = setInterval(function() {
+            let sid = setInterval(function () {
                 if (typeof initAfterpay === 'function' && typeof AfterPay !== 'undefined') {
                     clearInterval(sid);
-                    initAfterpay({pickupflag: $('#afterpay-express-storepickup').val() === "true"});
+                    initAfterpay({ pickupflag: $('#afterpay-express-storepickup').val() === 'true' });
                 }
                 if (cnt === 10) {
                     clearInterval(sid);
@@ -120,8 +136,7 @@ $(document).ready(function () {
         // On pdp page, if a store is selected, disable buy now express checkout button.
         if ($('.store-name').length > 0) {
             $('#afterpay-express-pdp-button').addClass('afterpay-hide');
-        }
-        else {
+        } else {
             $('#afterpay-express-pdp-button').removeClass('afterpay-hide');
         }
 
@@ -135,5 +150,5 @@ $(document).ready(function () {
         }
     });
 
-    // initialize 
+    // initialize
 });

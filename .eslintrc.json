@@ -1,6 +1,7 @@
 {
     "root": true,
     "extends": "airbnb-base/legacy",
+    "parser": "babel-eslint",
     "rules": {
         "import/no-unresolved": "off",
         "indent": ["error", 4, { "SwitchCase": 1, "VariableDeclarator": 1 }],
@@ -12,5 +13,16 @@
         "no-shadow": ["error", { "allow": ["err", "callback"]}],
         "linebreak-style": 0,
         "max-len": "off"
+    },
+    "globals": {
+        "dw": false,
+        "customer": false,
+        "session": false,
+        "request": false,
+        "response": false,
+        "empty": false,
+        "PIPELET_ERROR": false,
+        "PIPELET_NEXT": false,
+        "XML": false
     }
 }

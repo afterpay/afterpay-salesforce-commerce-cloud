@@ -1,4 +1,3 @@
 {
-    "init": ["./cartridge/scripts/init/AfterpayHttpServiceInit.js"],
     "hooks": "./cartridge/scripts/hooks.json"
 }

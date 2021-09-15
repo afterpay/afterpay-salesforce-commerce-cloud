@@ -21,16 +21,18 @@ server.prepend(
         var currentBasket = BasketMgr.getCurrentOrNewBasket();
         var paymentForm = server.forms.getForm('billing');
         var paymentMethodID = paymentForm.paymentMethod.value;
-        var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/AfterpayCheckoutHelpers');
-        var AfterpaySession = require('*/cartridge/scripts/util/AfterpaySession');
+        var AfterpayCOHelpers = require('~/cartridge/scripts/checkout/afterpayCheckoutHelpers');
+        var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
 
-        if (paymentMethodID !== 'AFTERPAY_PBI') {
+        if (paymentMethodID !== 'AFTERPAY' && paymentMethodID !== 'CLEARPAY') {
             // For express checkout, it's possible there was a Afterpay payment method in the basket,
             // so remove it if a non-Afterpay payment method was selected
             AfterpayCOHelpers.removeAfterpayPayments(currentBasket);
             AfterpaySession.clearSession();
-            return next();
+            next();
+            return;
         }
+
         if (data && data.csrfError) {
             res.json();
             this.emit('route:Complete', req, res);
@@ -89,6 +91,7 @@ server.prepend(
         };
 
         res.setViewData(viewData);
+
         var HookMgr = require('dw/system/HookMgr');
         var Resource = require('dw/web/Resource');
         var PaymentMgr = require('dw/order/PaymentMgr');
@@ -132,7 +135,7 @@ server.prepend(
             if (req.currentCustomer.profile && billingData.storedPaymentUUID) {
                 billingAddress.setPhone(req.currentCustomer.profile.phone);
                 currentBasket.setCustomerEmail(req.currentCustomer.profile.email);
-            } else if (paymentMethodID === 'AFTERPAY_PBI') {
+            } else if (paymentMethodID === 'AFTERPAY' || paymentMethodID === 'CLEARPAY') {
                 billingAddress.setPhone(billingData.phone.value);
                 currentBasket.setCustomerEmail(billingData.email.value);
             }
@@ -204,8 +207,8 @@ server.prepend(
             req.session.privacyCache.set('usingMultiShipping', false);
             usingMultiShipping = false;
         }
-        if (paymentMethodID !== 'AFTERPAY_PBI') {
-            hooksHelper('app.customer.subscription', 'subscribeTo', [paymentForm.subscribe.checked, billingForm.email.htmlValue], function () {});
+        if (paymentMethodID === 'AFTERPAY' || paymentMethodID === 'CLEARPAY') {
+            hooksHelper('app.customer.subscription', 'subscribeTo', [paymentForm.subscribe.checked, billingForm.contactInfoFields.email.htmlValue], function () {});
         }
         var currentLocale = Locale.getLocale(req.locale.id);
         var basketModel = new OrderModel(
@@ -227,7 +230,7 @@ server.prepend(
             error: false
         });
 
-        if (paymentMethodID === 'AFTERPAY_PBI') {
+        if (paymentMethodID === 'AFTERPAY' || paymentMethodID === 'CLEARPAY') {
             this.emit('route:Complete', req, res);
         }
     }

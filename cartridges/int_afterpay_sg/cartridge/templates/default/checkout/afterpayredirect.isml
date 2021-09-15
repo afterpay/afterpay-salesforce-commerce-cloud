@@ -1,0 +1,25 @@
+<iscontent type="text/html" charset="UTF-8" compact="true"/>
+<isdecorate template="checkout/pt_checkout"/>
+    <script src="${pdict.apJavascriptURL}" async></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script>
+        var brand = '${pdict.apBrand}';
+        var countryCode = '${pdict.countryCode}';
+
+        window.onload = function () {
+            $(".loader-image").fadeOut("slow");
+            if (brand === 'clearpay' && countryCode !== 'GB') {
+                Clearpay.initialize({countryCode: countryCode});
+                Clearpay.redirect({token: '${pdict.apToken.apToken}'});
+            } else {
+                AfterPay.initialize({countryCode: countryCode});
+                AfterPay.redirect({token: '${pdict.apToken.apToken}'});
+            }
+        }
+    </script>
+    <div class="loader-image"></div>
+    <div class="redirect-text">
+        <p>${Resource.msg('redirect.notification', pdict.CurrentSession.privacy.afterpayBrand, null)}</p>
+        <p class="notify-message">${Resource.msg('redirect.message',  pdict.CurrentSession.privacy.afterpayBrand, null)}</p>
+    </div>
+</isdecorate>

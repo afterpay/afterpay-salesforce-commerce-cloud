@@ -1,99 +1,88 @@
+// API Includes
+var Resource = require('dw/web/Resource');
 /**
- *
- * @input serviceResponse : Object
- * @output errorCode : Object
+ * @description retrieves error description based on error codes from the response
+ * @param {number} responseCode - response code
+ * @paran {boolean} storefrontView - end user doesn't need specific error message, containing technical details,
+ * so this flag forces to return generic error message, except of the case with declined payment - client should be
+ * informed about such response
+ * @returns {string} errorMessage - error message
  */
 
-// API Includes
-var	Resource = require('dw/web/Resource');
-var System = require('dw/system');
-	
-var LogUtils = require('~/cartridge/scripts/util/LogUtils');
-var Logger = LogUtils.getLogger("AfterpayErrors");
-    
-function execute( pdict : PipelineDictionary ) : Number
-{
-	var serviceStatus = pdict.serviceResponse;
-	
-	if (empty(serviceStatus)) {
-		Logger.error("No status code found");
-		return PIPELET_ERROR;
-	}
-	var response = getErrorResponses(serviceStatus);
-	
-	Logger.debug("Error response for the status code "+response);
+var afterpayErrors = {};
 
-	pdict.errorCode = response;
-	return PIPELET_NEXT;
+afterpayErrors.getErrorResponses = function (responseCode, storefrontView) {
+    var statusCode = responseCode && responseCode.httpStatusCode ? responseCode.httpStatusCode : responseCode;
+    var errorMessage;
 
-}
+    if (storefrontView) {
+        switch (statusCode) {
+            case 'DECLINED':
+            case 402:
+                return Resource.msg('apierror.flow.402', session.privacy.afterpayBrand, null);
+            default:
+                return Resource.msg('apierror.flow.default', session.privacy.afterpayBrand, null);
+        }
+    }
 
-function getErrorResponses(responseCode){
-	var statusCode = !empty(responseCode.httpStatusCode) ? responseCode.httpStatusCode : responseCode;
-	var errorMessage ="";
-    switch(statusCode) {
-	   
-	    case 400:
-	        errorMessage = Resource.msg('apierror.flow.400','afterpay',null);
-	        break;
-	    case 401:
-	        errorMessage = Resource.msg('apierror.flow.401','afterpay',null);
-	        break;
-	    
-	    case "DECLINED":
+    switch (statusCode) {
+        case 400:
+            errorMessage = Resource.msg('apierror.flow.400', session.privacy.afterpayBrand, null);
+            break;
+        case 401:
+            errorMessage = Resource.msg('apierror.flow.401', session.privacy.afterpayBrand, null);
+            break;
+        case 'DECLINED':
         case 402:
-	        errorMessage = Resource.msg('apierror.flow.402','afterpay',null);
-	        break;
-	    case 404:
-	        errorMessage = Resource.msg('apierror.flow.404','afterpay',null);
-	        break;
-	    case 405:
-	        errorMessage = Resource.msg('apierror.flow.405','afterpay',null);
-	        break;
+            errorMessage = Resource.msg('apierror.flow.402', session.privacy.afterpayBrand, null);
+            break;
+        case 404:
+            errorMessage = Resource.msg('apierror.flow.404', session.privacy.afterpayBrand, null);
+            break;
+        case 405:
+            errorMessage = Resource.msg('apierror.flow.405', session.privacy.afterpayBrand, null);
+            break;
         case 406:
-	        errorMessage = Resource.msg('apierror.flow.406','afterpay',null);
-	        break;
-	    case 409:
-	        errorMessage = Resource.msg('apierror.flow.409','afterpay',null);
-	        break;
+            errorMessage = Resource.msg('apierror.flow.406', session.privacy.afterpayBrand, null);
+            break;
+        case 409:
+            errorMessage = Resource.msg('apierror.flow.409', session.privacy.afterpayBrand, null);
+            break;
         case 410:
-	        errorMessage = Resource.msg('apierror.flow.410','afterpay',null);
-	        break;
+            errorMessage = Resource.msg('apierror.flow.410', session.privacy.afterpayBrand, null);
+            break;
         case 412:
-	        errorMessage = Resource.msg('apierror.flow.412','afterpay',null);
-	        break;
+            errorMessage = Resource.msg('apierror.flow.412', session.privacy.afterpayBrand, null);
+            break;
         case 422:
-	        errorMessage = Resource.msg('apierror.flow.422','afterpay',null);
-	        break;
+            errorMessage = Resource.msg('apierror.flow.422', session.privacy.afterpayBrand, null);
+            break;
         case 429:
-	        errorMessage = Resource.msg('apierror.flow.429','afterpay',null);
-	        break;
-	    
-        case "INTERNAL_SERVICE_ERROR":
+            errorMessage = Resource.msg('apierror.flow.429', session.privacy.afterpayBrand, null);
+            break;
+        case 'INTERNAL_SERVICE_ERROR':
         case 500:
-	        errorMessage = Resource.msg('apierror.flow.500','afterpay',null);
-	        break;
-	        
-        case "SERVICE_UNAVAILABLE":
+            errorMessage = Resource.msg('apierror.flow.500', session.privacy.afterpayBrand, null);
+            break;
+        case 'SERVICE_UNAVAILABLE':
         case 503:
-	        errorMessage = Resource.msg('apierror.flow.503','afterpay',null);
-	        break; 
-	    case 524:
-	        errorMessage = Resource.msg('apierror.flow.524','afterpay',null);
-	        break;   
-	    default:
-	        errorMessage = Resource.msg('apierror.flow.default','afterpay',null);
-	}
-	return errorMessage;
-}
+            errorMessage = Resource.msg('apierror.flow.503', session.privacy.afterpayBrand, null);
+            break;
+        case 524:
+            errorMessage = Resource.msg('apierror.flow.524', session.privacy.afterpayBrand, null);
+            break;
+        case 'TOKEN_ERROR':
+            errorMessage = Resource.msg('apierror.invalid.email.error', session.privacy.afterpayBrand, null);
+            break;
+        default:
+            errorMessage = Resource.msg('apierror.flow.default', session.privacy.afterpayBrand, null);
+    }
+
+    return errorMessage;
+};
 
 
 /*
  * Module exports
  */
-module.exports = {
-	GetErrorResponses: function(responseCode){
-		return getErrorResponses(responseCode);
-	}
-}
-
+module.exports = afterpayErrors;

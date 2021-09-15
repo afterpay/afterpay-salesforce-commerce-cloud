@@ -6,22 +6,18 @@
 
 <ismodule template="util/afterpayMessage"
     name="afterpaymessage"
-    attribute="message"
     attribute="classname" 
-    attribute="minthresholdamount"
-    attribute="maxthresholdamount"
     attribute="belowthreshold"
-    attribute="abovethreshold"
+    attribute="brand"
+    attribute="totalprice"
 />
 
-<iscomment>
-    Calls the Afterpay service to get the Threshold amount
-</iscomment>
-
-<ismodule template="util/afterpayThreshold"
-    name="afterpaythreshold"
-    attribute="thresholdresponse"
-    attribute="classname" 
-    attribute="message" 
+<ismodule template="product/components/addToCartButtonExtension"
+    name="afterpayexpresscheckout"
+    attribute="pagetype"
 />
 
+<ismodule template="product/components/checkoutButtons"
+    name="afterpayexpresscheckoutButtons"
+    attribute="pagetype"
+/>

@@ -1,0 +1,47 @@
+<iscontent type="text/html" charset="UTF-8" compact="true"/>
+
+<iscomment>
+afterpayEnabled - is Afterpay enabled in site preferences
+afterpayExpressCheckoutEnabled - is Afterpay express checkout enabled in site preferences
+isExpressCheckoutFinalize - has consumer already gone through Afterpay Express Checkout and now is back on merchant site to finalize
+afterpayExpressPickupEnabled - Checks that cart only has items being picked up. If so, set pickup flag.
+afterpayExpressCheckoutPdpEnabled - is Afterpay express checkout enabled on pdp in site preferences
+afterpayExpressPickupEnabled - does the current cart and selected ship method indicate Afterpay Express Checkout should use in-store pickup mode
+</iscomment>
+<isscript>
+    var AfterpayUtilities = require("*/cartridge/scripts/util/afterpayUtilities.js");
+    var sitePreferences = AfterpayUtilities.sitePreferencesUtilities;
+    var afterpayEnabled = sitePreferences.isAfterpayEnabled();
+    var afterpayExpressCheckoutEnabled = afterpayEnabled ? sitePreferences.isExpressCheckoutEnabled() : false;
+    var isExpressCheckoutFinalize = require('*/cartridge/scripts/util/afterpaySession').isExpressCheckoutFinalizeFlow();
+    var afterpayExpressCheckoutPdpEnabled = sitePreferences.isExpressCheckoutPdpEnabled();
+
+    var AfterpayCOHelpers = require('~/cartridge/scripts/checkout/afterpayCheckoutHelpers');
+    var afterpayExpressPickupEnabled = afterpayExpressCheckoutEnabled ? AfterpayCOHelpers.shouldEnableExpressPickupMode() : false;
+    var disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isBasketAmountWithinThreshold();
+    // for pdp, we don't use the basket amount, we just check if the current product > max thresshold
+    if (pdict.pagetype === 'product_detail' && afterpayExpressCheckoutPdpEnabled) {
+        disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isPriceBelowThreshold(SalesPrice ? SalesPrice : StandardPrice);
+    }
+    var BrandUtilities = require("*/cartridge/scripts/util/afterpayUtilities.js").brandUtilities;
+    var countrycode = BrandUtilities.getCountryCode();
+    var expressCheckoutJS = BrandUtilities.getBrandSettings().javaScriptUrl + "?merchant_key=demo";
+</isscript>
+<isif condition="${afterpayExpressCheckoutEnabled && (pdict.pagetype != 'product_detail' || afterpayExpressCheckoutPdpEnabled)}">
+    <input id="afterpay-express-countrycode" type="hidden" value="${countrycode}" />
+    <input id="afterpay-express-storepickup" type="hidden" value="${afterpayExpressPickupEnabled}" />
+    <input id="afterpay-express-buynow" type="hidden" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('apEnableExpressCheckoutBuyNow')}" />
+    <input id="afterpay-express-shipping-option-required" type="hidden" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('apExpressCheckoutShippingStrategy') == 'integrated'}" />
+    <input id="afterpay-express-url-createtoken" type="hidden" value="${URLUtils.url('AfterpayExpress-CreateToken')}" />
+    <input id="afterpay-express-url-getshippingmethods" type="hidden" value="${URLUtils.url('AfterpayExpress-GetShippingMethods')}" />
+    <input id="afterpay-express-url-processorder" type="hidden" value="${URLUtils.url('AfterpayExpress-PostAfterpayCheckoutFlow')}" />
+    <input id="afterpay-express-url-cancelorder" type="hidden" value="${URLUtils.url('AfterpayExpress-CancelOrder')}" />
+    <input id="afterpay-express-url-cartstatus" type="hidden" value="${URLUtils.url('AfterpayExpress-CartStatus')}" />
+    <input id="afterpayurl-continuefinalize" type="hidden" value="${URLUtils.url('AfterpayExpress-ContinueFinalize')}" />
+    <script src="${URLUtils.staticURL('/lib/jquery/jquery.min.js')}" type="text/javascript"></script>
+    <script src="${URLUtils.staticURL('/lib/jquery/ui/jquery-ui.min.js')}" type="text/javascript"></script>
+    <isif condition="${expressCheckoutJS}">
+        <script src="${expressCheckoutJS}"></script>
+    </isif>
+    <script src="${URLUtils.staticURL('/js/afterpayExpress.js')}" type="text/javascript"></script>
+</isif>

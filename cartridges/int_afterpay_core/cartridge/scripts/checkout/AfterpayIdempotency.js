@@ -1,84 +1,53 @@
+'use strict';
+/* global empty */
+var Site = require('dw/system/Site');
+
+var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
+var Logger = LogUtils.getLogger('afterpayIdempotency');
+
 /**
-*   @input ApInitialStatus : String
-*   @input Order : dw.order.Order
-*   @output FinalPaymentStatus : String   
-*
+* checks the current timestamp against initial timestamp
+* @param {number} milliseconds - timestamp
 */
+function sleep(milliseconds) {
+    var adjustedMilliseconds = milliseconds * 1000;
+    var initialTimestamp = new Date().getTime();
+    var checkTimestamp;
+    var presentTimestamp;
 
-importPackage( dw.system );
-
-var LogUtils = require('~/cartridge/scripts/util/LogUtils');
-var Logger = LogUtils.getLogger("AfterpayIdempotency");
-
-
-function execute( args : PipelineDictionary ) : Number
-{
-	var order = args.Order,
-	initialPaymentStatus = args.ApInitialStatus,
-	finalPaymentStatus, paymentStatus;
-	
-	if(empty(order) || empty(initialPaymentStatus)){
-		Logger.error("Either of the Parameters provided -Order or Paymentstatus or ServiceStatus is empty ");
-		return PIPELET_ERROR;
-	}
-	
-    paymentStatus = delayPayment(order, initialPaymentStatus);
-    
-		
-   args.FinalPaymentStatus = paymentStatus;
-   return PIPELET_NEXT;
-   
+    checkTimestamp = true;
+    while (checkTimestamp) {
+        presentTimestamp = new Date().getTime();
+        if (presentTimestamp - initialTimestamp > adjustedMilliseconds) {
+            checkTimestamp = false;
+        }
+    }
 }
 
 /**
- * Delays the payment retry by 5 secs. 
- */
-
-function sleep(milliseconds) {
-	milliseconds = milliseconds*1000;
-	var initialTimestamp = new Date().getTime();
-	var checkTimestamp, presentTimestamp;
-
-	checkTimestamp = true;
-	while(checkTimestamp){
-	    presentTimestamp = new Date().getTime();
-	    if(presentTimestamp-initialTimestamp > milliseconds) 
-	    {
-	    	checkTimestamp = false;
-	    }
-	}
-}
-
+* Delays the payment retry by 5 secs.
+* @param {Object} Order - order
+* @param {number} initialStatus - initial status
+* @returns {number} - payment status
+*/
 function delayPayment(Order, initialStatus, expressCheckoutModel) {
-	
-	var paymentStatus;
-	if(empty(Order) || empty(initialStatus)){
-		Logger.error("Either of the Parameters provided -Order or Paymentstatus or finalPaymentStatus is empty ");
-		return {error:true};
-	}
-	
-	 for (var i = 0; i < 4; i++) { 
-    	Logger.debug("Payment retry Execution count "+i+ " -and intial payment status :"+ initialStatus);
-		Logger.debug("Before time delay : "+ new Date());
-			
-    	sleep(Site.getCurrent().getCustomPreferenceValue('apDelayRetry'));
-    	Logger.debug("After 5 secs time delay : "+ new Date());
-		paymentStatus = require('~/cartridge/scripts/checkout/AfterpayHandlePaymentOrder').GetPaymentStatus(Order, initialStatus, expressCheckoutModel);
-		if(paymentStatus == 'APPROVED'){
-			break;
-		}
-		Logger.debug("Final Payment Status : "+ paymentStatus);
-	}
-	return paymentStatus;
+    var paymentStatus;
+    if (empty(Order) || empty(initialStatus)) {
+        Logger.error('Either of the Parameters provided -Order or Paymentstatus or finalPaymentStatus is empty');
+        return { error: true };
+    }
+    for (var i = 0; i < 4; i++) {
+        Logger.debug('Payment retry Execution count ' + i + ' -and intial payment status :' + initialStatus);
+        Logger.debug('Before time delay : ' + new Date());
+        sleep(Site.getCurrent().getCustomPreferenceValue('apDelayRetry'));
+        Logger.debug('After 5 secs time delay : ' + new Date());
+        paymentStatus = require('*/cartridge/scripts/checkout/afterpayHandlePaymentOrder').getPaymentStatus(Order, initialStatus, expressCheckoutModel);
+        if (paymentStatus === 'APPROVED') {
+            break;
+        }
+        Logger.debug('Final Payment Status : ' + paymentStatus);
+    }
+    return paymentStatus;
 }
 
-
-
-/*
- * Module exports
- */
-module.exports = {
-	DelayPayment: function(Order, initialStatus){
-		return delayPayment(Order, initialStatus);
-	}
-}
+module.exports.delayPayment = delayPayment;

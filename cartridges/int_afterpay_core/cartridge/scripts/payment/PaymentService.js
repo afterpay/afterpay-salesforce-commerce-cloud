@@ -1,36 +1,27 @@
-importPackage(dw.io);
-importPackage(dw.net);
-importPackage(dw.object);
-importPackage(dw.svc);
-importPackage(dw.system);
-importPackage(dw.util);
-importPackage(dw.web);
+'use strict';
+/* global empty */
 
-var AfterpayApiContext = require("~/cartridge/scripts/context/AfterpayApiContext");
-var AfterpayHttpService = require("~/cartridge/scripts/logic/services/AfterpayHttpService.ds");
-var sitePreferences = require("~/cartridge/scripts/util/AfterpayUtilities.js").getSitePreferencesUtilities();
-var ctrlCartridgeName = sitePreferences.getControllerCartridgeName();
-var Class 		= require(ctrlCartridgeName + '/cartridge/scripts/util/Class').Class;
+var StringUtils = require('dw/util/StringUtils');
 
-var PaymentService = Class.extend({
+var afterpayHttpService = require('*/cartridge/scripts/logic/services/afterpayHttpService');
+var afterpayUtils = require('*/cartridge/scripts/util/afterpayUtils');
 
-	 _requestUrl : null,
-
-	init : function() {
-        this.afterpayHttpService = new AfterpayHttpService();
-        this.afterpayApiContext = new AfterpayApiContext();
+/**
+ *  request and response definitions for payment service type 'get payment'
+ */
+var paymentService = {
+    generateRequest: function (token, paymentID) {
+        var param = !empty(token) ? 'token:' + token : paymentID;
+        var requestUrl = StringUtils.format(afterpayUtils.getEndpoint('getPayment'), param);
+        return requestUrl;
     },
 
-    generateRequest : function(token: String, paymentID : String) {
-    	var param = !empty(token) ? "token:" + token : paymentID;	
-        this._requestUrl = StringUtils.format(this.afterpayApiContext.getFlowApiUrls().get("getPayment"), param);
-    },
-
-    getResponse : function () {
-        var response = this.afterpayHttpService.call(this._requestUrl, "GET_PAYMENT", { requestMethod: 'GET' });
+    getResponse: function (requestUrl) {
+        var service = afterpayHttpService.getAfterpayHttpService();
+        var result = service.call(requestUrl, { requestMethod: 'GET' });
+        var response = afterpayUtils.handleServiceResponses(requestUrl, 'GET_PAYMENT', result, { requestMethod: 'GET' });
         return response;
     }
-});
+};
 
-
-module.exports = new PaymentService();
+module.exports = paymentService;

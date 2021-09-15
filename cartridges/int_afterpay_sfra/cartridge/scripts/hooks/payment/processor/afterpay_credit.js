@@ -1,6 +1,11 @@
 'use strict';
-var collections = require('*/cartridge/scripts/util/collections');
+
+/* API Includes */
 var Transaction = require('dw/system/Transaction');
+
+/* Script Modules */
+var collections = require('*/cartridge/scripts/util/collections');
+var apUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
 
 /**
 * removes other payment instruments from basket and saves afterpay
@@ -9,6 +14,15 @@ var Transaction = require('dw/system/Transaction');
 */
 function Handle(basket) {
     var currentBasket = basket;
+    var apCheckoutUtilities = apUtilities.checkoutUtilities;
+    var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
+
+    if (!paymentMethodName) {
+        return {
+            error: true
+        };
+    }
+
     Transaction.wrap(function () {
         var paymentInstruments = currentBasket.getPaymentInstruments();
         collections.forEach(paymentInstruments, function (item) {
@@ -16,7 +30,7 @@ function Handle(basket) {
         });
 
         currentBasket.createPaymentInstrument(
-            'AFTERPAY_PBI', currentBasket.totalGrossPrice
+            paymentMethodName, currentBasket.totalGrossPrice
         );
     });
 

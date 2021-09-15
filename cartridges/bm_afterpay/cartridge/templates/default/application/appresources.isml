@@ -1,10 +1,6 @@
 <iscontent type="text/javascript" charset="UTF-8" compact="true"/>
-<isscript>
-    importScript("util/Resource.ds");
-</isscript>
 
 (function(){
-    window.Resources = <isprint value="${JSON.stringify(ResourceHelper.getResources())}"/>;
-    window.Urls = <isprint value="${JSON.stringify(ResourceHelper.getUrls())}"/>;
+    window.Resources = <isprint value="${JSON.stringify(pdict.ResourceHelper.getResources())}"/>;
+    window.Urls = <isprint value="${JSON.stringify(pdict.ResourceHelper.getUrls())}"/>;
 }());
-  

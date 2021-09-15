@@ -11,11 +11,11 @@ afterpayAmount - total amount for the Afterpay payment instrument in the cart. I
 
 </iscomment>
 <isscript>
-var sitePreferences = require("~/cartridge/scripts/util/AfterpayUtilities.js").getSitePreferencesUtilities();
+var sitePreferences = require("*/cartridge/scripts/util/afterpayUtilities.js").sitePreferencesUtilities;
 var afterpayEnable = sitePreferences.isAfterpayEnabled();
 // session state specifically used for Afterpay Express
-var AfterpaySession = require('~/cartridge/scripts/util/AfterpaySession');
-var AfterpayCOHelpers = require('~/cartridge/scripts/checkout/AfterpayCheckoutHelpers');
+var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
+var AfterpayCOHelpers = require('~/cartridge/scripts/checkout/afterpayCheckoutHelpers');
 // This does a recalculation using the current basket
 AfterpayCOHelpers.calculateAndSetPaymentAmount(dw.order.BasketMgr.getCurrentBasket());
 var afterpayAmount = AfterpayCOHelpers.getCurrentAfterpayPaymentAmount(dw.order.BasketMgr.getCurrentBasket());
@@ -27,20 +27,25 @@ if (afterpayAmount.value == 0) {
 var afterpayToken = AfterpaySession.getToken();
 var isExpressCheckoutFinalize = AfterpaySession.isExpressCheckoutFinalizeFlow();
 var afterpayExpressCheckoutEnabled = sitePreferences.isExpressCheckoutEnabled();
+var BrandUtilities = require("*/cartridge/scripts/util/afterpayUtilities.js").brandUtilities;
+var expressCheckoutJS = BrandUtilities.getBrandSettings().javaScriptUrl + "?merchant_key=demo";
+var countrycode = BrandUtilities.getCountryCode();
+var buttonPlaceOrderClass = 'afterpay-placeorder-button';
+if(countrycode === 'GB'){
+    buttonPlaceOrderClass = 'clearpay-placeorder-button';
+}
 </isscript>
 
 <isif condition="${afterpayExpressCheckoutEnabled && isExpressCheckoutFinalize}">
     <input id="afterpay-express-checkout-finalize" type="hidden" value="true" />
     <input id="afterpay-widget-amount" type="hidden" value="${afterpayAmount.value}" />
+    <input id="afterpay-widget-locale" type="hidden" value="${request.getLocale()}" />
     <input id="afterpay-widget-currency" type="hidden" value="${afterpayAmount.currencyCode}" />
     <input id="afterpay-token" type="hidden" value="${afterpayToken}" />
     <input id="afterpay-express-url-cancelorder" type="hidden" value="${URLUtils.url('AfterpayExpress-CancelOrder')}" />
     <input id="afterpay-express-url-finalize" type="hidden" value="${URLUtils.url('AfterpayExpress-FinalizeOrder')}" />
     <input id="afterpay-express-url-cartstatus" type="hidden" value="${URLUtils.url('AfterpayExpress-CartStatus')}" />
     <input id="afterpay-express-url-widgeterror" type="hidden" value="${URLUtils.url('AfterpayExpress-WidgetError')}" />
-
-    <script src="${dw.system.Site.current.preferences.custom.apExpressCheckoutJS}" type="text/javascript"></script>
-    <script src="${URLUtils.staticURL('/js/afterpayWidget.js')}" type="text/javascript"></script>
 <iselse/>
     <iscomment>For non-express-checkout Afterpay tab, show new widget. Note that in this case,
     AFTERPAY_PBI has not been added to the basket yet, so amount should be 0. However, the amounts
@@ -48,8 +53,11 @@ var afterpayExpressCheckoutEnabled = sitePreferences.isExpressCheckoutEnabled();
     </iscomment>
     <input id="afterpay-express-checkout-finalize" type="hidden" value="false" />
     <input id="afterpay-widget-amount" type="hidden" value="${afterpayAmount.value}" />
+    <input id="afterpay-widget-locale" type="hidden" value="${request.getLocale()}" />
     <input id="afterpay-widget-currency" type="hidden" value="${afterpayAmount.currencyCode}" />
     <input id="afterpay-token" type="hidden" value="" />
-    <script src="${dw.system.Site.current.preferences.custom.apExpressCheckoutJS}" type="text/javascript"></script>
-    <script src="${URLUtils.staticURL('/js/afterpayWidget.js')}" type="text/javascript"></script>
+</isif>
+<script src="${URLUtils.staticURL('/js/afterpayWidget.js')}" type="text/javascript"></script>
+<isif condition="${expressCheckoutJS}">
+        <script src="${expressCheckoutJS}"></script>
 </isif>

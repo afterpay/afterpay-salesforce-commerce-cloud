@@ -3,8 +3,7 @@
 var getConfig = require('@tridnguyen/config');
 
 var opts = Object.assign({}, getConfig({
-    sfraBaseUrl: 'https://' + global.baseUrl + '/on/demandware.store/Sites-RefArch-Site/en_US',
-    sgBaseUrl: 'https://' + global.baseUrl + '/on/demandware.store/Sites-SiteGenesis-Site/en_US',
+    baseUrl: 'https://' + global.baseUrl + '/on/demandware.store/Sites-RefArchAU-Site/en_AU',
     suite: '*',
     reporter: 'spec',
     timeout: 60000,

@@ -62,17 +62,26 @@ var utilitiesMock = {
     }
 };
 
-var afterpaySitePreferencesUtilities = {
-     sitePreferencesUtilities:
-        {
-            getServiceName: function () { return 'afterpay_service_id'; },
-            getUserAgent: function () { return {}; },
-            getCaptureTimeout: function () { return {}; },
+var afterpayUtilities = {
+    brandUtilities: {
+        getCountryCode: function () {
+            return 'US';
+        },
+        getBrandSettings: function () {
+            return {
+                service: 'afterpay.service.USCA'
+            }
         }
-}; 
+    },
+    sitePreferencesUtilities: {
+        getServiceName: function () { return 'afterpay_service_id'; },
+        getUserAgent: function () { return {}; },
+        getCaptureTimeout: function () { return {}; },
+    }
+};
 
 function proxyModel() {
-    return proxyquire('../../../cartridges/int_afterpay_sfra/cartridge/scripts/logic/services/afterpayHttpService',
+    return proxyquire('../../../cartridges/int_afterpay_core/cartridge/scripts/logic/services/afterpayHttpService',
         {
             'dw/svc/LocalServiceRegistry': {
                 createService: function (serviceId, configObj) {
@@ -133,7 +142,7 @@ function proxyModel() {
                             return {};
                         }
                     },
-            '*/cartridge/scripts/util/afterpayUtilities' : afterpaySitePreferencesUtilities,
+            '*/cartridge/scripts/util/afterpayUtilities' : afterpayUtilities,
             'dw/util/StringUtils' : stringUtilsMock,
             '*/cartridge/scripts/util/afterpayLogUtils' : customLogger
         });

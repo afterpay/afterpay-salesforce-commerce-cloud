@@ -1,10 +1,9 @@
 'use strict';
 
 var afterpayRedirect = require('../afterpay/afterpayRedirect');
-//var afterpayOrigWidget = require('../afterpay/afterpayWidget');
+//var afterpayWidget = require('../afterpay/afterpayWidget');
 var afterpayExpressWidget = require('../afterpay/afterpayExpressWidget');
 var baseCheckout = require('base/checkout/checkout');
-
 
 // Hide all states
 function hideAllStates() {
@@ -24,55 +23,45 @@ function hideAllStates() {
 
 // Handle changes between different checkout stages
 function handleStateChange() {
-    let cm_elem = document.querySelector('#checkout-main');
-    let stage = cm_elem.getAttribute('data-checkout-stage');
+    let cmElem = document.querySelector('#checkout-main');
+    let stage = cmElem.getAttribute('data-checkout-stage');
 
-    let ec_finalize = false;
-    if ($('#afterpay-express-checkout-finalize').length > 0 && $('#afterpay-express-checkout-finalize').val() === "true") {
-        ec_finalize = true;
+    var ecFinalize = false;
+    if ($('#afterpay-express-checkout-finalize').length > 0 && $('#afterpay-express-checkout-finalize').val() === 'true') {
+        ecFinalize = true;
     }
 
     // Always do removeClass after addClass in case same element has multiple classes
-    if (stage === "shipping") {
+    if (stage === 'shipping') {
         hideAllStates();
         $('.ap-checkout-ship').removeClass('afterpay-hide');
-    }
-    else if (stage === "payment") {
-        let isAfterpayTab = $('.afterpay_pbi-tab').hasClass('active');
+    } else if (stage === 'payment') {
+        var isAfterpayTab = $('.afterpay-tab').hasClass('active') || $('.clearpay-tab').hasClass('active');
         hideAllStates();
         if (isAfterpayTab) {
-            if (ec_finalize) {
+            if (ecFinalize) {
                 $('.ap-checkout-pay-tab-ecf').removeClass('afterpay-hide');
-            }
-            else {
+            } else {
                 $('.ap-checkout-pay-tab-noecf').removeClass('afterpay-hide');
             }
+        } else if (ecFinalize) {
+            $('.ap-checkout-pay-notab-ecf').removeClass('afterpay-hide');
+        } else {
+            $('.ap-checkout-pay-notab-noecf').removeClass('afterpay-hide');
         }
-        else {
-            if (ec_finalize) {
-                $('.ap-checkout-pay-notab-ecf').removeClass('afterpay-hide');
-            }
-            else {
-                $('.ap-checkout-pay-notab-noecf').removeClass('afterpay-hide');                
-            }
-        }
-    }
-    else if (stage === "placeOrder") {
+    } else if (stage === 'placeOrder') {
         let isAfterpayPayment = $('#afterpay-payment-shown').length;
 
         hideAllStates();
         if (isAfterpayPayment) {
             $('.ap-checkout-po-ecf').removeClass('afterpay-hide');
-        }
-        else {
+        } else {
             // If there's no Afterpay payment on the placeOrder stage, just cancel express checkout finalize flow
             $('#afterpay-express-checkout-finalize').val(false);
             $('.ap-checkout-po-noecf').removeClass('afterpay-hide');
-
         }
     }
 }
-
 
 var exports = {
     initialize: function () {
@@ -82,72 +71,72 @@ var exports = {
             $(document).ajaxComplete(function () {
                 afterpayRedirect.selectPaymentMethod();
             });
-
             // do afterpay redirect method if the original submit button is clicked
             // with afterpay as payment type
             $('button.submit-payment').on('click', function (e) {
-                var isAfterpayTab = $('.afterpay_pbi-tab').hasClass('active');
+                var isAfterpayTab = $('.afterpay-tab').hasClass('active') || $('.clearpay-tab').hasClass('active');
 
                 if (isAfterpayTab) {
                     e.stopPropagation();
                     afterpayRedirect.generalValidation();
                 }
             });
-
-            // update the widget with correct amounts on initial page load
+         // update the widget with correct amounts on initial page load
             afterpayExpressWidget.updateExpressWidget();
 
-            // Call handleStage when page is loaded/reloaded
+         // Call handleStage when page is loaded/reloaded
             handleStateChange();
 
-            let cm_elem = document.querySelector('#checkout-main');            
-            // Call handleStage with new stage whenever we detect the stage change
-            // SFRA base changes attributes on #checkout-main to indicate stage of checkout flow changes
+            let cmElem = document.querySelector('#checkout-main');            
+         // Call handleStage with new stage whenever we detect the stage change
+         // SFRA base changes attributes on #checkout-main to indicate stage of checkout flow changes
             if (window.MutationObserver) {
-                var observer = new MutationObserver(function(mutations) {
+                var observer = new MutationObserver(function (mutations) {
                     for (let mutation of mutations) {
                         if (mutation.type === 'attributes') {
                             handleStateChange();
                         }
                     }
                 });
-                observer.observe(cm_elem, { attributes: true });
+                observer.observe(cmElem, { attributes: true });
             } else {
-                // If no MutationObserver support, just use interval to poll state
+             // If no MutationObserver support, just use interval to poll state
                 var checkState = setInterval(function () {
                     handleStateChange();
                 }, 500);
             }
 
-            // Call handleStage with new stage whenever afterpay payment tab is pressed
-            let tabelem = document.querySelector('.afterpay_pbi-tab');
+         // Call handleStage with new stage whenever afterpay payment tab is pressed
+            let tabelem = document.querySelector('.afterpay-tab') ? document.querySelector('.afterpay-tab') : document.querySelector('.clearpay-tab');
             if (window.MutationObserver) {
-                var observer = new MutationObserver(function(mutations) {
+                var observer = new MutationObserver(function (mutations) {
                     handleStateChange();
                 });
                 observer.observe(tabelem, { attributes: true });
             }
 
 
-            if (typeof createAfterpayWidget === "function") {
+            if (typeof createAfterpayWidget === 'function') {
                 createAfterpayWidget();
             }
 
-            // Handle place-order button click
-            $("#afterpay-placeorder-button").on('click', function() {
-                if(typeof afterpayWidget !== 'undefined') {
-                    let url = $("#afterpay-express-url-finalize").val();
+         // Handle place-order button click
+            $('#afterpay-placeorder-button').on('click', function () {
+                if (typeof afterpayWidget !== 'undefined') {
+                    let url = $('#afterpay-express-url-finalize').val();
                     let checksum = afterpayWidget.paymentScheduleChecksum;
-                    window.location.href= url + "?checksum=" + checksum;
+                    window.location.href = url + '?checksum=' + checksum;
                 }
             });
 
-            // if express checkout finalization flow, then select the afterpay payment
-            // tab by default
-            if (($('#afterpay-express-checkout-finalize').val() === "true") &&
-                (parseFloat($('#afterpay-widget-amount').val()) > 0.0)) {
-                $('.afterpay_pbi-content').addClass('active');
-                $('.afterpay_pbi-tab').addClass('active');
+         // if express checkout finalization flow, then select the afterpay payment
+         // tab by default
+            if (($('#afterpay-express-checkout-finalize').val() === 'true') &&
+             (parseFloat($('#afterpay-widget-amount').val()) > 0.0)) {
+                $('.afterpay-content').addClass('active');
+                $('.afterpay-tab').addClass('active');
+                $('.clearpay-content').addClass('active');
+                $('.clearpay-tab').addClass('active');
                 $('.credit-card-content').removeClass('active');
                 $('.credit-card-tab').removeClass('active');
             }
@@ -156,7 +145,7 @@ var exports = {
     updateCheckoutView: function () {
         $('body').on('checkout:updateCheckoutView', function () {
             // Refresh checkout Afterpay Widget
-            //afterpayOrigWidget.getWidget(null, null, 'checkout-afterpay-message');
+            // afterpayWidget.getWidget(null, null, 'checkout-afterpay-message');
             // Refresh Afterpay Express Checkout Widget
             afterpayExpressWidget.updateExpressWidget();
         });
