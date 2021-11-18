@@ -37,24 +37,31 @@ afterpayUtils.filterLogData = function (requestJSON) {
 * @returns {string} - request JSON
 */
 afterpayUtils.maskDetails = function (requestJSON) {
-    var index;
-    var responseJSON = requestJSON;
     if (requestJSON.shipping) {
-        for (index = 0; index < requestJSON.shipping.length; index++) {
-            responseJSON.shipping[index] = '***';
+        if(Object.keys(requestJSON.shipping).length > 1) {
+            for (var index in requestJSON.shipping) {
+                requestJSON.shipping[index] = '***';
+            }
         }
     }
 
     if (requestJSON.billing) {
-        for (index = 0; index < requestJSON.billing.length; index++) {
-            responseJSON.billing[index] = '***';
+        if(Object.keys(requestJSON.billing).length > 1) {
+            for (var index in requestJSON.billing) {
+                requestJSON.billing[index] = '***';
+            }
         }
     }
 
-    if (requestJSON.consumer && requestJSON.consumer.email) {
-        responseJSON.consumer.email = '***';
+    if (requestJSON.consumer) {
+        if (requestJSON.consumer.email) {
+            requestJSON.consumer.email = '***';
+        }
+        if (requestJSON.consumer.phoneNumber) {
+            requestJSON.consumer.phoneNumber = '***';
+        }
     }
-    return JSON.stringify(responseJSON);
+    return JSON.stringify(requestJSON);
 };
 
 /**

@@ -18,7 +18,7 @@ var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('AFTERPAY');
 var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
 var ECPaymentHelpers = require('*/cartridge/scripts/payment/expressCheckoutPaymentHelpers');
-var brandUtilities = AfterpayUtilities.brandUtilities;
+var { brandUtilities } = AfterpayUtilities;
 
 /**
  * Handles Afterpay token generation process
@@ -29,7 +29,7 @@ function Handle(args) {
     var cart = Cart.get(args.Basket);
 
     Transaction.wrap(function () {
-        cart.removeAllPaymentInstruments();
+        cart.removeExistingPaymentInstruments('AFTERPAY');
         cart.createPaymentInstrument('AFTERPAY', cart.getNonGiftCertificateAmount());
     });
 

@@ -27,11 +27,15 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     if(countrycode === 'GB'){
         checkoutButtonClass = 'clearpay-checkout-button';
     }
+
+    if(disableAfterpayPaymentMethod){
+        checkoutButtonClass += " afterpay-hide";
+    }
 </isscript>
 <iscomment>Start of Afterpay</iscomment>
 <isset name="afterpayExpressCheckoutPage" value="cart" scope="page" />
 <isinclude template="product/components/afterpayexpresscheckout" />
-<isif condition="${afterpayExpressCheckoutEnabled && !disableAfterpayPaymentMethod}">
+<isif condition="${afterpayExpressCheckoutEnabled}">
     <div class="mb-sm-3">
         <isif condition="${isExpressCheckoutFinalize}">
             <a href="${URLUtils.url('AfterpayExpress-ContinueFinalize')}" class="${checkoutButtonClass} btn btn-block checkout-btn ${pdict.valid.error ? 'disabled' : ''}">

@@ -5,9 +5,10 @@ var COHelpers = require('*/cartridge/scripts/checkout/checkoutHelpers');
 var csrfProtection = require('*/cartridge/scripts/middleware/csrf');
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('AfterpayRedirect');
-var apUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
-var apBrandUtilities = apUtilities.brandUtilities;
-var apCheckoutUtilities = apUtilities.checkoutUtilities;
+var {
+         brandUtilities: apBrandUtilities,
+         checkoutUtilities: apCheckoutUtilities
+     } = require('*/cartridge/scripts/util/afterpayUtilities');
 
 /* API Includes */
 var OrderMgr = require('dw/order/OrderMgr');

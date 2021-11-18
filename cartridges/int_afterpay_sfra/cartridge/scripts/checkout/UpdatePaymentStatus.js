@@ -22,8 +22,7 @@ var updatePaymentStatus = {};
 * @returns {Object} - authorization or error
 */
 updatePaymentStatus.handlePaymentStatus = function (order) {
-    var apUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
-    var apCheckoutUtilities = apUtilities.checkoutUtilities;
+    var { checkoutUtilities: apCheckoutUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
     var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
     var response;
     var finalPaymentStatus;

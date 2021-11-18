@@ -43,9 +43,9 @@ var afterpayUpdateOrder = {
         var amount = null;
 
         Transaction.wrap(function () {
-            payTrans.setTransactionID((paymentResult.id) ? paymentResult.id : null);
+            payTrans.setTransactionID(paymentResult.id || null);
             payTrans.setPaymentProcessor(afterpayUpdateOrder.getPaymentProcessor());
-            payTrans.custom.apPaymentID = (paymentResult.id) ? paymentResult.id : null;
+            payTrans.custom.apPaymentID = paymentResult.id || null;
             payTrans.custom.apPaymentMode = paymentMode;
             payTrans.custom.apCountryCode = BrandUtilities.getCountryCode();
 

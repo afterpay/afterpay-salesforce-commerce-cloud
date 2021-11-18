@@ -10,9 +10,7 @@
 var Money = require('dw/value/Money');
 
 /* Script Modules */
-var AfterpayUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
-var BrandUtilities = AfterpayUtilities.brandUtilities;
-var SitePreferences = AfterpayUtilities.sitePreferencesUtilities;
+var { brandUtilities: BrandUtilities, sitePreferencesUtilities: SitePreferences } = require('*/cartridge/scripts/util/afterpayUtilities');
 var ctrlCartridgeName = SitePreferences.getControllerCartridgeName();
 var thresholdUtilities = require('*/cartridge/scripts/util/thresholdUtilities');
 

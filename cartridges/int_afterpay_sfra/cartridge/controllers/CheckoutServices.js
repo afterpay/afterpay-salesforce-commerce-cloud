@@ -132,10 +132,7 @@ server.prepend(
                 billingAddress.setStateCode(billingData.address.stateCode.value);
             }
             billingAddress.setCountryCode(billingData.address.countryCode.value);
-            if (req.currentCustomer.profile && billingData.storedPaymentUUID) {
-                billingAddress.setPhone(req.currentCustomer.profile.phone);
-                currentBasket.setCustomerEmail(req.currentCustomer.profile.email);
-            } else if (paymentMethodID === 'AFTERPAY' || paymentMethodID === 'CLEARPAY') {
+            if (paymentMethodID === 'AFTERPAY' || paymentMethodID === 'CLEARPAY') {
                 billingAddress.setPhone(billingData.phone.value);
                 currentBasket.setCustomerEmail(billingData.email.value);
             }

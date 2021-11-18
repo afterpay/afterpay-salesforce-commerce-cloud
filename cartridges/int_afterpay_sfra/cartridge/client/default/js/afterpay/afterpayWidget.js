@@ -25,11 +25,9 @@ function getWidget(updatedProductID, updatedProductPrice, className, $productCon
                 }
             } else {
                 if (typeof $productContainer !== 'undefined') {
-                    $productContainer.find('.afterpay-widget').html('');
-                    $productContainer.find('.afterpay-widget').show();
+                    $productContainer.find('.afterpay-widget').empty().show();
                 } else if (typeof $productContainer === 'undefined') {
-                    $('.afterpay-widget').html('');
-                    $('.afterpay-widget').show();
+                    $('.afterpay-widget').empty().show();
                 }
             }
         }

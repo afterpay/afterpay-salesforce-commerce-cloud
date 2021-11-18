@@ -2,11 +2,7 @@
 
 var Builder = require('../util/builder');
 var afterpayWebServiceUtilities = require('*/cartridge/scripts/util/afterpayUtilities').sitePreferencesUtilities;
-var Order = require('*/cartridge/scripts/order/expressOrder').Order;
-var LineItem = require('*/cartridge/scripts/order/expressOrder').LineItem;
-var Discount = require('*/cartridge/scripts/order/expressOrder').Discount;
-var Shipping = require('*/cartridge/scripts/order/expressOrder').Shipping;
-var Amount = require('*/cartridge/scripts/order/expressOrder').Amount;
+var { Order, LineItem, Discount, Shipping, Amount } = require('*/cartridge/scripts/order/expressOrder');
 
 /**
  * @class

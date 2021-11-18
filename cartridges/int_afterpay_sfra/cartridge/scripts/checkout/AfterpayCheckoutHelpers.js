@@ -1,8 +1,8 @@
 'use strict';
 var apUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
-var apBrandUtilities = apUtilities.brandUtilities;
 var apCheckoutUtilities = apUtilities.checkoutUtilities;
 var thresholdUtilities = require('*/cartridge/scripts/util/thresholdUtilities');
+var ArrayList = require('dw/util/ArrayList');
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('afterpayCheckoutHelpers');
 
@@ -230,22 +230,20 @@ var checkoutTools = {
             let product = li.product;
             // just ignore names. Using quantity/productid/price/currency
             // product can be null if line-item is something like a warranty. Just ignoring those.
-            let amt = null;
             let cc = null;
             let id = null;
             if (product) {
-                amt = product.getPriceModel().getPrice().value.toFixed(2);
                 cc = product.getPriceModel().getPrice().currencyCode.toUpperCase();
                 id = product.ID;
             } else {
-                amt = li.adjustedNetPrice.value.toFixed(2);
                 cc = li.adjustedNetPrice.currencyCode.toUpperCase();
                 id = li.productID;
             }
-            let s = '' + li.getQuantity().value + ',' + id + ',' + amt + ',' + cc;
+            let s = '' + li.getQuantity().value + ',' + id + ',' + cc;
             cksum += crc32(s);
             Logger.debug('Line and checksum: ' + s + ' Checksum:' + cksum);
         });
+        Logger.debug('Final Checksum' + cksum);
         return cksum;
     },
     // compute a checksum for the current shipping address so we can check
@@ -270,13 +268,6 @@ var checkoutTools = {
         var isWithinThreshold = thresholdUtilities.checkThreshold(price);
         return isWithinThreshold.status;
     },
-    isPriceBelowThreshold: function (price) {
-        if (!price) {
-            return false;
-        }
-        var isWithinThreshold = thresholdUtilities.checkThreshold(price);
-        return isWithinThreshold.status;
-    },
     isBasketAmountWithinThreshold: function () {
         var basket = dw.order.BasketMgr.getCurrentBasket();
         if (!basket) {
@@ -286,6 +277,25 @@ var checkoutTools = {
 
         var isWithinThreshold = thresholdUtilities.checkThreshold(orderTotal);
         return isWithinThreshold.status;
+    },
+    // compute a checksum from the Afterpay Response
+    // if anything changed
+    computeResponseProductLineItemChecksum: function (ctnr) {
+        let crc32 = require("*/cartridge/scripts/util/afterpayUtilities.js").crc32;
+        // Should use whatever info we use in building the create checkout
+        var lineItems = new ArrayList(ctnr.items);
+        var apItemsList = lineItems.iterator();
+        let cksum = 0;
+        while (apItemsList.hasNext()) {
+            let apProductLineItem = apItemsList.hasNext() ? apItemsList.next() : '';
+            let cc = apProductLineItem.price.currency;
+            let id = apProductLineItem.sku ? apProductLineItem.sku : '';
+            let s = "" + apProductLineItem.quantity + "," + id + "," + cc;
+            cksum += crc32(s);
+            Logger.debug("Line and checksum: " + s + " Checksum:" + cksum);
+        }
+        Logger.debug("Final Checksum" + cksum);
+        return cksum;
     }
 };
 

@@ -2,12 +2,9 @@
 var paymentService = require('*/cartridge/scripts/payment/paymentService');
 var afterpayDirectCaptureService = require('*/cartridge/scripts/logic/services/afterpayDirectCapturePaymentService');
 var afterpayAuthoriseService = require('*/cartridge/scripts/logic/services/afterpayAuthorisePaymentService');
-var afterpayUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
-var sitePreferences = afterpayUtilities.sitePreferencesUtilities;
 var PAYMENT_MODE = require('*/cartridge/scripts/util/afterpayConstants').PAYMENT_MODE;
 var PAYMENT_STATUS = require('*/cartridge/scripts/util/afterpayConstants').PAYMENT_STATUS;
-var apUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
-var apCheckoutUtilities = apUtilities.checkoutUtilities;
+var { checkoutUtilities: apCheckoutUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
 
 var Site = require('dw/system/Site');
 var Resource = require('dw/web/Resource');

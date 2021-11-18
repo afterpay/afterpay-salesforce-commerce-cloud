@@ -2,8 +2,10 @@
 var Transaction = require('dw/system/Transaction');
 var OrderMgr = require('dw/order/OrderMgr');
 var Order = require('dw/order/Order');
-
-var AfterpayCheckoutUtilities = require('*/cartridge/scripts/util/afterpayUtilities').checkoutUtilities;
+var { 
+    checkoutUtilities: AfterpayCheckoutUtilities,
+    brandUtilities
+} = require('*/cartridge/scripts/util/afterpayUtilities');
 var PAYMENT_MODE = require('*/cartridge/scripts/util/afterpayConstants').PAYMENT_MODE;
 var PAYMENT_STATUS = require('*/cartridge/scripts/util/afterpayConstants').PAYMENT_STATUS;
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
@@ -70,7 +72,6 @@ var _getOrdersNotPaid = function () {
 };
 
 var checkPaymentStatus = function () {
-    var { brandUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
     var orders = _getOrdersNotPaid();
 
     if (orders.count === 0) {

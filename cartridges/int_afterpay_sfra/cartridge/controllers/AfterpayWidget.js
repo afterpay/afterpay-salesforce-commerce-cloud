@@ -38,27 +38,14 @@ server.get('GetUpdatedWidget',
 
         var updatedTemplate = 'util/afterpayMessage';
         var priceContext;
-        var totalPrice = 0;
+        var totalPrice;
 
         if (req.querystring.className === 'cart-afterpay-message' || req.querystring.className === 'checkout-afterpay-message') {
             var basketObject = BasketMgr.getCurrentBasket();
             totalPrice = basketObject.totalGrossPrice;
         } else {
-            var productID = req.querystring.productID;
             var currencyCode = req.session.currency.currencyCode;
-            var productObject = ProductFactory.get({
-                pid: productID
-            });
-
-            if (productObject.price.sales) {
-                totalPrice = productObject.price.sales.value;
-            } else if (productObject.price.list) {
-                totalPrice = productObject.price.list.value;
-            } else if (productObject.price.min.sales) {
-                totalPrice = productObject.price.min.sales.value;
-            } else if (productObject.price.min.list) {
-                totalPrice = productObject.price.min.list.value;
-            }
+            totalPrice = req.querystring.updatedProductPrice;
 
             if (!empty(totalPrice)) {
                 totalPrice = new Money(totalPrice, currencyCode);

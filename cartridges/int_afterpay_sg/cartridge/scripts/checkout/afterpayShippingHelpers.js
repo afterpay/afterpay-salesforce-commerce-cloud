@@ -1,6 +1,7 @@
 'use strict';
 var AfterpayUtilities = require('*/cartridge/scripts/util/afterpayUtilities.js');
 var sitePreferences = AfterpayUtilities.sitePreferencesUtilities;
+var ShippingMgr = require('dw/order/ShippingMgr');
 
 var storePickupTools = {
     getStorePickupMethodSet: function() {
@@ -13,14 +14,14 @@ var storePickupTools = {
         return storePickupSet;
     },
     getShippingMethodForID: function(shipId) {
-        let shippingMethods = dw.order.ShippingMgr.getAllShippingMethods();
+        let shippingMethods = ShippingMgr.getAllShippingMethods();
         let shipMethods = shippingMethods.toArray().filter(function(method) {
             return method.ID == shipId;
         })
         return shipMethods[0] || null;
     },
     setCartShippingMethod: function(cart, shippingMethod) {
-        let shippingMethods = dw.order.ShippingMgr.getAllShippingMethods();
+        let shippingMethods = ShippingMgr.getAllShippingMethods();
         let Transaction = require('dw/system/Transaction');
         Transaction.wrap(function () {
             cart.updateShipmentShippingMethod(cart.getDefaultShipment().getID(), shippingMethod.getID(), shippingMethod, shippingMethods);
@@ -40,7 +41,6 @@ var storePickupTools = {
         return null;
     },
     calculateCartTaxShipTotals: function(cart) {
-        var ShippingMgr = require('dw/order/ShippingMgr');
         let Transaction = require('dw/system/Transaction'); 
         // This should be the in-store pickup. However I guess it can be null for in-store
         //let shipmethod = inMethod || cart.getDefaultShipment().getShippingMethod();

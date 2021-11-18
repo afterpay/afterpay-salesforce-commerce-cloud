@@ -29,7 +29,7 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
         // for pdp, we don't use the basket amount, we just check if the current product > max thresshold
         if (afterpayExpressCheckoutPage === 'product_detail' && afterpayExpressCheckoutPdpEnabled) {
             if (product && product.price) {
-                disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isPriceBelowThreshold(
+                disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isPriceWithinThreshold(
                     AfterpayCOHelpers.getProductPriceForMessaging(product.price));
             }
         }

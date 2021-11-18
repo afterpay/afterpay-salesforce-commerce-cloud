@@ -9,18 +9,13 @@ var Logger = LogUtils.getLogger('afterpayExpressGetToken');
  * calls token service to retrieve the token
  */
 function getExpressToken(basket, checkoutPrice, sourceUrl, merchantReference, store) {
-    var AfterpayToken;
     try {
         orderCreateService.generateRequest(basket, checkoutPrice, sourceUrl, merchantReference, store);
-
         var response = orderCreateService.getResponse();
-        var res = new TokenModel();
-
         if (!empty(response.token)) {
+            var AfterpayToken = new TokenModel();
             Logger.debug('Afterpay Token generated from service: ' + response.token);
-            res.apToken = response.token;
-
-            AfterpayToken = res;
+            AfterpayToken.apToken = response.token;
             return AfterpayToken;
         }
         Logger.error('Can not get token. The response: ' + response);

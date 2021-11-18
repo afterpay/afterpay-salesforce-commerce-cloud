@@ -342,6 +342,7 @@ server.get('CartStatus',
             let cartTotals = AfterpayShippingHelpers.calculateBasketTaxShipTotals(req, currentBasket);
             res.json({ cartTotalAmount: cartTotals.totalCost.value,
                 cartTotalCurrency: cartTotals.totalCost.currencyCode,
+                withinThreshold: AfterpayCOHelpers.isBasketAmountWithinThreshold(),
                 instorepickup: AfterpayCOHelpers.shouldEnableExpressPickupMode(currentBasket),
                 expressCheckoutFinalize: AfterpaySession.isExpressCheckoutFinalizeFlow() });
             return next();

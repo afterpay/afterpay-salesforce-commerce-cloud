@@ -124,7 +124,7 @@ function CreateToken() {
     // If so, we use in-store pickup mode for express checkout
     if ((numHomeDeliveries == 0) && (Object.keys(storeMap).length == 1)) {
         storePickup = true;
-        for (key in storeMap) {
+        for (var key in storeMap) {
             store = storeMap[key];
         }
     } else if ((numHomeDeliveries > 0) && (Object.keys(storeMap).length > 0) && expressCheckoutShippingStrategy == 'integrated') {
@@ -197,7 +197,7 @@ function GetShippingMethods() {
     }
     var ShippingMgr = require('dw/order/ShippingMgr');
     var HashMap = require('dw/util/HashMap');
-    var ShippingHelpers = require('*/cartridge/scripts/checkout/afterpayShippingHelpers');
+    var ShippingHelpers = require('~/cartridge/scripts/checkout/afterpayShippingHelpers');
 
     var i,
         address,
@@ -218,7 +218,7 @@ function GetShippingMethods() {
         // if this is a store pickup, just get the store name
         let storeMap = COHelpers.getInStorePickupsMap(cart.object);
         let store = null;
-        for (key in storeMap) {
+        for (var key in storeMap) {
             store = storeMap[key];
         }
         if (store) {
@@ -390,7 +390,7 @@ function PostAfterpayCheckoutFlow() {
 
 function DeferredShippingFlow(afterPayOrderResponse) {
     var Transaction = require('dw/system/Transaction');
-    var ShippingHelpers = require('*/cartridge/scripts/checkout/afterpayShippingHelpers');
+    var ShippingHelpers = require('~/cartridge/scripts/checkout/afterpayShippingHelpers');
 
     var cart = app.getModel('Cart').get();
     if (!cart) {
@@ -490,7 +490,7 @@ function IntegratedShippingFlow(afterPayOrderResponse) {
         (adjustCartResponse.totalCost.currencyCode != currency)) {
         // this can occur if session was modified while express checkout was in flight
         Logger.error('Amount returned by Afterpay did not match expected amount. Afterpay returned=' + amount + currency + ' Merchant computed=' + adjustCartResponse.totalCost.value + adjustCartResponse.totalCost.currencyCode);
-        redirectToErrorDisplay(Resource.msg('expresscheckout.error.checkout', brand, null));
+        redirectToErrorDisplay(Resource.msg('apierror.token.conflict', brand, null));
         return;
     }
 

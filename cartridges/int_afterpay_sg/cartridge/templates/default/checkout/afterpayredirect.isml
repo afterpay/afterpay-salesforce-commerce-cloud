@@ -1,7 +1,7 @@
 <iscontent type="text/html" charset="UTF-8" compact="true"/>
 <isdecorate template="checkout/pt_checkout"/>
     <script src="${pdict.apJavascriptURL}" async></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="${URLUtils.staticURL('/lib/jquery/jquery.min.js')}"></script>
     <script>
         var brand = '${pdict.apBrand}';
         var countryCode = '${pdict.countryCode}';

@@ -4,8 +4,7 @@ var Resource = require('dw/web/Resource');
 var TaxMgr = require('dw/order/TaxMgr');
 
 var Builder = require('../util/builder');
-var afterpayWebServiceUtilities = require('*/cartridge/scripts/util/afterpayUtilities').sitePreferencesUtilities;
-var { brandUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
+var { checkoutUtilities, brandUtilities, sitePreferencesUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
 var Order = require('*/cartridge/scripts/order/order');
 var LineItem = require('*/cartridge/scripts/order/lineItem');
 var Discount = require('*/cartridge/scripts/order/discount');
@@ -69,9 +68,7 @@ OrderRequestBuilder.prototype._buildAddress = function (type, address) {
  * @returns {dw.order.PaymentTransaction} - payment transaction associated with provided basket
  */
 OrderRequestBuilder.prototype._getPaymentTransaction = function (basket) {
-    var apUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
-    var apCheckoutUtilities = apUtilities.checkoutUtilities;
-    var paymentMethod = apCheckoutUtilities.getPaymentMethodName();
+    var paymentMethod = checkoutUtilities.getPaymentMethodName();
 
     if (!paymentMethod) {
         return null;
@@ -199,9 +196,32 @@ OrderRequestBuilder.prototype.buildPurchaseCountry = function () {
  */
 OrderRequestBuilder.prototype.buildShipping = function (basket) {
     var shippingAddress = basket.defaultShipment.shippingAddress;
-
-    this._buildAddress('shipping', shippingAddress);
-
+    if(shippingAddress.address1 !== null){
+        this._buildAddress('shipping', shippingAddress);
+    }
+    else{
+        var storeMap = {};
+        let lineItemsIter = basket.allProductLineItems.iterator();
+        while(lineItemsIter.hasNext()) {
+            let lineItem = lineItemsIter.next();
+            if (lineItem.custom.fromStoreId) {
+                storeMap[lineItem.custom.fromStoreId] = dw.catalog.StoreMgr.getStore(lineItem.custom.fromStoreId);
+            }
+        }
+        Logger.debug("storeMap : " + JSON.stringify(storeMap));
+        if (Object.keys(storeMap).length == 1) {
+            storePickup = true;
+            for (var key in storeMap) {
+                store = storeMap[key];
+            }
+            if(store){
+                this._buildShiptoStore('shipping', store);
+            }
+        }
+        else{
+            return null;
+        }
+    }
     return this;
 };
 
@@ -213,37 +233,27 @@ OrderRequestBuilder.prototype.buildShipping = function (basket) {
 OrderRequestBuilder.prototype.buildItems = function (basket) {
     var lineItems = basket.getAllProductLineItems().toArray();
 
-    for (var i = 0; i < lineItems.length; i++) {
-        var lineItem = lineItems[i];
-        var product = lineItem.product;
-
-        if (product) {
-            var bundledProduct = product.bundled ? product.bundled : false;
-
-            if (!(bundledProduct)) {
+    this.context.items = lineItems.map(function (li) {
                 var item = new LineItem();
+        var product = li.product;
 
-                if (TaxMgr.getTaxationPolicy() === TaxMgr.TAX_POLICY_GROSS) {
-                    if (lineItem.adjustedGrossPrice) {
-                        item.price.amount = lineItem.adjustedGrossPrice.divide(lineItem.quantity.value).value;
-                    }
-                } else if (lineItem.adjustedNetPrice) {
-                    item.price.amount = lineItem.adjustedNetPrice.divide(lineItem.quantity.value).value;
-                }
-
-                if (!item.price.amount) {
-                    item.price.amount = product.getPriceModel().getPrice().value;
-                }
-
+    // Some lineitems may not be products
+    // e.g. extended warranties
+        if (!product) {
+            item.name = li.getLineItemText();
+            item.sku = li.productID;
+            item.quantity = li.getQuantity().value;
+            item.price.amount = li.adjustedNetPrice.value;
+            item.price.currency = li.adjustedNetPrice.currencyCode;
+        } else {
                 item.name = product.name;
                 item.sku = product.ID;
-                item.quantity = lineItem.getQuantity().value;
+            item.quantity = li.getQuantity().value;
+            item.price.amount = product.getPriceModel().getPrice().value;
                 item.price.currency = product.getPriceModel().getPrice().currencyCode;
-
-                this.context.items.push(item);
             }
-        }
-    }
+        return item;
+    });
     return this;
 };
 
@@ -253,8 +263,8 @@ OrderRequestBuilder.prototype.buildItems = function (basket) {
  * @returns {Object} - this object
  */
 OrderRequestBuilder.prototype.buildMerchantInformation = function (url) {
-    this.context.merchant.redirectConfirmUrl = !empty(url) ? url : afterpayWebServiceUtilities.getRedirectConfirmUrl();
-    this.context.merchant.redirectCancelUrl = !empty(url) ? url : afterpayWebServiceUtilities.getRedirectCancelUrl();
+    this.context.merchant.redirectConfirmUrl = !empty(url) ? url : sitePreferencesUtilities.getRedirectConfirmUrl();
+    this.context.merchant.redirectCancelUrl = !empty(url) ? url : sitePreferencesUtilities.getRedirectCancelUrl();
 
     return this;
 };
@@ -353,5 +363,17 @@ OrderRequestBuilder.prototype.buildTotalTax = function (basket) {
 
     return this;
 };
+
+OrderRequestBuilder.prototype._buildShiptoStore = function(type, store) {
+    this.context[type].name = store.name || 'UNKNOWN';
+    this.context[type].line1 = store.address1 || '';
+    this.context[type].line2 = store.address2 || '';
+    this.context[type].area1 = store.city || '';
+    this.context[type].region = store.stateCode || '';
+    this.context[type].postcode = store.postalCode || '';
+    this.context[type].countryCode = store.countryCode.value || '';
+    this.context[type].phoneNumber = store.phone || '';
+};
+
 
 module.exports = OrderRequestBuilder;

@@ -32,7 +32,6 @@ function getOrder(token) {
     }
 }
 
-
 /*
  * Module exports
  */

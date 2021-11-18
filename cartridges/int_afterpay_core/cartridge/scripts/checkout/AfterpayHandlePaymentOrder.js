@@ -1,7 +1,5 @@
 var PAYMENT_STATUS = require('*/cartridge/scripts/util/afterpayConstants').PAYMENT_STATUS;
-var apUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
-var brandUtilities = apUtilities.brandUtilities;
-var sitePreferencesUtilities = apUtilities.sitePreferencesUtilities;
+var { sitePreferencesUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
 var afterpayUpdateOrder = require('*/cartridge/scripts/checkout/afterpayUpdateOrder');
 var baseUpdateOrderService = require('*/cartridge/scripts/logic/services/afterpayUpdateOrderService');
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');

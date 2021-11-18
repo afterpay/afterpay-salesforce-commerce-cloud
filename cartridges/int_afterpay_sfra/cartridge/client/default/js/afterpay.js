@@ -24,11 +24,9 @@ function getWidget(updatedProductID, updatedProductPrice, className, $productCon
                     $('.afterpay-widget').show();
                 }
             } else if (typeof $productContainer !== 'undefined') {
-                $productContainer.find('.afterpay-widget').html('');
-                $productContainer.find('.afterpay-widget').show();
+                $productContainer.find('.afterpay-widget').empty().show();
             } else if (typeof $productContainer === 'undefined') {
-                $('.afterpay-widget').html('');
-                $('.afterpay-widget').show();
+                $('.afterpay-widget').empty().show();
             }
         }
     });
@@ -59,6 +57,7 @@ function updateStorePickupState() {
                     $('#afterpay-express-storepickup').val(data.instorepickup.toString());
                     initAfterpay({ pickupflag: data.instorepickup });
                 }
+                $('#afterpay-express-button').toggleClass('afterpay-hide', !data.withinThreshold);
             }
         });
     }
@@ -134,11 +133,7 @@ $(document).ready(function () {
         }
 
         // On pdp page, if a store is selected, disable buy now express checkout button.
-        if ($('.store-name').length > 0) {
-            $('#afterpay-express-pdp-button').addClass('afterpay-hide');
-        } else {
-            $('#afterpay-express-pdp-button').removeClass('afterpay-hide');
-        }
+        $('#afterpay-express-pdp-button').toggleClass('afterpay-hide', $('.store-name').length);
 
 
         if ($('.cart-page').length > 0) {

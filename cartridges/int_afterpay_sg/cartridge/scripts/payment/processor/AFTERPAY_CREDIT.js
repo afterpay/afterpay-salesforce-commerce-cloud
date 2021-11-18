@@ -3,8 +3,7 @@
 /* Script Modules */
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('AFTERPAY_CREDIT');
-var AfterpayUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
-var BrandUtilities = AfterpayUtilities.brandUtilities;
+var { brandUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
 var BrandMapping = require('*/cartridge/scripts/brandMapping');
 
 /**
@@ -13,7 +12,7 @@ var BrandMapping = require('*/cartridge/scripts/brandMapping');
  * @returns {Object} response - response
  */
 function Handle(args) {
-    var brand = BrandUtilities.getBrand();
+    var brand = brandUtilities.getBrand();
     var mapping = BrandMapping[brand];
     var processorPath = null;
 
@@ -47,7 +46,7 @@ function Handle(args) {
  * @returns {Object} response - response
  */
 function Authorize(args) {
-    var brand = BrandUtilities.getBrand();
+    var brand = brandUtilities.getBrand();
     var mapping = BrandMapping[brand];
     var processorPath = null;
 

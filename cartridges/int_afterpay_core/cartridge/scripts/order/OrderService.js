@@ -2,7 +2,6 @@
 
 var afterpayHttpService = require('*/cartridge/scripts/logic/services/afterpayHttpService');
 var afterpayUtils = require('*/cartridge/scripts/util/afterpayUtils');
-var { brandUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
 var OrderRequestBuilder = require('*/cartridge/scripts/order/orderRequestBuilder');
 
 /**

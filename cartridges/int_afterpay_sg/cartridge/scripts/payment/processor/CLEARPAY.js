@@ -18,7 +18,7 @@ var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('CLEARPAY');
 var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
 var ECPaymentHelpers = require('*/cartridge/scripts/payment/expressCheckoutPaymentHelpers');
-var brandUtilities = AfterpayUtilities.brandUtilities;
+var { brandUtilities } = AfterpayUtilities;
 
 
 /**
@@ -30,7 +30,7 @@ function Handle(args) {
     var cart = Cart.get(args.Basket);
 
     Transaction.wrap(function () {
-        cart.removeAllPaymentInstruments();
+        cart.removeExistingPaymentInstruments('CLEARPAY');
         cart.createPaymentInstrument('CLEARPAY', cart.getNonGiftCertificateAmount());
     });
 

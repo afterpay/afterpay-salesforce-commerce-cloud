@@ -16,8 +16,7 @@ var UUIDUtils = require('dw/util/UUIDUtils');
 /* Script Modules */
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('TransActions');
-var afterpayUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
-var brandUtilities = afterpayUtilities.brandUtilities;
+var { brandUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
 
 /**
  * updates the order status

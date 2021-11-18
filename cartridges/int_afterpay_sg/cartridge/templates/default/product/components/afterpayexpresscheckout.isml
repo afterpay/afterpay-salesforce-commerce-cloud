@@ -21,7 +21,7 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     var disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isBasketAmountWithinThreshold();
     // for pdp, we don't use the basket amount, we just check if the current product > max thresshold
     if (pdict.pagetype === 'product_detail' && afterpayExpressCheckoutPdpEnabled) {
-        disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isPriceBelowThreshold(SalesPrice ? SalesPrice : StandardPrice);
+        disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isPriceWithinThreshold(SalesPrice ? SalesPrice : StandardPrice);
     }
     var BrandUtilities = require("*/cartridge/scripts/util/afterpayUtilities.js").brandUtilities;
     var countrycode = BrandUtilities.getCountryCode();

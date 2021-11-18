@@ -1,8 +1,6 @@
 'use strict';
-var afterpayUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
-var sitePreferences = afterpayUtilities.sitePreferencesUtilities;
+var { checkoutUtilities: apCheckoutUtilities, sitePreferencesUtilities: sitePreferences } = require('*/cartridge/scripts/util/afterpayUtilities');
 var ctrlCartridgeName = sitePreferences.getControllerCartridgeName();
-var apCheckoutUtilities = afterpayUtilities.checkoutUtilities;
 
 /* Script Modules */
 var app = require(ctrlCartridgeName + '/cartridge/scripts/app');

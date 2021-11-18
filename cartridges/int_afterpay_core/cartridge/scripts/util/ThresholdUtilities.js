@@ -1,10 +1,15 @@
 /* global session */
 var PaymentMgr = require('dw/order/PaymentMgr');
 
-var AfterpayUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
 var configurationService = require('*/cartridge/scripts/logic/services/afterpayConfigurationService');
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('thresholdUtilities');
+var { brandUtilities, checkoutUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
+var afterpayBrand = BrandUtilities.getBrand();
+var countryCode = BrandUtilities.getCountryCode();
+var result = {
+    status: false
+};
 
 /**
  * @abstract
@@ -17,20 +22,20 @@ var thresholdUtilities = {
             minAmount: 0,
             maxAmount: 0
         };
-    
+
         if (thresholdResponse) {
             var minThresholdObj = thresholdResponse.minimumAmount;
             var maxThresholdObj = thresholdResponse.maximumAmount;
-    
+
             if (minThresholdObj) {
                 configuration.minAmount = parseFloat(minThresholdObj.amount, 10);
             }
-    
+
             if (maxThresholdObj) {
                 configuration.maxAmount = parseFloat(maxThresholdObj.amount, 10);
             }
         }
-    
+
         return configuration;
     },
     getThresholdAmounts: function (afterpayBrand) {
@@ -74,25 +79,28 @@ var thresholdUtilities = {
         }
     },
     checkThreshold: function (price) {
-        var BrandUtilities = AfterpayUtilities.brandUtilities;
-        var CheckoutUtilities = AfterpayUtilities.checkoutUtilities;
-
-        var afterpayBrand = BrandUtilities.getBrand();
-        var countryCode = BrandUtilities.getCountryCode();
-        var result = {
-            status: false
-        };
-
         if (afterpayBrand && (price && price.value)) {
+            result =  this.getThresholdResult(price.value);
+        }
+        return result;
+    },
+    checkPriceThreshold: function (price) {
+        if (afterpayBrand && price) {
+            result =  this.getThresholdResult(price);
+        }
+        return result;
+    },
+    getThresholdResult: function(price) {
+        if (price) {
             var threshold = this.getThresholdAmounts(afterpayBrand);
             this.saveThresholds(afterpayBrand, threshold);
-            var paymentMethodName = CheckoutUtilities.getPaymentMethodName();
+            var paymentMethodName = checkoutUtilities.getPaymentMethodName();
             var paymentMethod;
             var isApplicable;
 
             if (paymentMethodName) {
                 paymentMethod = PaymentMgr.getPaymentMethod(paymentMethodName);
-                isApplicable = paymentMethod.isApplicable(session.customer, countryCode, price.value);
+                isApplicable = paymentMethod.isApplicable(session.customer, countryCode, price);
 
                 result.status = isApplicable;
 
