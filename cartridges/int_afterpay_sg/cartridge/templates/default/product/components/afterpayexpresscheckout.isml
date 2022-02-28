@@ -16,8 +16,8 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     var isExpressCheckoutFinalize = require('*/cartridge/scripts/util/afterpaySession').isExpressCheckoutFinalizeFlow();
     var afterpayExpressCheckoutPdpEnabled = sitePreferences.isExpressCheckoutPdpEnabled();
 
-    var AfterpayCOHelpers = require('~/cartridge/scripts/checkout/afterpayCheckoutHelpers');
-    var afterpayExpressPickupEnabled = afterpayExpressCheckoutEnabled ? AfterpayCOHelpers.shouldEnableExpressPickupMode() : false;
+    var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
+    var afterpayExpressPickupEnabled = afterpayExpressCheckoutEnabled ? require('~/cartridge/scripts/checkout/afterpaySGCheckoutHelpers').shouldEnableExpressPickupMode() : false;
     var disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isBasketAmountWithinThreshold();
     // for pdp, we don't use the basket amount, we just check if the current product > max thresshold
     if (pdict.pagetype === 'product_detail' && afterpayExpressCheckoutPdpEnabled) {

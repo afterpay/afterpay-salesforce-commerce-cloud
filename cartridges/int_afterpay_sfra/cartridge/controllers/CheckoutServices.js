@@ -21,13 +21,12 @@ server.prepend(
         var currentBasket = BasketMgr.getCurrentOrNewBasket();
         var paymentForm = server.forms.getForm('billing');
         var paymentMethodID = paymentForm.paymentMethod.value;
-        var AfterpayCOHelpers = require('~/cartridge/scripts/checkout/afterpayCheckoutHelpers');
         var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
 
         if (paymentMethodID !== 'AFTERPAY' && paymentMethodID !== 'CLEARPAY') {
             // For express checkout, it's possible there was a Afterpay payment method in the basket,
             // so remove it if a non-Afterpay payment method was selected
-            AfterpayCOHelpers.removeAfterpayPayments(currentBasket);
+            require('~/cartridge/scripts/checkout/afterpayRefArchCheckoutHelpers').removeAfterpayPayments(currentBasket);
             AfterpaySession.clearSession();
             next();
             return;

@@ -27,8 +27,10 @@ var apBrandUtilities = AfterpayUtilities.brandUtilities;
 var thresholdUtilities = require('*/cartridge/scripts/util/thresholdUtilities');
 var brand = apBrandUtilities.getBrand();
 var threshold = thresholdUtilities.getThresholdAmounts(brand);
-var COHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
+var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
+var AfterpaySGCOHelpers = require('*/cartridge/scripts/checkout/afterpaySGCheckoutHelpers');
 
+var AfterpayShippingHelpers = require('~/cartridge/scripts/checkout/afterpayShippingHelpers');
 
 function redirectToErrorDisplay(error) {
     let redirectURL = dw.web.URLUtils.https('COBilling-Start', 'afterpay', error);
@@ -70,10 +72,9 @@ function CartStatus() {
         return;
     }
 
-    let ShippingHelpers = require('*/cartridge/scripts/checkout/afterpayShippingHelpers');
-    let cartTotals = ShippingHelpers.calculateCartTaxShipTotals(cart);
+    let cartTotals = AfterpayShippingHelpers.calculateCartTaxShipTotals(cart);
 
-    var afterpayExpressPickupEnabled = COHelpers.shouldEnableExpressPickupMode();
+    var afterpayExpressPickupEnabled = AfterpaySGCOHelpers.shouldEnableExpressPickupMode();
     responseUtils.renderJSON({ cartTotalAmount: cartTotals.totalCost.value, cartTotalCurrency: cartTotals.totalCost.currencyCode, instorepickup: afterpayExpressPickupEnabled });
 }
 
@@ -86,7 +87,6 @@ function CreateToken() {
         return;
     }
     var ShippingMgr = require('dw/order/ShippingMgr');
-    var ShippingHelpers = require('*/cartridge/scripts/checkout/afterpayShippingHelpers');
     // reset all session params if user clicks checkout again
     let AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
     AfterpaySession.clearSession();
@@ -113,8 +113,8 @@ function CreateToken() {
 
 
     // Get a map of storeId -> store .
-    let storeMap = COHelpers.getInStorePickupsMap(cart.object);
-    let numHomeDeliveries = COHelpers.getNumHomeDeliveries(cart.object);
+    let storeMap = AfterpayCOHelpers.getInStorePickupsMap(cart.object);
+    let numHomeDeliveries = AfterpayCOHelpers.getNumHomeDeliveries(cart.object);
 
     let store = null;
     let storePickup = false;
@@ -155,7 +155,7 @@ function CreateToken() {
     // This is the initial amount we will create the checkout with
     // var createCheckoutPrice = cart.object.getAdjustedMerchandizeTotalGrossPrice();
     var createCheckoutPrice = cart.getNonGiftCertificateAmount();
-    if (!COHelpers.isPriceWithinThreshold(createCheckoutPrice)) {
+    if (!AfterpayCOHelpers.isPriceWithinThreshold(createCheckoutPrice)) {
         responseUtils.renderJSON({ status: 'FAILURE',
             error: Resource.msgf('minimum.threshold.message', brand, null, new Money(threshold.minAmount, cart.object.currencyCode)
              , new Money(threshold.maxAmount, cart.object.currencyCode)) });
@@ -180,7 +180,7 @@ function CreateToken() {
     AfterpaySession.setExpressCheckoutAmount(createCheckoutPrice.value);
     AfterpaySession.setExpressCheckoutCurrency(createCheckoutPrice.currencyCode);
     // Store a checksum of the line items into the session. Check this before we do a capture.
-    AfterpaySession.setItemsChecksum(COHelpers.computeBasketProductLineItemChecksum(cart.object));
+    AfterpaySession.setItemsChecksum(AfterpayCOHelpers.computeBasketProductLineItemChecksum(cart.object));
 
     app.getController('COShipping').PrepareShipments();
 
@@ -197,7 +197,6 @@ function GetShippingMethods() {
     }
     var ShippingMgr = require('dw/order/ShippingMgr');
     var HashMap = require('dw/util/HashMap');
-    var ShippingHelpers = require('~/cartridge/scripts/checkout/afterpayShippingHelpers');
 
     var i,
         address,
@@ -214,16 +213,16 @@ function GetShippingMethods() {
         return;
     }
 
-    if (COHelpers.shouldEnableExpressPickupMode(cart)) {
+    if (AfterpaySGCOHelpers.shouldEnableExpressPickupMode(cart)) {
         // if this is a store pickup, just get the store name
-        let storeMap = COHelpers.getInStorePickupsMap(cart.object);
+        let storeMap = AfterpayCOHelpers.getInStorePickupsMap(cart.object);
         let store = null;
         for (var key in storeMap) {
             store = storeMap[key];
         }
         if (store) {
             // The cart should only have in-store pickup items at this point
-            let costs = ShippingHelpers.calculateCartTaxShipTotals(cart);
+            let costs = AfterpayShippingHelpers.calculateCartTaxShipTotals(cart);
             responseUtils.renderJSON([{
                 id: store.ID,
                 name: store.name,
@@ -268,7 +267,7 @@ function GetShippingMethods() {
         }
 
         // copy in the shipping address to the basket to get tax/shipping rates
-        COHelpers.addShippingAddressToBasket(cart.object, {
+        AfterpaySGCOHelpers.addShippingAddressToBasket(cart.object, {
             name: '',
             line1: addressIn.address1 || '',
             line2: addressIn.address2 || '',
@@ -340,7 +339,6 @@ function PostAfterpayCheckoutFlow() {
     var BasketMgr = require('dw/order/BasketMgr');
     var OrderMgr = require('dw/order/OrderMgr');
     var Transaction = require('dw/system/Transaction');
-    var ShippingHelpers = require('*/cartridge/scripts/checkout/afterpayShippingHelpers');
 
     var apOrderToken = AfterpaySession.getToken();
     // var merchantOrderNum = AfterpaySession.getMerchantReference();
@@ -390,7 +388,6 @@ function PostAfterpayCheckoutFlow() {
 
 function DeferredShippingFlow(afterPayOrderResponse) {
     var Transaction = require('dw/system/Transaction');
-    var ShippingHelpers = require('~/cartridge/scripts/checkout/afterpayShippingHelpers');
 
     var cart = app.getModel('Cart').get();
     if (!cart) {
@@ -399,18 +396,18 @@ function DeferredShippingFlow(afterPayOrderResponse) {
         return;
     }
 
-    COHelpers.addShippingAddressToBasket(cart.object, afterPayOrderResponse.shipping);
-    AfterpaySession.setShippingChecksum(COHelpers.computeBasketShippingChecksum(cart.object));
-    COHelpers.addConsumerToBasket(cart.object, afterPayOrderResponse.consumer);
+    AfterpaySGCOHelpers.addShippingAddressToBasket(cart.object, afterPayOrderResponse.shipping);
+    AfterpaySession.setShippingChecksum(AfterpayCOHelpers.computeBasketShippingChecksum(cart.object));
+    AfterpayCOHelpers.addConsumerToBasket(cart.object, afterPayOrderResponse.consumer);
     if (afterPayOrderResponse.billing) {
-        COHelpers.addBillingAddressToBasket(cart.object, afterPayOrderResponse.billing);
+        AfterpayCOHelpers.addBillingAddressToBasket(cart.object, afterPayOrderResponse.billing);
     } else {
         // Use shipping address for billing if billing is not passed in
-        COHelpers.addBillingAddressToBasket(cart.object, afterPayOrderResponse.shipping);
+        AfterpayCOHelpers.addBillingAddressToBasket(cart.object, afterPayOrderResponse.shipping);
     }
 
     app.getController('COShipping').PrepareShipments();
-    let cartTotals = ShippingHelpers.calculateCartTaxShipTotals(cart);
+    let cartTotals = AfterpayShippingHelpers.calculateCartTaxShipTotals(cart);
     var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
     // Even though we do not know shipping cost yet, create the payment instrument
     // so billing screens will show Afterpay as the selected billing option.
@@ -418,7 +415,7 @@ function DeferredShippingFlow(afterPayOrderResponse) {
     Transaction.wrap(function () {
         cart.calculate();
         // remove everything except gift certs
-        COHelpers.removeAllNonGiftCertificatePayments(cart);
+        AfterpaySGCOHelpers.removeAllNonGiftCertificatePayments(cart);
          let paymentInstrument = cart.object.createPaymentInstrument(paymentMethodName, new Money(0.0, cart.object.currencyCode));
         // will compute the amount for us for the payment instrument
         cart.calculatePaymentTransactionTotal();
@@ -433,7 +430,6 @@ function DeferredShippingFlow(afterPayOrderResponse) {
 
 function IntegratedShippingFlow(afterPayOrderResponse) {
     var Transaction = require('dw/system/Transaction');
-    var ShippingHelpers = require('*/cartridge/scripts/checkout/afterpayShippingHelpers');
     var apOrderToken = AfterpaySession.getToken();
 
     var newOrder = null;
@@ -448,39 +444,39 @@ function IntegratedShippingFlow(afterPayOrderResponse) {
     }
 
     let isStorePickup = false;
-    if (COHelpers.shouldEnableExpressPickupMode(cart)) {
+    if (AfterpaySGCOHelpers.shouldEnableExpressPickupMode(cart)) {
         isStorePickup = true;
     }
 
     let adjustCartResponse = false;
 
     // For in-store pickup, the address will be the address of the store
-    COHelpers.addShippingAddressToBasket(cart.object, afterPayOrderResponse.shipping);
-    AfterpaySession.setShippingChecksum(COHelpers.computeBasketShippingChecksum(cart.object));
+    AfterpaySGCOHelpers.addShippingAddressToBasket(cart.object, afterPayOrderResponse.shipping);
+    AfterpaySession.setShippingChecksum(AfterpayCOHelpers.computeBasketShippingChecksum(cart.object));
 
     if (!isStorePickup) {
         // Need to compute the cost given the chosen shipping selection
-        let shipMethod = ShippingHelpers.getShippingMethodForID(selectedShipOption);
+        let shipMethod = AfterpayShippingHelpers.getShippingMethodForID(selectedShipOption);
         if (!shipMethod) {
             Logger.error('Shipping method returned by Afterpay was invalid.');
             redirectToErrorDisplay(Resource.msg('expresscheckout.error.checkout', brand, null));
             return;
         }
-        ShippingHelpers.setCartShippingMethod(cart, shipMethod);
+        AfterpayShippingHelpers.setCartShippingMethod(cart, shipMethod);
     } else {
         // Should we get the address of the store? Or if it's instore pickup, we will never send
         // Store a checksum of the line items into the session. Check this before we do a capture.
         AfterpaySession.setExpressCheckoutInstorePickup(true);
     }
 
-    let cartTotals = ShippingHelpers.calculateCartTaxShipTotals(cart);
-    COHelpers.addConsumerToBasket(cart.object, afterPayOrderResponse.consumer);
+    let cartTotals = AfterpayShippingHelpers.calculateCartTaxShipTotals(cart);
+    AfterpayCOHelpers.addConsumerToBasket(cart.object, afterPayOrderResponse.consumer);
 
     if (afterPayOrderResponse.billing) {
-        COHelpers.addBillingAddressToBasket(cart.object, afterPayOrderResponse.billing);
+        AfterpayCOHelpers.addBillingAddressToBasket(cart.object, afterPayOrderResponse.billing);
     } else {
         // Use shipping address for billing if billing is not passed in
-        COHelpers.addBillingAddressToBasket(cart.object, afterPayOrderResponse.shipping);
+        AfterpayCOHelpers.addBillingAddressToBasket(cart.object, afterPayOrderResponse.shipping);
     }
     adjustCartResponse = { totalCost: cartTotals.totalCost };
 
@@ -500,11 +496,11 @@ function IntegratedShippingFlow(afterPayOrderResponse) {
         session.forms.billing.fulfilled.value = true;
         // create the payment transaction with Afterpay for the desired amount
         Transaction.wrap(function () {
-            COHelpers.removeAllNonGiftCertificatePayments(cart);
+            AfterpaySGCOHelpers.removeAllNonGiftCertificatePayments(cart);
 
             var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
             cart.object.createPaymentInstrument(paymentMethodName, new Money(amount, currency));
-            COHelpers.addShippingAddressToBasket(cart.object, afterPayOrderResponse.shipping);
+            AfterpaySGCOHelpers.addShippingAddressToBasket(cart.object, afterPayOrderResponse.shipping);
         });
 
         // puts initial state into paymentTransaction
@@ -534,10 +530,10 @@ function IntegratedShippingFlow(afterPayOrderResponse) {
         // However, consumer can still modify anything, so will recreate as necessary
         var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
         Transaction.wrap(function () {
-            COHelpers.removeAllNonGiftCertificatePayments(cart);
+            AfterpaySGCOHelpers.removeAllNonGiftCertificatePayments(cart);
 
             let paymentInstrument = cart.object.createPaymentInstrument(paymentMethodName, new Money(amount,currency));
-            COHelpers.addShippingAddressToBasket(cart.object, afterPayOrderResponse.shipping);
+            AfterpaySGCOHelpers.addShippingAddressToBasket(cart.object, afterPayOrderResponse.shipping);
         });
         // Prepopulate the billing form with Afterpay payment type
         app.getForm('billing').object.paymentMethods.selectedPaymentMethodID.htmlValue = paymentMethodName;
@@ -587,7 +583,7 @@ function ContinueFinalize() {
     var Transaction = require('dw/system/Transaction');
     var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
     Transaction.wrap(function () {
-        COHelpers.removeAllNonGiftCertificatePayments(cart);
+        AfterpaySGCOHelpers.removeAllNonGiftCertificatePayments(cart);
         let paymentInstrument = cart.object.createPaymentInstrument(paymentMethodName, new Money(0.0, cart.object.currencyCode));
         cart.calculatePaymentTransactionTotal();
     });
@@ -630,7 +626,6 @@ function FinalizeOrder() {
         return;
     }
 
-    var ShippingHelpers = require('*/cartridge/scripts/checkout/afterpayShippingHelpers');
     var redirectURL;
 
     var apOrderToken = AfterpaySession.getToken();
@@ -642,7 +637,7 @@ function FinalizeOrder() {
     app.getController('COShipping').PrepareShipments();
 
     Transaction.wrap(function () {
-        COHelpers.removeAllNonGiftCertificatePayments(cart);
+        AfterpaySGCOHelpers.removeAllNonGiftCertificatePayments(cart);
         var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
         let paymentInstrument = cart.object.createPaymentInstrument(paymentMethodName, new Money(0.0, cart.object.currencyCode));
         // will compute the amount for us for the payment instrument

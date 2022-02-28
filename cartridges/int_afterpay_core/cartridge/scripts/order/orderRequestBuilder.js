@@ -208,7 +208,7 @@ OrderRequestBuilder.prototype.buildShipping = function (basket) {
                 storeMap[lineItem.custom.fromStoreId] = dw.catalog.StoreMgr.getStore(lineItem.custom.fromStoreId);
             }
         }
-        Logger.debug("storeMap : " + JSON.stringify(storeMap));
+
         if (Object.keys(storeMap).length == 1) {
             storePickup = true;
             for (var key in storeMap) {

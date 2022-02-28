@@ -1,0 +1,23 @@
+<iscontent type="text/html" charset="UTF-8" compact="true"/>
+
+<iscomment>
+    Render the Afterpay message for PLP , PDP and Cart
+</iscomment>
+
+<ismodule template="util/afterpayMessage"
+    name="afterpaymessage"
+    attribute="classname" 
+    attribute="belowthreshold"
+    attribute="brand"
+    attribute="totalprice"
+/>
+
+<ismodule template="product/components/addToCartButtonExtension"
+    name="afterpayexpresscheckout"
+    attribute="pagetype"
+/>
+
+<ismodule template="product/components/checkoutButtons"
+    name="afterpayexpresscheckoutButtons"
+    attribute="pagetype"
+/>

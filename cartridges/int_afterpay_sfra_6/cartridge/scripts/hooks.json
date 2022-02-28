@@ -1,0 +1,12 @@
+{
+    "hooks": [
+        {
+            "name": "app.payment.processor.afterpay_credit",
+            "script": "./hooks/payment/processor/afterpay_credit"
+        },
+        {
+            "name": "dw.system.request.onSession",
+            "script": "./request/onSession"
+        }
+    ]
+}

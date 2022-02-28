@@ -5,8 +5,8 @@ var configurationService = require('*/cartridge/scripts/logic/services/afterpayC
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('thresholdUtilities');
 var { brandUtilities, checkoutUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
-var afterpayBrand = BrandUtilities.getBrand();
-var countryCode = BrandUtilities.getCountryCode();
+var afterpayBrand = brandUtilities.getBrand();
+var countryCode = brandUtilities.getCountryCode();
 var result = {
     status: false
 };

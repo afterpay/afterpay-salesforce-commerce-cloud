@@ -22,8 +22,7 @@
   var BrandUtilities = require("*/cartridge/scripts/util/afterpayUtilities.js").brandUtilities;
   var countrycode = BrandUtilities.getCountryCode();
   var expressCheckoutJS = BrandUtilities.getBrandSettings().javaScriptUrl + "?merchant_key=demo";
-  var AfterpayCOHelpers = require('~/cartridge/scripts/checkout/afterpayCheckoutHelpers');
-  var afterpayAmount = AfterpayCOHelpers.getCurrentAfterpayPaymentAmount(dw.order.BasketMgr.getCurrentBasket());
+  var afterpayAmount = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers').getCurrentAfterpayPaymentAmount(dw.order.BasketMgr.getCurrentBasket());
   if (afterpayAmount.value == 0) {
     // If we've reached the billing page and there's no existing Afterpay payment transaction in the basket, clear the
     // session since we're obviously not the normal express checkout flow

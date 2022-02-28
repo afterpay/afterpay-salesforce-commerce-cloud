@@ -1,0 +1,46 @@
+<iscontent type="text/html" charset="UTF-8" compact="true"/>
+
+<isif condition="${pdict.totalprice}">
+    <isif condition="${pdict.classname == 'checkout-afterpay-message'}">
+        <div class="afterpay-widget-message ${pdict.classname}">
+            <span title="${Resource.msg('terms.conditions.label', pdict.brand, null)}" >
+                <div>${Resource.msg('checkout.content.redirect.label', pdict.brand, null)}</div>
+                <hr>
+                <afterpay-placement
+                    data-is-eligible="true"
+                    data-locale="${request.getLocale()}"
+                    data-badge-theme="black-on-mint"
+                    data-amount="${pdict.totalprice}"
+                    data-modal-link-style="circled-info-icon"
+                    data-intro-text="${Resource.msg('checkout.content.intro.text', pdict.brand, null)}"
+                >
+                </afterpay-placement>
+                <afterpay-placement
+                    data-type="price-table"
+                    data-amount="${pdict.totalprice}"
+                    data-currency="${session.currency.getCurrencyCode()}"
+                    data-locale="${request.getLocale()}"
+                ></afterpay-placement>
+                <br>
+                <div>
+                    <a
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        href="${require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities.getBrandSettings()['learnMoreUrl']}"
+                    >
+                        ${Resource.msg('checkout.content.terms', pdict.brand, null)}
+                    </a>
+                </div>
+            </span>
+        </div>
+        <iselse/>
+        <afterpay-placement
+            data-is-eligible="true"
+            data-locale="${request.getLocale()}"
+            data-badge-theme="black-on-mint"
+            data-amount="${pdict.totalprice}"
+            data-modal-link-style="circled-info-icon"
+        >
+        </afterpay-placement>
+    </isif>
+</isif>

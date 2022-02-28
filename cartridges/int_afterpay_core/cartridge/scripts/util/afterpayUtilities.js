@@ -5,8 +5,6 @@ var Site = require('dw/system/Site');
 var PaymentMgr = require('dw/order/PaymentMgr');
 var URLUtils = require('dw/web/URLUtils');
 var Locale = require('dw/util/Locale');
-var ctrlCartridgeName = dw.system.Site.getCurrent().getCustomPreferenceValue('apControllerCartridgeName');
-var app = require(ctrlCartridgeName + '/cartridge/scripts/app');
 
 /**
  *  Site Preferences Utilities
@@ -227,27 +225,6 @@ module.exports = {
     checkoutUtilities: checkoutUtilities,
     brandUtilities: brandUtilities
 };
-
-var disableSummaryForAfterpay = function (cart, viewContext) {
-    var afterpayEnable = sitePreferencesUtilities.isAfterpayEnabled();
-    var expressCheckoutEnable = sitePreferencesUtilities.isExpressCheckoutEnabled();
-    let isExpressCheckout = require('*/cartridge/scripts/util/afterpaySession').isExpressCheckout();
-
-    var apPaymentInstrument;
-    var iter = cart.object.getPaymentInstruments().iterator();
-
-    while (iter.hasNext()) {
-        apPaymentInstrument = iter.next();
-
-		// don't disable summary for express checkout when the current order is an express checkout order.
-		// Non-express-checkout still skips summary screen
-        if ((expressCheckoutEnable && isExpressCheckout) || afterpayEnable == false || apPaymentInstrument.paymentMethod !== 'AFTERPAY' || apPaymentInstrument.paymentMethod !== 'CLEARPAY') {
-            app.getView(viewContext).render('checkout/summary/summary');
-	    }
-    }
-};
-
-module.exports.disableSummaryForAfterpay = disableSummaryForAfterpay;
 
 var crc32 = function (str) {
     function utf8_encode(s) {

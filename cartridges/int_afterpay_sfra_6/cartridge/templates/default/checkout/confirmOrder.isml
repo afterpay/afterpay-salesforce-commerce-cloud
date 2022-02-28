@@ -1,0 +1,30 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+   window.onload = function () {
+       var redirect = $('<form>')
+            .appendTo(document.body)
+            .attr({
+                method: 'POST',
+                action: '${pdict.continueUrl}'
+            });
+
+        $('<input>')
+            .appendTo(redirect)
+            .attr({
+                name: 'orderID',
+                value: '${pdict.orderID}',
+                type: 'hidden'
+            });
+
+        $('<input>')
+            .appendTo(redirect)
+            .attr({
+                name: 'orderToken',
+                value: '${pdict.orderToken}',
+                type: 'hidden'
+            });
+
+        redirect.submit();
+    }
+</script>
+

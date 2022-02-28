@@ -1,0 +1,4 @@
+<div>
+    <isprint value="${payment.paymentMethod}" encoding="on" />
+    <div id="afterpay-payment-shown"></div>
+</div>

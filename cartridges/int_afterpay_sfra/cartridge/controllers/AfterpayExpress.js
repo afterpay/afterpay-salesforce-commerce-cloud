@@ -5,7 +5,8 @@ var parsePrice = require('~/cartridge/scripts/util/parsePriceAfterpay.js');
 var Response = require('server/response');
 var URLUtils = require('dw/web/URLUtils');
 var COHelpers = require('*/cartridge/scripts/checkout/checkoutHelpers');
-var AfterpayCOHelpers = require('~/cartridge/scripts/checkout/afterpayCheckoutHelpers');
+var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
+var AfterpayRefArchCOHelpers = require('~/cartridge/scripts/checkout/afterpayRefArchCheckoutHelpers');
 var Resource = require('dw/web/Resource');
 let AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
 let ValidationHelpers = require('*/cartridge/scripts/helpers/basketValidationHelpers');
@@ -40,7 +41,7 @@ function redirectToErrorDisplay(res, error) {
 function deferredShippingFlow(req, res, next, afterPayOrderResponse) {
     var currentBasket = BasketMgr.getCurrentBasket();
 
-    AfterpayCOHelpers.addShippingAddressToBasket(currentBasket, afterPayOrderResponse.shipping);
+    AfterpayRefArchCOHelpers.addShippingAddressToBasket(currentBasket, afterPayOrderResponse.shipping);
     AfterpaySession.setShippingChecksum(AfterpayCOHelpers.computeBasketShippingChecksum(currentBasket));
     AfterpayCOHelpers.addConsumerToBasket(currentBasket, afterPayOrderResponse.consumer);
     if (afterPayOrderResponse.billing) {
@@ -52,13 +53,13 @@ function deferredShippingFlow(req, res, next, afterPayOrderResponse) {
 
     // Recreate the payment instrument in case session changed
     Transaction.wrap(function () {
-        AfterpayCOHelpers.removeAllNonGiftCertificatePayments(currentBasket);
+        AfterpayRefArchCOHelpers.removeAllNonGiftCertificatePayments(currentBasket);
         var apCheckoutUtilities = apUtilities.checkoutUtilities;
         var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
         currentBasket.createPaymentInstrument(paymentMethodName, new Money(0.0, currentBasket.currencyCode));
     });
 
-    AfterpayCOHelpers.calculateAndSetPaymentAmount(currentBasket);
+    AfterpayRefArchCOHelpers.calculateAndSetPaymentAmount(currentBasket);
     AfterpaySession.setExpressCheckoutFinalizeFlow(true);
     res.redirect(URLUtils.url('Checkout-Begin', 'stage', 'shipping'));
     return next();
@@ -72,12 +73,12 @@ function integratedShippingFlow(req, res, next, afterPayOrderResponse) {
     var selectedShipOption = afterPayOrderResponse.shippingOptionIdentifier;
 
     let isStorePickup = false;
-    if (AfterpayCOHelpers.shouldEnableExpressPickupMode(currentBasket)) {
+    if (AfterpayRefArchCOHelpers.shouldEnableExpressPickupMode(currentBasket)) {
         isStorePickup = true;
     }
 
     // For in-store pickup, the address will be the address of the store
-    AfterpayCOHelpers.addShippingAddressToBasket(currentBasket, afterPayOrderResponse.shipping);
+    AfterpayRefArchCOHelpers.addShippingAddressToBasket(currentBasket, afterPayOrderResponse.shipping);
     AfterpaySession.setShippingChecksum(AfterpayCOHelpers.computeBasketShippingChecksum(currentBasket));
 
     if (!isStorePickup) {
@@ -111,7 +112,7 @@ function integratedShippingFlow(req, res, next, afterPayOrderResponse) {
         (adjustCartResponse.totalCost.currencyCode != currency)) {
         // this can occur if session was modified while express checkout was in flight
         Logger.error('Amount returned by Afterpay did not match expected amount. Afterpay returned=' + amount + currency + ' Merchant computed=' + adjustCartResponse.totalCost.value + adjustCartResponse.totalCost.currencyCode);
-        redirectToErrorDisplay(res, Resource.msg('expresscheckout.error.checkout', 'afterpay', null));
+        redirectToErrorDisplay(res, Resource.msg('expresscheckout.error.amountMismatch', 'afterpay', null));
         return next();
     }
 
@@ -119,11 +120,11 @@ function integratedShippingFlow(req, res, next, afterPayOrderResponse) {
     if (buyNow) {
         // create the payment transaction with Afterpay for the desired amount
         Transaction.wrap(function () {
-            AfterpayCOHelpers.removeAllNonGiftCertificatePayments(currentBasket);
+            AfterpayRefArchCOHelpers.removeAllNonGiftCertificatePayments(currentBasket);
             var apCheckoutUtilities = apUtilities.checkoutUtilities;
             var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
             currentBasket.createPaymentInstrument(paymentMethodName, new Money(amount, currency));
-            AfterpayCOHelpers.addShippingAddressToBasket(currentBasket, afterPayOrderResponse.shipping);
+            AfterpayRefArchCOHelpers.addShippingAddressToBasket(currentBasket, afterPayOrderResponse.shipping);
         });
         // puts initial state into paymentTransaction
         require('*/cartridge/scripts/checkout/afterpayUpdatePreapprovalStatus').getPreApprovalResult(currentBasket, { status: 'SUCCESS', orderToken: apOrderToken, apExpressCheckout: true });
@@ -158,11 +159,11 @@ function integratedShippingFlow(req, res, next, afterPayOrderResponse) {
         return next();
     }
     Transaction.wrap(function () {
-        AfterpayCOHelpers.removeAllNonGiftCertificatePayments(currentBasket);
+        AfterpayRefArchCOHelpers.removeAllNonGiftCertificatePayments(currentBasket);
         var apCheckoutUtilities = apUtilities.checkoutUtilities;
         var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
         currentBasket.createPaymentInstrument(paymentMethodName, new Money(amount, currency));
-        AfterpayCOHelpers.addShippingAddressToBasket(currentBasket, afterPayOrderResponse.shipping);
+        AfterpayRefArchCOHelpers.addShippingAddressToBasket(currentBasket, afterPayOrderResponse.shipping);
     });
     AfterpaySession.setExpressCheckoutFinalizeFlow(true);
         // puts initial state into paymentTransaction
@@ -184,13 +185,13 @@ server.get('ContinueFinalize',
                 return next();
             }
             Transaction.wrap(function () {
-                AfterpayCOHelpers.removeAllNonGiftCertificatePayments(currentBasket);
+                AfterpayRefArchCOHelpers.removeAllNonGiftCertificatePayments(currentBasket);
                 var apCheckoutUtilities = apUtilities.checkoutUtilities;
                 var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
                 currentBasket.createPaymentInstrument(paymentMethodName, new Money(0.0, currentBasket.currencyCode));
             });
             // This does a recalculation using the current basket
-            AfterpayCOHelpers.calculateAndSetPaymentAmount(currentBasket);
+            AfterpayRefArchCOHelpers.calculateAndSetPaymentAmount(currentBasket);
             let payAmt = AfterpayCOHelpers.getCurrentAfterpayPaymentAmount(currentBasket);
             if (!AfterpayCOHelpers.isPriceWithinThreshold(payAmt)) {
                 var brand = apBrandUtilities.getBrand();
@@ -235,12 +236,12 @@ server.get('FinalizeOrder',
 
             // Recreate the payment instrument in case session changed
             Transaction.wrap(function () {
-                AfterpayCOHelpers.removeAllNonGiftCertificatePayments(currentBasket);
+                AfterpayRefArchCOHelpers.removeAllNonGiftCertificatePayments(currentBasket);
                 var apCheckoutUtilities = apUtilities.checkoutUtilities;
                 var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
                 currentBasket.createPaymentInstrument(paymentMethodName, new Money(0.0, currentBasket.currencyCode));
             });
-            AfterpayCOHelpers.calculateAndSetPaymentAmount(currentBasket);
+            AfterpayRefArchCOHelpers.calculateAndSetPaymentAmount(currentBasket);
 
             // Re-calculate the payments.
             var calculatedPaymentTransaction = COHelpers.calculatePaymentTransaction(
@@ -319,7 +320,7 @@ server.get('Debug',
         server.middleware.https,
         function (req, res, next) {
             var currentBasket = BasketMgr.getCurrentBasket();
-            AfterpayCOHelpers.removeAllNonGiftCertificatePayments(currentBasket);
+            AfterpayRefArchCOHelpers.removeAllNonGiftCertificatePayments(currentBasket);
 
             let cartTotals = AfterpayShippingHelpers.calculateBasketTaxShipTotals(req, currentBasket);
             return next();
@@ -343,8 +344,31 @@ server.get('CartStatus',
             res.json({ cartTotalAmount: cartTotals.totalCost.value,
                 cartTotalCurrency: cartTotals.totalCost.currencyCode,
                 withinThreshold: AfterpayCOHelpers.isBasketAmountWithinThreshold(),
-                instorepickup: AfterpayCOHelpers.shouldEnableExpressPickupMode(currentBasket),
-                expressCheckoutFinalize: AfterpaySession.isExpressCheckoutFinalizeFlow() });
+                instorepickup: AfterpayRefArchCOHelpers.shouldEnableExpressPickupMode(currentBasket),
+                expressCheckoutFinalize: AfterpaySession.isExpressCheckoutFinalizeFlow()
+            });
+            return next();
+        }
+);
+
+server.get('GetShippingRequired',
+        server.middleware.https,
+        function (req, res, next) {
+            if (!afterpayEnabled || !expressCheckoutEnabled) {
+                res.json({});
+                return next();
+            }
+
+            var afterpayShipmentType = '';
+            var currentBasket = BasketMgr.getCurrentBasket();
+            if (currentBasket) {
+                afterpayShipmentType = AfterpayRefArchCOHelpers.getCartShipmentType(currentBasket)
+            }
+           
+            res.json({
+                shipmentType: afterpayShipmentType 
+            });
+            
             return next();
         }
 );
@@ -387,23 +411,20 @@ server.get('CreateToken',
             }
 
         // Get a map of storeId -> store .
-            let storeMap = AfterpayCOHelpers.getInStorePickupsMap(currentBasket);
-            let numHomeDeliveries = AfterpayCOHelpers.getNumHomeDeliveries(currentBasket);
-            let store = null;
-            let storePickup = false;
+        let storeMap = AfterpayCOHelpers.getInStorePickupsMap(currentBasket);
+        let store = null;
+        var shipmentType =  AfterpayRefArchCOHelpers.getCartShipmentType(currentBasket);
+        var expressCheckoutSplitShipment = false;
         // Make sure everything is only going to a single store and there are no home deliveries.
         // If so, we use in-store pickup mode for express checkout
-            if ((numHomeDeliveries == 0) && (Object.keys(storeMap).length == 1)) {
-                storePickup = true;
-                for (key in storeMap) {
-                    store = storeMap[key];
-                }
-            } else if ((numHomeDeliveries > 0) && (Object.keys(storeMap).length > 0)) {
-            // If there are items going to multiple places, we can't use express checkout
-                return returnJsonError(res, next, Resource.msg('expresscheckout.error.multidestination', 'afterpay', null));
-            } else if (Object.keys(storeMap).length > 1) {
-                return returnJsonError(res, next, Resource.msg('expresscheckout.error.multidestination', 'afterpay', null));
+        if(!empty(shipmentType)){
+            if(shipmentType !='SingleStorePickup'){
+                expressCheckoutSplitShipment = true
             }
+            for (var key in storeMap) {
+                store = storeMap[key];
+            }
+        }
 
         // merchantnum is currently unused. Just pass in a "x"
         // var merchantOrderNum = Math.random().toString(36).substring(2, 15);
@@ -419,7 +440,7 @@ server.get('CreateToken',
 
         // Create the payment instrument
             Transaction.wrap(function () {
-                AfterpayCOHelpers.removeAllNonGiftCertificatePayments(currentBasket);
+                AfterpayRefArchCOHelpers.removeAllNonGiftCertificatePayments(currentBasket);
                 var apCheckoutUtilities = apUtilities.checkoutUtilities;
                 var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
                 currentBasket.createPaymentInstrument(paymentMethodName, checkoutPrice);
@@ -431,6 +452,7 @@ server.get('CreateToken',
             AfterpaySession.setExpressCheckoutAmount(checkoutPrice.value);
             AfterpaySession.setExpressCheckoutCurrency(checkoutPrice.currencyCode);
             AfterpaySession.setItemsChecksum(AfterpayCOHelpers.computeBasketProductLineItemChecksum(currentBasket));
+            AfterpaySession.setIsSplitShipment(expressCheckoutSplitShipment);
 
             res.json({ status: 'SUCCESS', token: afterPayTokenResponse, merchantRef: merchantOrderNum });
             return next();
@@ -461,7 +483,7 @@ server.post('GetShippingMethods',
             }
 
 
-            if (AfterpayCOHelpers.shouldEnableExpressPickupMode(currentBasket)) {
+            if (AfterpayRefArchCOHelpers.shouldEnableExpressPickupMode(currentBasket)) {
             // if this is a store pickup, just get the store name
                 let storeMap = AfterpayCOHelpers.getInStorePickupsMap(currentBasket);
                 let store = null;
@@ -617,7 +639,12 @@ server.get('PostAfterpayCheckoutFlow',
                 return next();
             }
 
-            let expressCheckoutShippingStrategy = sitePreferences.getExpressCheckoutShippingStrategy();
+            var expressCheckoutShippingStrategy = sitePreferences.getExpressCheckoutShippingStrategy();
+
+            if((!empty(AfterpaySession.getIsSplitShipment()) && AfterpaySession.getIsSplitShipment())){
+                expressCheckoutShippingStrategy = "deferred";
+            }
+
            // If this is deferred shipping, just call DeferredFlow()
             if (expressCheckoutShippingStrategy == 'deferred') {
                 return deferredShippingFlow(req, res, next, afterPayOrderResponse);

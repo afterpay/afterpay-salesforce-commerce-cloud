@@ -1,0 +1,9 @@
+<isif condition="${pdict.isAfterpayEnabled}">
+    <script
+        async
+        type="text/javascript"
+        src="https://js.afterpay.com/afterpay-1.x.js"
+        data-min="${pdict.thresholdAmounts.minAmount}"
+        data-max="${pdict.thresholdAmounts.maxAmount}"
+    ></script>
+</isif>

@@ -20,9 +20,10 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     var afterpayExpressCheckoutEnabled = afterpayEnabled ? sitePreferences.isExpressCheckoutEnabled() : false;
     var isExpressCheckoutFinalize = require('*/cartridge/scripts/util/afterpaySession').isExpressCheckoutFinalizeFlow();
     var afterpayExpressCheckoutPdpEnabled = sitePreferences.isExpressCheckoutPdpEnabled();
-    var AfterpayCOHelpers = require('~/cartridge/scripts/checkout/afterpayCheckoutHelpers');
-    var afterpayExpressPickupEnabled = AfterpayCOHelpers.shouldEnableExpressPickupMode();
+    var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
+    var afterpayExpressPickupEnabled = require('~/cartridge/scripts/checkout/afterpayRefArchCheckoutHelpers').shouldEnableExpressPickupMode();
     var disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isBasketAmountWithinThreshold();
+
     var checkoutButtonClass = 'afterpay-checkout-button';
     if(countrycode === 'GB'){
         checkoutButtonClass = 'clearpay-checkout-button';

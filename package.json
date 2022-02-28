@@ -1,6 +1,6 @@
 {
   "name": "Afterpay",
-  "version": "23.0.2",
+  "version": "23.1.0",
   "description": "Afterpay cartridge",
   "main": "index.js",
   "engines": {

@@ -4,4 +4,9 @@ cartridges/int_afterpay_sfra/cartridge/static/default/js/afterpay.js
 cartridges/int_afterpay_sfra/cartridge/static/default/js/afterpayCheckout.js
 cartridges/int_afterpay_sfra/cartridge/static/default/js/checkout.js
 cartridges/int_afterpay_sfra/cartridge/static/default/js/productTile.js
+cartridges/int_afterpay_sfra_6/cartridge/static/default/css
+cartridges/int_afterpay_sfra_6/cartridge/static/default/js/afterpay.js
+cartridges/int_afterpay_sfra_6/cartridge/static/default/js/afterpayCheckout.js
+cartridges/int_afterpay_sfra_6/cartridge/static/default/js/checkout.js
+cartridges/int_afterpay_sfra_6/cartridge/static/default/js/productTile.js
 dw.json

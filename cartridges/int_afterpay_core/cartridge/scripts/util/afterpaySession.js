@@ -15,6 +15,7 @@ var AfterpaySession = {
         session.custom.afterpay_express_checkout_shipping_checksum = 0;
         session.custom.afterpay_express_checkout_items_checksum = 0;
         session.custom.afterpay_express_instore_pickup = false;
+        session.custom.afterpay_express_split_shipment = false;
     },
     // Call this whenever the Afterpay Express transaction should be completely cleared
     clearSession: function () {
@@ -28,6 +29,7 @@ var AfterpaySession = {
         delete session.custom.afterpay_express_checkout_shipping_checksum;
         delete session.custom.afterpay_express_checkout_items_checksum;
         delete session.custom.afterpay_express_instore_pickup;
+        delete session.custom.afterpay_express_split_shipment;
     },
     isValid: function () {
         return (!empty(session.custom.afterpay_token));
@@ -86,7 +88,12 @@ var AfterpaySession = {
     isExpressCheckoutInstorePickup: function () {
         return session.custom.afterpay_express_instore_pickup;
     },
-
+    setIsSplitShipment: function (val) {
+        session.custom.afterpay_express_split_shipment = val;
+    },
+    getIsSplitShipment: function () {
+        return session.custom.afterpay_express_split_shipment;
+    },
     debugGetSessionAsString: function () {
         return 'token: ' + session.custom.afterpay_token + ' express_checkout: ' + session.custom.afterpay_express_checkout
           + ' finalize_flow: ' + session.custom.afterpay_express_checkout_finalize_flow + ' checkout_amount: ' + session.custom.afterpay_express_checkout_amount

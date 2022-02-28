@@ -42,7 +42,7 @@ function getAfterpayHttpService() {
             service.setRequestMethod(requestBody.requestMethod);
             service.addHeader('Content-Type', 'application/json');
 
-            const afterpayCartridge = 'AfterpayCartridge/23.0.2';
+            const afterpayCartridge = 'AfterpayCartridge/23.1.0';
             const merchantID = 'Merchant/' + service.configuration.credential.user;
             const siteURL = URLUtils.httpsHome().toString();
             const storeFront = Site.getCurrent().getID();

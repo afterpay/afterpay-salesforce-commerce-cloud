@@ -12,7 +12,6 @@ var apHandlers = {
         var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
         if (AfterpaySession.isExpressCheckout()) {
             var Transaction = require('dw/system/Transaction');
-            var COHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
 
             var cart = app.getModel('Cart').get();
             if (cart) {
@@ -22,7 +21,7 @@ var apHandlers = {
                     return;
                 }
                 Transaction.wrap(function () {
-                    COHelpers.removeAllNonGiftCertificatePayments(cart);
+                    require('~/cartridge/scripts/checkout/afterpaySGCheckoutHelpers').removeAllNonGiftCertificatePayments(cart);
                     var paymentInstrument = cart.object.createPaymentInstrument(paymentMethodName, new dw.value.Money(0.0, cart.object.currencyCode));
                     // will compute the amount for us for the payment instrument
                     cart.calculatePaymentTransactionTotal();
