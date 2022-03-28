@@ -86,7 +86,7 @@ updatePaymentStatus.handlePaymentStatus = function (order) {
 
     Logger.debug('Afterpay final payment status :' + finalPaymentStatus);
 
-    if (finalPaymentStatus === 'APPROVED') {
+    if (finalPaymentStatus === 'APPROVED' || finalPaymentStatus === 'ACTIVE') {
         return { authorized: true };
     } else if (finalPaymentStatus === 'PENDING') {
         return {

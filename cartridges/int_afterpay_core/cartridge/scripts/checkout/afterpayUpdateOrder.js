@@ -57,6 +57,9 @@ var afterpayUpdateOrder = {
                 amount = empty(paymentResult.openToCaptureAmount) ? null : new Money(parseFloat(paymentResult.openToCaptureAmount.amount), paymentResult.openToCaptureAmount.currency);
             }
 
+            if(paymentResult.status === afterpayConstants.PAYMENT_STATUS.ACTIVE && amount === null ){
+                amount = empty(paymentResult.amount) ? null : new Money(parseFloat(paymentResult.amount.amount), paymentResult.amount.currency);   
+            }
             payTrans.setAmount(amount);
         });
 

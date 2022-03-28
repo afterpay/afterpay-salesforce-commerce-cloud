@@ -2,7 +2,6 @@
 
 var Resource = require('dw/web/Resource');
 var TaxMgr = require('dw/order/TaxMgr');
-
 var Builder = require('../util/builder');
 var { checkoutUtilities, brandUtilities, sitePreferencesUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
 var Order = require('*/cartridge/scripts/order/order');
@@ -105,6 +104,7 @@ OrderRequestBuilder.prototype.buildRequest = function (params) {
         .buildItems(basket)
         .applyDiscounts(basket)
         .buildTotalAmount(basket)
+        .buildInitialOrderAmount(basket)
         .buildShippingAmount(basket)
         .buildTotalTax(basket)
         .buildMerchantInformation(url)
@@ -234,7 +234,7 @@ OrderRequestBuilder.prototype.buildItems = function (basket) {
     var lineItems = basket.getAllProductLineItems().toArray();
 
     this.context.items = lineItems.map(function (li) {
-                var item = new LineItem();
+        var item = new LineItem();
         var product = li.product;
 
     // Some lineitems may not be products
@@ -246,11 +246,11 @@ OrderRequestBuilder.prototype.buildItems = function (basket) {
             item.price.amount = li.adjustedNetPrice.value;
             item.price.currency = li.adjustedNetPrice.currencyCode;
         } else {
-                item.name = product.name;
-                item.sku = product.ID;
+            item.name = product.name;
+            item.sku = product.ID;
             item.quantity = li.getQuantity().value;
             item.price.amount = product.getPriceModel().getPrice().value;
-                item.price.currency = product.getPriceModel().getPrice().currencyCode;
+            item.price.currency = product.getPriceModel().getPrice().currencyCode;
             }
         return item;
     });
@@ -297,6 +297,57 @@ OrderRequestBuilder.prototype.applyDiscounts = function (basket) {
             }
         }
     }
+
+    return this;
+};
+/**
+ * builds initial order amount details
+ * @param {dw.order.Basket} basket - basket
+ * @returns {Object} - this object
+ */
+// eslint-disable-next-line no-unused-vars
+OrderRequestBuilder.prototype.buildInitialOrderAmount = function (basket) {
+    var paymentTransaction = this._getPaymentTransaction(basket);
+    var preOrderHelper = require('*/cartridge/scripts/checkout/afterpayPreOrderHelpers');
+    var productAvailabilityModel = require('dw/catalog/ProductAvailabilityModel');
+    var ProductMgr = require('dw/catalog/ProductMgr');
+    var Amount = require('*/cartridge/scripts/order/amount');
+   
+    if (!paymentTransaction) {
+        return this;
+    }
+    var productLineItems = basket.getAllProductLineItems().iterator();
+    var preOrderAmount = 0.00;
+
+    while (productLineItems.hasNext()) {
+        var productLineItem = productLineItems.next();
+        var product = productLineItem.product;
+
+        if (!product) {
+            var parentProductID = productLineItem.parent.productID;
+           product = ProductMgr.getProduct(parentProductID);
+        }
+        
+        if(product){
+            var productAvailabiltyStatus = product.availabilityModel.getAvailabilityStatus();
+            if(productAvailabiltyStatus == productAvailabilityModel.AVAILABILITY_STATUS_PREORDER || productAvailabiltyStatus == productAvailabilityModel.AVAILABILITY_STATUS_BACKORDER){
+                var productPrice = productLineItem.proratedPrice.value;
+                preOrderAmount += productPrice;
+            }
+        }
+    }
+
+    var orderSubTotal = preOrderHelper.getCartSubtotal(basket);;
+
+    if(preOrderAmount > 0 && orderSubTotal){
+        var initialOrderAmount = (paymentTransaction.amount.value - preOrderAmount).toFixed(2);
+        if((orderSubTotal - preOrderAmount).toFixed(2) == 0){
+            initialOrderAmount = 0.00;
+        }
+        this.context.initialOrderAmount = new Amount();
+        this.context.initialOrderAmount.amount = initialOrderAmount;
+        this.context.initialOrderAmount.currency =  basket.getCurrencyCode();
+    } 
 
     return this;
 };
@@ -374,6 +425,5 @@ OrderRequestBuilder.prototype._buildShiptoStore = function(type, store) {
     this.context[type].countryCode = store.countryCode.value || '';
     this.context[type].phoneNumber = store.phone || '';
 };
-
 
 module.exports = OrderRequestBuilder;

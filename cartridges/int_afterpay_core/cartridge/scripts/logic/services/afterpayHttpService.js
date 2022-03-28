@@ -42,7 +42,7 @@ function getAfterpayHttpService() {
             service.setRequestMethod(requestBody.requestMethod);
             service.addHeader('Content-Type', 'application/json');
 
-            const afterpayCartridge = 'AfterpayCartridge/23.1.0';
+            const afterpayCartridge = 'AfterpayCartridge/23.2.0-beta';
             const merchantID = 'Merchant/' + service.configuration.credential.user;
             const siteURL = URLUtils.httpsHome().toString();
             const storeFront = Site.getCurrent().getID();
@@ -67,7 +67,7 @@ function getAfterpayHttpService() {
         },
 
         parseResponse: function (service, httpClient) {
-            if (httpClient.statusCode === 200 || httpClient.statusCode === 201) {
+            if (httpClient.statusCode === 200 || httpClient.statusCode === 201 || httpClient.statusCode === 202) {
                 var parseResponse = httpClient.text;
                 var filterResponse = parseResponse;
                 Logger.debug('Parsed Response : ' + afterpayUtils.filterLogData(filterResponse));
