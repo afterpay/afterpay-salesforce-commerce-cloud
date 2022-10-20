@@ -132,20 +132,19 @@ OrderRequestBuilder.prototype.buildItems = function (basket) {
         var item = new LineItem();
         var product = li.product;
 
-    // Some lineitems may not be products
-    // e.g. extended warranties
+        // Some lineitems may not be products
+        // e.g. extended warranties
         if (!product) {
             item.name = li.getLineItemText();
-            item.quantity = li.getQuantity().value;
-            item.price.amount = li.adjustedNetPrice.value;
+            item.sku = li.productID;
             item.price.currency = li.adjustedNetPrice.currencyCode;
         } else {
-            item.name = product.name;
-            item.sku = product.ID;
-            item.quantity = li.getQuantity().value;
-            item.price.amount = product.getPriceModel().getPrice().value;
-            item.price.currency = product.getPriceModel().getPrice().currencyCode;
+                item.name = product.name;
+                item.sku = product.ID;
+                item.price.currency = product.getPriceModel().getPrice().currencyCode;
         }
+        item.quantity = li.getQuantity().value;
+        item.price.amount = (li.adjustedPrice.value/item.quantity).toString();
         return item;
     });
 

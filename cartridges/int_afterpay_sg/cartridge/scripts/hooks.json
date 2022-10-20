@@ -5,6 +5,10 @@
       "script": "./payment/processor/AFTERPAY_CREDIT"
     },
     {
+      "name": "app.payment.processor.CASHAPP_CREDIT",
+      "script": "./payment/processor/CASHAPP_CREDIT"
+    },
+    {
       "name": "dw.system.request.onSession",
       "script": "./request/OnSession"
     }

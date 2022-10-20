@@ -112,6 +112,9 @@ var exports = {
             let tabelem = document.querySelector('.afterpay-tab') ? document.querySelector('.afterpay-tab') : document.querySelector('.clearpay-tab');
             if (window.MutationObserver) {
                 var observer = new MutationObserver(function (mutations) {
+                    if($('.afterpay-tab').hasClass('active') || $('.clearpay-tab').hasClass('active')){
+                        afterpayExpressWidget.updateExpressWidget();
+                    }
                     handleStateChange();
                 });
                 observer.observe(tabelem, { attributes: true });

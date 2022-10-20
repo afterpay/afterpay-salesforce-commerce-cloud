@@ -20,16 +20,17 @@ var parsePaymentStatus = function (paymentStatus) {
  * @param {number} paymentStatus - payment status
  * @returns {number} - payment status
  */
-function getPaymentStatus(order, paymentStatus, expressCheckoutModel) {
+function getPaymentStatus(order, paymentStatus, expressCheckoutModel, isCashAppPay) {
     var parsedPaymentStatus = parsePaymentStatus(paymentStatus);
+    var isCashAppPay = isCashAppPay || false;
     Logger.debug('parsed payment status : ' + parsedPaymentStatus);
     var paymentResult;
     try {
-        paymentResult = baseUpdateOrderService.handleOrder(order, parsedPaymentStatus, expressCheckoutModel);
+        paymentResult = baseUpdateOrderService.handleOrder(order, parsedPaymentStatus, expressCheckoutModel, isCashAppPay);
         if (paymentResult && paymentResult.status === 'DECLINED') {
             parsedPaymentStatus = paymentResult.status;
         }
-        afterpayUpdateOrder.handleUpdateOrder(order, paymentResult, sitePreferencesUtilities.getPaymentMode().value);
+        afterpayUpdateOrder.handleUpdateOrder(order, paymentResult, sitePreferencesUtilities.getPaymentMode().value,isCashAppPay);
         Logger.debug('UpdatedOrder service status : ' + parsedPaymentStatus);
     } catch (exception) {
         Logger.error('Exception occured while updating order status ' + exception);

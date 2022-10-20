@@ -21,16 +21,16 @@ var updatePaymentStatus = {};
 * @param {Object} order - order
 * @returns {Object} - authorization or error
 */
-updatePaymentStatus.handlePaymentStatus = function (order) {
+updatePaymentStatus.handlePaymentStatus = function (order, isCashAppPay) {
     var { checkoutUtilities: apCheckoutUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
-    var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
     var response;
     var finalPaymentStatus;
     var errorMessage;
     var responseCode;
     var paymentTransaction;
     var apInitialStatus;
-
+    var isCashAppPay = isCashAppPay || false;
+    var paymentMethodName = apCheckoutUtilities.getPaymentMethodName(isCashAppPay);
     var impactOrder = order;
 
     if (!paymentMethodName) {
@@ -76,7 +76,7 @@ updatePaymentStatus.handlePaymentStatus = function (order) {
         }
     }
 
-    finalPaymentStatus = require('*/cartridge/scripts/checkout/afterpayHandlePaymentOrder').getPaymentStatus(order, apInitialStatus, expressCheckoutModel);
+    finalPaymentStatus = require('*/cartridge/scripts/checkout/afterpayHandlePaymentOrder').getPaymentStatus(order, apInitialStatus, expressCheckoutModel, isCashAppPay);
     response = (finalPaymentStatus.errorMessage) ? finalPaymentStatus.errorMessage : finalPaymentStatus;
     responseCode = apCheckoutUtilities.getPaymentResponseCode(finalPaymentStatus);
 

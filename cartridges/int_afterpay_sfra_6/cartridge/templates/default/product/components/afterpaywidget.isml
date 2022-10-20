@@ -25,9 +25,10 @@ if (afterpayAmount.value == 0) {
 }
 var afterpayToken = AfterpaySession.getToken();
 var isExpressCheckoutFinalize = AfterpaySession.isExpressCheckoutFinalizeFlow();
-var afterpayExpressCheckoutEnabled = sitePreferences.isExpressCheckoutEnabled();
+var afterpayEnabled = sitePreferences.isAfterpayEnabled();
+var afterpayExpressCheckoutEnabled = afterpayEnabled && sitePreferences.isExpressCheckoutEnabled();
 var BrandUtilities = require("*/cartridge/scripts/util/afterpayUtilities.js").brandUtilities;
-var expressCheckoutJS = BrandUtilities.getBrandSettings().javaScriptUrl + "?merchant_key=demo";
+var expressCheckoutJS = BrandUtilities.getBrandSettings().javaScriptUrl;
 var countrycode = BrandUtilities.getCountryCode();
 var buttonPlaceOrderClass = 'afterpay-placeorder-button';
 if(countrycode === 'GB'){

@@ -7,6 +7,7 @@
         var assets = require('*/cartridge/scripts/assets.js');
         assets.addJs('/js/checkout.js');
         assets.addJs('/js/afterpayCheckout.js');
+        assets.addJs('/js/cashappCheckout.js');
         assets.addCss('/css/checkout/checkout.css');
         assets.addCss('/css/afterpaystyle.css');
     </isscript>
@@ -87,6 +88,11 @@
                     <isinclude template="product/components/afterpaywidget" />
                     <div id="afterpay-widget-container"></div>
                 </div>
+                <!-- Display Cash App Pay Popup -->
+                <div class="cap-checkout-content">
+                    <isinclude template="product/components/cashappwidget" />
+                    <div id="cash-app-pay"></div>
+                </div>
                 <!----------------------------------------------------------------------------------->
                 <!-- Checkout Workflow Buttons -->
                 <!----------------------------------------------------------------------------------->
@@ -107,6 +113,9 @@
                             <button class="btn btn-primary btn-block place-order" data-action="${URLUtils.url('CheckoutServices-PlaceOrder')}"
                                     type="submit" name="submit" value="place-order">${Resource.msg('button.place.order', 'checkout', null)}
                             </button>
+                            <iscomment>Start of CashAppPay</iscomment>
+                                <div id="cash-app-pay" class="btn btn-block cashapp-checkout-button"></div>
+                                <iscomment>End of CashAppPay</iscomment>
                             <iscomment>Start of Afterpay</iscomment>
                             </div>
                             <input id="afterpay-placeorder-button" class="afterpay-widget-hideuntilready ${buttonPlaceOrderClass} btn btn-block ap-checkout-pay-tab-ecf ap-checkout-po-ecf"

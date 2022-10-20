@@ -4,7 +4,7 @@
 var Money = require('dw/value/Money');
 
 /* Script Modules */
-var { brandUtilities: apBrandUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
+var { brandUtilities: apBrandUtilities, sitePreferencesUtilities:apSitePreferences } = require('*/cartridge/scripts/util/afterpayUtilities');
 
 var getTemplateSpecificWidget = {};
 
@@ -144,6 +144,7 @@ getTemplateSpecificWidget.getCheckoutWidgetData = function (currentBasket, class
     }
 
     var isApplicable = apBrandUtilities.isAfterpayApplicable() && isWithinThreshold.status;
+    var iscashAppApplicable = apSitePreferences.isCashAppEnabled() && isWithinThreshold.status;
     var apBrand = apBrandUtilities.getBrand();
 
     if (className === 'checkout-afterpay-message') {
@@ -151,6 +152,7 @@ getTemplateSpecificWidget.getCheckoutWidgetData = function (currentBasket, class
     }
 
     priceContext.apApplicable = isApplicable;
+    priceContext.cashAppApplicable = iscashAppApplicable;
     priceContext.apBrand = apBrand;
 
     return priceContext;

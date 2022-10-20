@@ -486,7 +486,7 @@ function IntegratedShippingFlow(afterPayOrderResponse) {
         (adjustCartResponse.totalCost.currencyCode != currency)) {
         // this can occur if session was modified while express checkout was in flight
         Logger.error('Amount returned by Afterpay did not match expected amount. Afterpay returned=' + amount + currency + ' Merchant computed=' + adjustCartResponse.totalCost.value + adjustCartResponse.totalCost.currencyCode);
-        redirectToErrorDisplay(Resource.msg('apierror.token.conflict', brand, null));
+        redirectToErrorDisplay(Resource.msg('expresscheckout.error.amountMismatch', brand, null));
         return;
     }
 

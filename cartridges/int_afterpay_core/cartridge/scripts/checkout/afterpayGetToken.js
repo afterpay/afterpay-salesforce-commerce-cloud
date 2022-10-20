@@ -9,10 +9,11 @@ var Logger = LogUtils.getLogger('afterpayGetToken');
  * @param {Object} basket - basket
  * @returns {Object} - Token
  */
-function getToken(basket) {
+function getToken(basket,isCashAppPay) {
     var AfterpayToken;
+    var isCashAppPay = isCashAppPay || false;
     try {
-        orderCreateService.generateRequest(basket);
+        orderCreateService.generateRequest(basket,isCashAppPay);
         var response = orderCreateService.getResponse();
         var res = new TokenModel();
 

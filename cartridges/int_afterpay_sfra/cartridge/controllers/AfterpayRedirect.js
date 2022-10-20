@@ -206,7 +206,7 @@ server.get('HandleResponse', server.middleware.https, function (req, res, next) 
             productExists = require('*/cartridge/scripts/checkout/afterpayTokenConflict').checkTokenConflict(currentBasket, req.querystring.orderToken);
             require('*/cartridge/scripts/checkout/afterpayUpdatePreapprovalStatus').getPreApprovalResult(currentBasket, req.querystring);
             if (!productExists || productExists.error) {
-                res.redirect(URLUtils.url('Checkout-Begin', 'stage', 'payment', 'afterpayErrorMessage', Resource.msg('apierror.token.conflict', 'afterpay', null)));
+                res.redirect(URLUtils.url('Checkout-Begin', 'stage', 'payment', 'afterpayErrorMessage', Resource.msg('apierror.flow.invalid', 'afterpay', null)));
             } else {
                 var order = COHelpers.createOrder(currentBasket);
                 paymentStatusUpdated = require('*/cartridge/scripts/checkout/updatePaymentStatus').handlePaymentStatus(order);

@@ -360,7 +360,6 @@ var scrollAnimate = require('base/components/scrollAnimate');
                                     defer.reject(data);
                                 }
                             } else {
-                                console.log(data.continueUrl);
                                 var redirect = $('<form>')
                                     .appendTo(document.body)
                                     .attr({

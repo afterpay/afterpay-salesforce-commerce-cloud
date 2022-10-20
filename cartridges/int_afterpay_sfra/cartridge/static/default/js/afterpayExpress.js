@@ -26,8 +26,7 @@ function initAfterpay(settings) {
                                 AfterPay.shippingOptionRequired = false;
                             }
                         }
-                       
-                        console.log('onCommenceCheckout(). Actions=', actions);
+
                         var afterpayExpressTokenUrl = $('#afterpay-express-url-createtoken').val() + '?s_url=' + encodeURIComponent(window.location.href);
                         // This is to support Afterpay Express from product details page. Add product to cart and checkout.
                         if (productIdSelector && productQuantitySelector) {
@@ -35,7 +34,7 @@ function initAfterpay(settings) {
                             let q_elem = document.querySelector(productQuantitySelector);
                             afterpayExpressTokenUrl += '&cartAction=add&pid=' + (p_elem.innerText || '') + '&Quantity=' + (q_elem.value || '');
                         }            
-                        console.log('onCommenceCheckout(). TokenUrl: ', afterpayExpressTokenUrl);
+
                         var currentLocation = window.location.href;
                         sleep(commenceDelay).then(() => {
                             $.ajax({
@@ -43,35 +42,29 @@ function initAfterpay(settings) {
                                 url: afterpayExpressTokenUrl,
                                 success: function (res) {
                                     if (res.status == 'SUCCESS') {
-                                        console.log('Result of CreateToken: ', res);
-                                        // var afterpaytoken = res.response.afterpaytoken;
                                         var afterpaytoken = res.token.apToken;
-                                        console.log('Got token from afterpay: ', afterpaytoken);
                                         actions.resolve(afterpaytoken);
                                     } else {
                                         alert(res.error);
-                                        console.log('Afterpay Express Checkout: Token Creation Failure: ', res.error);
                                         actions.reject(AfterPay.CONSTANTS.SERVICE_UNAVAILABLE);
                                     }
                                 },
                                 error: function () {
-                                    console.log('Afterpay Express Checkout: request failure.');
+                                    alert('Afterpay payment failed.');
                                 }
                             });
                         });
                         
                     },
                     error: function () {
-                        console.log('Afterpay Express Checkout: request failure.');
+                        alert('Afterpay payment failed.');
                     }
                 });
             }
         },
         // NOTE: onShippingAddressChange only needed if shippingOptionRequired is true
         onShippingAddressChange: function (data, actions) {
-            console.log('onShippingAddressChange called. data=', data);
             var shippingMetthodsUrl = $('#afterpay-express-url-getshippingmethods').val();
-            console.log('Calling this to get shipping methods: ' + shippingMetthodsUrl);
             $.ajax({
                 type: 'POST',
                 url: shippingMetthodsUrl,
@@ -87,7 +80,6 @@ function initAfterpay(settings) {
                     phoneNumber: data.phoneNumber
                 },
                 success: function (response) {
-                    console.log('shipping method computed successfully. Returning data to Afterpay portal via resolve. shippingMethods=', response);
                         // Need to handle case where address is unsupported/invalid
                     if (!response.shipmethods || response.shipmethods.length == 0) {
                         actions.reject(AfterPay.CONSTANTS.SHIPPING_ADDRESS_UNSUPPORTED);
@@ -96,19 +88,15 @@ function initAfterpay(settings) {
                     }
                 },
                 error: function () {
-                    console.log('Afterpay Express Checkout: failure in get shipping methods');
+                    alert('Afterpay payment failed.');
                 }
             });
         },
         onComplete: function (event) {
             if (event.data.status == 'SUCCESS') {
-                console.log('onComplete called with SUCCESS');
-                console.log(event.data);
                 var afterpayExpressProcessUrl = $('#afterpay-express-url-processorder').val() + '?orderToken=' + event.data.orderToken + '&merchantReference=' + event.data.merchantReference;
                 $(location).attr('href', afterpayExpressProcessUrl);
             } else {
-                console.log('onComplete failed');
-                console.log(event.data);
                 var errorUrl = $('#afterpay-express-url-cancelorder').val() + '?orderToken=' + event.data.orderToken + '&merchantReference=' + event.data.merchantReference;
                 $(location).attr('href', errorUrl);
             }
@@ -131,11 +119,10 @@ function reinitializeAfterpayPopup() {
         url: getCartStatusUrl,
         success: function (res) {
             var instorepickup = res.instorepickup;
-            console.log('Instorepickup setting: ', instorepickup);
             initAfterpay(instorepickup);
         },
         error: function () {
-            console.log('Afterpay Express cart status request failure.');
+            alert('Afterpay payment failed.');
         }
     });
 }

@@ -1,3 +1,4 @@
+.vscode
 node_modules
 cartridges/int_afterpay_sfra/cartridge/static/default/css
 cartridges/int_afterpay_sfra/cartridge/static/default/js/afterpay.js

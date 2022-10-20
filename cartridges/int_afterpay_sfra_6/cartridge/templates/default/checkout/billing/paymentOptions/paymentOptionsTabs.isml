@@ -5,5 +5,7 @@
         <isinclude template="checkout/billing/paymentOptions/afterpayTab" />
     <iselseif condition="${(paymentOption.ID.toLowerCase() == 'clearpay' && pdict.priceContext.apApplicable)}">
         <isinclude template="checkout/billing/paymentOptions/clearpayTab" />
+    <iselseif condition="${(paymentOption.ID.toLowerCase() == 'cashapppay' && pdict.priceContext.cashAppApplicable)}">
+        <isinclude template="checkout/billing/paymentOptions/cashAppTab" />
     </isif>
 </isloop>

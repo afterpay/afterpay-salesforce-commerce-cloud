@@ -78,37 +78,39 @@ var thresholdUtilities = {
             session.privacy[prefix + 'MaxAmount'] = 0;
         }
     },
-    checkThreshold: function (price) {
+    checkThreshold: function (price, isCashAppPay) {
+        isCashAppPay = isCashAppPay  || false;
         if (afterpayBrand && (price && price.value)) {
-            result =  this.getThresholdResult(price.value);
+            result =  this.getThresholdResult(price.value,isCashAppPay);
         }
         return result;
     },
-    checkPriceThreshold: function (price) {
+    checkPriceThreshold: function (price, isCashAppPay) {
+        isCashAppPay = isCashAppPay  || false;
         if (afterpayBrand && price) {
-            result =  this.getThresholdResult(price);
+            result =  this.getThresholdResult(price, isCashAppPay);
         }
         return result;
     },
-    getThresholdResult: function(price) {
+    getThresholdResult: function(price, isCashAppPay) {
         if (price) {
             var threshold = this.getThresholdAmounts(afterpayBrand);
             this.saveThresholds(afterpayBrand, threshold);
-            var paymentMethodName = checkoutUtilities.getPaymentMethodName();
+            var paymentMethodName = checkoutUtilities.getPaymentMethodName(isCashAppPay);
             var paymentMethod;
             var isApplicable;
-
             if (paymentMethodName) {
                 paymentMethod = PaymentMgr.getPaymentMethod(paymentMethodName);
                 isApplicable = paymentMethod.isApplicable(session.customer, countryCode, price);
 
-                result.status = isApplicable;
-
                 if (isApplicable) {
-                    result.belowThreshold = price.value <= threshold.minAmount;
-                    result.aboveThreshold = price.value >= threshold.maxAmount;
+                    result.belowThreshold = price <= threshold.minAmount;
+                    result.aboveThreshold = price >= threshold.maxAmount;
                     result.minThresholdAmount = threshold.minAmount;
                     result.maxThresholdAmount = threshold.maxAmount;
+                    if(price >= threshold.minAmount && price <= threshold.maxAmount){
+                        result.status = true;
+                    }
                 }
             }
         }

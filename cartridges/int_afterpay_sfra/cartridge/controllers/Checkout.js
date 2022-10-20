@@ -25,22 +25,25 @@ server.append(
         var currentBasket = BasketMgr.getCurrentBasket();
         var afterpayErrorResponse = req.querystring.afterpayErrorMessage;
         var afterpayForm = server.forms.getForm('afterpay');
+        var {sitePreferencesUtilities} = require('*/cartridge/scripts/util/afterpayUtilities');
         var priceContext;
-
-        priceContext = require('*/cartridge/scripts/util/getTemplateSpecificWidget').getCheckoutWidgetData(
-            currentBasket,
-            'checkout-afterpay-message',
-            req.locale.id
-        );
-
-        res.render('checkout/checkout', {
-            afterpayApiError: afterpayErrorResponse,
-            priceContext: priceContext,
-            customForms: {
-                afterpayForm: afterpayForm
-            }
-        });
-
+        if(sitePreferencesUtilities.isAfterpayEnabled()){
+            priceContext = require('*/cartridge/scripts/util/getTemplateSpecificWidget').getCheckoutWidgetData(
+                currentBasket,
+                'checkout-afterpay-message',
+                req.locale.id
+            );
+    
+            res.render('checkout/checkout', {
+                afterpayApiError: afterpayErrorResponse,
+                priceContext: priceContext,
+                customForms: {
+                    afterpayForm: afterpayForm
+                }
+            });
+    
+        }
+        
         return next();
     }
 );

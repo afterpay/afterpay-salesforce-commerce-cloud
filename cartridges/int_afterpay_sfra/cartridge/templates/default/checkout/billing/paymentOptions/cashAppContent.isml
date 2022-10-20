@@ -1,0 +1,3 @@
+<div class="tab-pane ${paymentOption.ID.toLowerCase() + '-content'}" id="${paymentOption.ID.toLowerCase() + '-content'}" role="tabpanel">
+    <label>You will be redirected to Cash App Pay<label>
+</div>

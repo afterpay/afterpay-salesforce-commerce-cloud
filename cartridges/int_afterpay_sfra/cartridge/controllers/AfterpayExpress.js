@@ -35,6 +35,7 @@ function returnJsonError(res, next, err) {
 }
 
 function redirectToErrorDisplay(res, error) {
+    AfterpaySession.clearSession();
     res.redirect(URLUtils.url('Checkout-Begin', 'stage', 'payment', 'afterpayErrorMessage', error));
 }
 

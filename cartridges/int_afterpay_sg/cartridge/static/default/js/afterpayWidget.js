@@ -15,7 +15,6 @@ function createAfterpayWidget() {
     onChange: function (event) {
       if (!event.data.isValid) {
         let widgetErrorUrl = $('#afterpay-express-url-widgeterror').val() + "?error=" + encodeURIComponent(event.data.error);
-        console.log("Error with Afterpay Widget: " + event.data.error);
         window.location.assign(widgetErrorUrl);
         // Need to clear the session
       }
@@ -25,7 +24,6 @@ function createAfterpayWidget() {
       // See "Getting the widget's state" for more details.
     },
     onError: function (event) {
-      console.log("onError() called. event=", event);
       var errorUrl = $('#afterpay-express-url-cancelorder').val();
       $(location).attr('href', errorUrl);
       // See "Handling widget errors" for more details.
@@ -52,11 +50,8 @@ function checkCartAndUpdateWidget() {
         amount: {
           amount: res.cartTotalAmount.toString(),
           currency: res.cartTotalCurrency
-        },
+        }
       });
-    },
-    error: function () {
-      console.log("Afterpay Express cart status request failure.");
     }
   });
 }

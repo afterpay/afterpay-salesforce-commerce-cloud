@@ -34,12 +34,11 @@ function initAfterpay(settings) {
                         } else {
                             afterpayCreateTokenErrorMessage = res.error;
                             alert(res.error);
-                            console.log('Afterpay Express Checkout: Token Creation Failure: ', res.error);
                             actions.reject(AfterPay.CONSTANTS.SERVICE_UNAVAILABLE);
                         }
                     },
                     error: function () {
-                        console.log('Afterpay Express Checkout: request failure.');
+                        alert('Afterpay payment failed.');
                     }
                 });
             });
@@ -72,7 +71,7 @@ function initAfterpay(settings) {
                     }
                 },
                 error: function () {
-                    console.log('Afterpay Express Checkout: failure in get shipping methods');
+                    alert('Afterpay payment failed.');
                 }
             });
         },
@@ -106,7 +105,7 @@ function reinitializeAfterpayPopup() {
             initAfterpay({ pickupflag: instorepickup });
         },
         error: function () {
-            console.log('Afterpay Express cart status request failure.');
+            alert('Afterpay payment failed.');
         }
     });
 }

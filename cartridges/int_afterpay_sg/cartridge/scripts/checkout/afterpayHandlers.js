@@ -9,8 +9,8 @@ var apHandlers = {
     // recompute the amount for the Afterpay payment instrument
     recomputeAfterpayPayment: function() {
         var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
-        var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
         if (AfterpaySession.isExpressCheckout()) {
+            var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
             var Transaction = require('dw/system/Transaction');
 
             var cart = app.getModel('Cart').get();
@@ -30,13 +30,14 @@ var apHandlers = {
         }
     },
     // only call when changing to non-Afterpay payment method
-    handleChangedPaymentInstrument: function() {
-        var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
-        var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
-        var cart = app.getModel('Cart').get();
-        cart.removePaymentInstruments( cart.getPaymentInstruments(paymentMethodName));
-        // clears all session vars used by Afterpay
-        AfterpaySession.clearSession();
+    handleChangedPaymentInstrument: function(paymentMethod) {
+        if (paymentMethod != 'CASHAPPPAY') {
+            this.removePaymentMethods(true);
+        } 
+        if (paymentMethod != 'AFTERPAY' && paymentMethod != 'CLEARPAY') {
+            this.removePaymentMethods();
+        }
+       
     },
     // When the shipping method is updated, we need to update the Afterpay
     // payment in the cart with the correct amount
@@ -45,8 +46,15 @@ var apHandlers = {
     },
     handleBillingStart: function() {
         this.recomputeAfterpayPayment();
+    },
+    removePaymentMethods: function(isCashAppPay){
+        var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
+        var paymentMethodName = apCheckoutUtilities.getPaymentMethodName(isCashAppPay);
+        var cart = app.getModel('Cart').get();
+        cart.removePaymentInstruments( cart.getPaymentInstruments(paymentMethodName));
+        // clears all session vars used by Afterpay
+        AfterpaySession.clearSession();
     }
-
 };
 
 module.exports = apHandlers;

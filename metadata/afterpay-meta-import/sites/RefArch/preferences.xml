@@ -15,6 +15,7 @@
             <preference preference-id="apDisplayPlpInfo">false</preference>
             <preference preference-id="apPaymentMode">DIRECT_CAPTURE</preference>
             <preference preference-id="enableAfterpay">false</preference>
+            <preference preference-id="enableCashAppPay">false</preference>
             <preference preference-id="apEnableExpressCheckout">true</preference>
             <preference preference-id="apExpressCheckoutShippingStrategy">integrated</preference>
             <preference preference-id="apEnableExpressCheckoutBuyNow">true</preference>

@@ -9,11 +9,22 @@
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
+             <attribute-definition attribute-id="isCashAppPayOrder">
+                <display-name xml:lang="x-default">CashAppPay Payment Method</display-name>
+                <description xml:lang="x-default">Determines if this is an CashAppPay order</description>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
             <attribute-group group-id="Afterpay">
                 <display-name xml:lang="x-default">Afterpay</display-name>
                 <attribute attribute-id="apIsAfterpayOrder"/>
+            </attribute-group>
+            <attribute-group group-id="CashAppPay">
+                <display-name xml:lang="x-default">Cash App Pay</display-name>
+                <attribute attribute-id="isCashAppPayOrder"/>
             </attribute-group>
         </group-definitions>
     </type-extension>
@@ -218,6 +229,12 @@
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
+             <attribute-definition attribute-id="enableCashAppPay">
+                <display-name xml:lang="x-default">Enable Cash App Pay</display-name>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
             <attribute-definition attribute-id="apEnableExpressCheckout">
                 <display-name xml:lang="x-default">Enable Express Checkout</display-name>
                 <type>boolean</type>
@@ -268,6 +285,7 @@
             <attribute-group group-id="Integration_Afterpay">
                 <display-name xml:lang="x-default">Integration Afterpay</display-name>
                 <attribute attribute-id="enableAfterpay"/>
+                <attribute attribute-id="enableCashAppPay"/>
                 <attribute attribute-id="apBrandSettings"/>
                 <attribute attribute-id="apDisplayPdpInfo"/>
                 <attribute attribute-id="apDisplayPlpInfo"/>

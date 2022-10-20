@@ -67,8 +67,8 @@ OrderRequestBuilder.prototype._buildAddress = function (type, address) {
  * @param {dw.order.Basket} basket - source cart
  * @returns {dw.order.PaymentTransaction} - payment transaction associated with provided basket
  */
-OrderRequestBuilder.prototype._getPaymentTransaction = function (basket) {
-    var paymentMethod = checkoutUtilities.getPaymentMethodName();
+OrderRequestBuilder.prototype._getPaymentTransaction = function (basket, isCashAppPay) {
+    var paymentMethod = checkoutUtilities.getPaymentMethodName(isCashAppPay);
 
     if (!paymentMethod) {
         return null;
@@ -94,22 +94,20 @@ OrderRequestBuilder.prototype.buildRequest = function (params) {
         throw new Error(this._log(e));
     }
 
-    var basket = params.basket;
-    var url = params.url;
-    var requestMethod = params.requestMethod;
-
+    var { basket, isCashAppPay, requestMethod } = params;
     return this.init()
         .buildConsumer(basket)
         .buildBilling(basket)
         .buildShipping(basket)
         .buildItems(basket)
         .applyDiscounts(basket)
-        .buildTotalAmount(basket)
+        .buildTotalAmount(basket,isCashAppPay)
         .buildShippingAmount(basket)
         .buildTotalTax(basket)
-        .buildMerchantInformation(url)
+        .buildMerchantInformation(isCashAppPay)
         .buildPurchaseCountry()
-        .buildRequestMethod(requestMethod);
+        .buildRequestMethod(requestMethod)
+        .buildCashAppPay(isCashAppPay);
 };
 
 /**
@@ -242,16 +240,14 @@ OrderRequestBuilder.prototype.buildItems = function (basket) {
         if (!product) {
             item.name = li.getLineItemText();
             item.sku = li.productID;
-            item.quantity = li.getQuantity().value;
-            item.price.amount = li.adjustedNetPrice.value;
             item.price.currency = li.adjustedNetPrice.currencyCode;
         } else {
                 item.name = product.name;
                 item.sku = product.ID;
-            item.quantity = li.getQuantity().value;
-            item.price.amount = product.getPriceModel().getPrice().value;
                 item.price.currency = product.getPriceModel().getPrice().currencyCode;
-            }
+        }
+        item.quantity = li.getQuantity().value;
+        item.price.amount = (li.adjustedPrice.value/item.quantity).toString();
         return item;
     });
     return this;
@@ -262,10 +258,22 @@ OrderRequestBuilder.prototype.buildItems = function (basket) {
  * @param {string} url - url
  * @returns {Object} - this object
  */
-OrderRequestBuilder.prototype.buildMerchantInformation = function (url) {
-    this.context.merchant.redirectConfirmUrl = !empty(url) ? url : sitePreferencesUtilities.getRedirectConfirmUrl();
-    this.context.merchant.redirectCancelUrl = !empty(url) ? url : sitePreferencesUtilities.getRedirectCancelUrl();
+OrderRequestBuilder.prototype.buildMerchantInformation = function (isCashAppPay) {
+    var merchantURL = sitePreferencesUtilities.getRedirectConfirmUrl(isCashAppPay);
+    this.context.merchant.redirectConfirmUrl = merchantURL;
+    this.context.merchant.redirectCancelUrl = merchantURL;
 
+    return this;
+};
+
+/**
+ * builds CashAppPay
+ * @returns {Object} - this object
+ */
+ OrderRequestBuilder.prototype.buildCashAppPay = function (isCashAppPay) {
+    if(isCashAppPay){
+        this.context.isCashAppPay = 'true';
+    }
     return this;
 };
 
@@ -307,9 +315,8 @@ OrderRequestBuilder.prototype.applyDiscounts = function (basket) {
  * @returns {Object} - this object
  */
 // eslint-disable-next-line no-unused-vars
-OrderRequestBuilder.prototype.buildTotalAmount = function (basket) {
-    var paymentTransaction = this._getPaymentTransaction(basket);
-
+OrderRequestBuilder.prototype.buildTotalAmount = function (basket,isCashAppPay) {
+    var paymentTransaction = this._getPaymentTransaction(basket,isCashAppPay);
     if (!paymentTransaction) {
         return null;
     }

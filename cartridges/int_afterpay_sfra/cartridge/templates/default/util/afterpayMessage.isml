@@ -28,7 +28,7 @@
                         rel="noreferrer noopener"
                         href="${require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities.getBrandSettings()['learnMoreUrl']}"
                     >
-                        ${Resource.msg('checkout.content.terms', pdict.brand, null)}
+                        ${Resource.msg('terms.conditions.label', pdict.brand, null)}
                     </a>
                 </div>
             </span>
