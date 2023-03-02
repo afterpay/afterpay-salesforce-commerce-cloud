@@ -1,6 +1,7 @@
+'use strict';
+
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('AfterpayTokenConflict');
-var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
 /**
 * validates the generated token to avoid duplication for the same order
 * @param {Object} basket - basket
@@ -8,6 +9,7 @@ var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHe
 * @returns {boolean} - product present or not
 */
 function checkTokenConflict(basket, token) {
+    var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
     var sameBasket = true;
     var tokenValidate;
     try {
@@ -21,7 +23,7 @@ function checkTokenConflict(basket, token) {
     }
 
     var cksum = AfterpayCOHelpers.computeResponseProductLineItemChecksum(tokenValidate);
-    if (cksum != AfterpayCOHelpers.computeBasketProductLineItemChecksum(basket)) {
+    if (cksum !== AfterpayCOHelpers.computeBasketProductLineItemChecksum(basket)) {
         sameBasket = false;
     }
     return sameBasket;

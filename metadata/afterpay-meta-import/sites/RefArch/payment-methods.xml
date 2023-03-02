@@ -63,4 +63,23 @@
             </range>
         </ranges>
     </payment-method>
+
+    <payment-method method-id="CASHAPPPAY">
+        <name xml:lang="x-default">Cash App Pay</name>
+        <image>cashapppay-logomark1x.png</image>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>CASHAPP_CREDIT</processor-id>
+        <countries>
+            <country country-code="US"/>
+        </countries>
+        <currencies>
+            <currency>USD</currency>
+        </currencies>
+        <ranges>
+            <range currency="USD">
+                <min-purchase-amount>0.03</min-purchase-amount>
+                <max-purchase-amount>1000</max-purchase-amount>
+            </range>
+        </ranges>
+    </payment-method>
 </payment-settings>

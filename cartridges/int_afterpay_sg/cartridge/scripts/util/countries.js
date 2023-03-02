@@ -1,3 +1,5 @@
+'use strict';
+
 /* eslint consistent-return: 0 */
 var countries = require('*/cartridge/countries');
 var Locale = require('dw/util/Locale');
@@ -14,7 +16,7 @@ function getCountries() {
     var allowedCountries = countries.filter(function (country) {
         var hasAllowedLocale = false;
         // loop over allowed locales
-        for (var i = 0; i < allowedLocales.length; i++) {
+        for (var i = 0; i < allowedLocales.length; i++) { // eslint-disable-line
             var locale = Locale.getLocale(allowedLocales[i]);
             if (country.countryCode === locale.country) {
                 hasAllowedLocale = true;
@@ -25,7 +27,6 @@ function getCountries() {
     });
     return allowedCountries;
 }
-
 
 /**
  * retrieves countries as grouped
@@ -60,14 +61,14 @@ function getCurrent(pdict) {
     if (!currentLocale.country) {
         return countries[0]; // return the first in the list if the requested one is not available
     }
-    for (var i = 0; i < countries.length; i++) {
+    for (var i = 0; i < countries.length; i++) { // eslint-disable-line
         var _country = countries[i]; // eslint-disable-line
         if (_country.countryCode === currentLocale.country) {
             country = _country;
             break;
         }
     }
-    return country || countries[0];  // return the first in the list if the requested one is not available
+    return country || countries[0]; // return the first in the list if the requested one is not available
 }
 
 exports.getCountries = getCountries;

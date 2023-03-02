@@ -1,3 +1,5 @@
+'use strict';
+
 /**
 * Gets order list
 *
@@ -30,14 +32,14 @@ function getOrders(input) {
     var rowCount;
     var pageCount;
 
-    totalOrderCount = startRow = endRow = rowCount = pageCount = 0;
+    totalOrderCount = startRow = endRow = rowCount = pageCount = 0; // eslint-disable-line
 
     if (orderNumber) { // searching for an order ID
         order = OrderMgr.searchOrder('orderNo = {0}', orderNumber);
 
         if (order) {
             result.push(order);
-            totalOrderCount = startRow = endRow = 1;
+            totalOrderCount = startRow = endRow = 1;// eslint-disable-line
         }
     } else { // all orders on pagination
         orders = OrderMgr.searchOrders('custom.apIsAfterpayOrder = {0}', 'creationDate desc', true);

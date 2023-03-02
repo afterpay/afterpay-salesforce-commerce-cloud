@@ -1,8 +1,10 @@
+'use strict';
+
 /* eslint no-underscore-dangle: 0 */
 
 var Builder = require('../util/builder');
 var afterpayWebServiceUtilities = require('*/cartridge/scripts/util/afterpayUtilities').sitePreferencesUtilities;
-var { Order, LineItem, Discount, Shipping, Amount } = require('*/cartridge/scripts/order/expressOrder');
+var expressOrderObject = require('*/cartridge/scripts/order/expressOrder');
 
 /**
  * @class
@@ -33,10 +35,7 @@ OrderRequestBuilder.prototype._log = function (errorCode) {
  * @param {Object} params - params
 */
 OrderRequestBuilder.prototype._handleRequire = function (params) {
-    if (
-    empty(params) ||
-    empty(params.basket)
-    ) {
+    if (empty(params) || empty(params.basket)) {
         throw new Error('404');
     }
 };
@@ -52,7 +51,7 @@ OrderRequestBuilder.prototype._buildAddress = function (type, address) {
     this.context[type].line1 = address.address1 || '';
     this.context[type].line2 = address.address2 || '';
     this.context[type].area1 = address.city || '';
-    this.context[type].region = address.stateCode || '';
+    this.context[type].region = address.stateCode != 'undefined' ? address.stateCode : '';
     this.context[type].postcode = address.postalCode || '';
     this.context[type].countryCode = address.countryCode.value || '';
     this.context[type].phoneNumber = address.phone || '';
@@ -77,14 +76,14 @@ OrderRequestBuilder.prototype.buildRequest = function (params) {
     var requestMethod = params.requestMethod;
 
     return this.init()
-    .buildItems(basket)
-    .applyDiscounts(basket)
-    .buildTotalAmount(checkoutPrice)
-    .buildMerchantInformation(sourceUrl)
-    .buildRequestMethod(requestMethod)
-    .buildMerchantReference(merchantReference)
-    .buildShiptoStore(store)
-    .buildExpressMode();
+        .buildItems(basket)
+        .applyDiscounts(basket)
+        .buildTotalAmount(checkoutPrice)
+        .buildMerchantInformation(sourceUrl)
+        .buildRequestMethod(requestMethod)
+        .buildMerchantReference(merchantReference)
+        .buildShiptoStore(store)
+        .buildExpressMode();
 };
 
 /**
@@ -92,7 +91,7 @@ OrderRequestBuilder.prototype.buildRequest = function (params) {
  * @returns {Object} - This object
  */
 OrderRequestBuilder.prototype.init = function () {
-    this.context = new Order();
+    this.context = new expressOrderObject.Order();
 
     return this;
 };
@@ -129,23 +128,22 @@ OrderRequestBuilder.prototype.buildItems = function (basket) {
     var lineItems = basket.getAllProductLineItems().toArray();
 
     this.context.items = lineItems.map(function (li) {
-        var item = new LineItem();
+        var item = new expressOrderObject.LineItem();
         var product = li.product;
 
-    // Some lineitems may not be products
-    // e.g. extended warranties
+        // Some lineitems may not be products
+        // e.g. extended warranties
         if (!product) {
             item.name = li.getLineItemText();
-            item.quantity = li.getQuantity().value;
-            item.price.amount = li.adjustedNetPrice.value;
+            item.sku = li.productID;
             item.price.currency = li.adjustedNetPrice.currencyCode;
         } else {
             item.name = product.name;
             item.sku = product.ID;
-            item.quantity = li.getQuantity().value;
-            item.price.amount = product.getPriceModel().getPrice().value;
             item.price.currency = product.getPriceModel().getPrice().currencyCode;
         }
+        item.quantity = li.getQuantity().value;
+        item.price.amount = (li.adjustedPrice.value / item.quantity).toString();
         return item;
     });
 
@@ -159,8 +157,8 @@ OrderRequestBuilder.prototype.buildItems = function (basket) {
  */
 OrderRequestBuilder.prototype.buildMerchantInformation = function (sourceUrl) {
     this.context.merchant.popupOriginUrl = !empty(sourceUrl)
-    ? sourceUrl
-    : afterpayWebServiceUtilities.getRedirectConfirmUrl(); // using redirect url as backup
+        ? sourceUrl
+        : afterpayWebServiceUtilities.getRedirectConfirmUrl(); // using redirect url as backup
 
     return this;
 };
@@ -174,7 +172,7 @@ OrderRequestBuilder.prototype.applyDiscounts = function (basket) {
     var priceAdjustments = basket.getPriceAdjustments().toArray();
 
     this.context.discounts = priceAdjustments.map(function (pa) {
-        var discount = new Discount();
+        var discount = new expressOrderObject.Discount();
 
         discount.displayName = pa.lineItemText;
         discount.amount.amount = Math.abs(pa.price.value);
@@ -188,17 +186,15 @@ OrderRequestBuilder.prototype.applyDiscounts = function (basket) {
 
 /**
  * builds total amount details
- * @param {dw.order.Basket} basket - basket
+ * @param {Object} checkoutPrice - checkoutPrice
  * @returns {Object} - this object
  */
-// eslint-disable-next-line no-unused-vars
 OrderRequestBuilder.prototype.buildTotalAmount = function (checkoutPrice) {
     this.context.amount.amount = checkoutPrice.value;
     this.context.amount.currency = checkoutPrice.currencyCode;
 
     return this;
 };
-
 
 OrderRequestBuilder.prototype.buildMerchantReference = function (merchantReference) {
     this.context.merchantReference = merchantReference;
@@ -215,7 +211,7 @@ OrderRequestBuilder.prototype.buildShiptoStore = function (store) {
     if (!store) {
         return this;
     }
-    let shipping = new Shipping();
+    var shipping = new expressOrderObject.Shipping();
     this.context.shipping = shipping;
     shipping.name = store.name || 'UNKNOWN';
     shipping.line1 = store.address1 || '';

@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  *
  * @input Basket : dw.order.Basket The basket to create shipments for
@@ -7,6 +9,11 @@ var getOrderService = require('*/cartridge/scripts/logic/services/afterpayGetOrd
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('AfterpayGetToken');
 
+/**
+ * calls token service to retrieve the token
+ * @param {string} token - token
+ * @returns {Object} - Order object
+ */
 function getOrder(token) {
     try {
         getOrderService.generateRequest(token);

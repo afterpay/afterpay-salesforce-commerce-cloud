@@ -1,22 +1,21 @@
 'use strict';
+
 var AfterpayUtilities = require('*/cartridge/scripts/util/afterpayUtilities.js');
 var sitePreferences = AfterpayUtilities.sitePreferencesUtilities;
-var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
-var Logger = LogUtils.getLogger('afterpayShippingHelper');
 
 var storePickupTools = {
     getStorePickupMethodSet: function () {
-        let storePickupMethods = sitePreferences.getStorePickupShippingMethodIDs();
-        let arr = storePickupMethods.split(',').map(function (item) {
+        var storePickupMethods = sitePreferences.getStorePickupShippingMethodIDs();
+        var arr = storePickupMethods.split(',').map(function (item) {
             return item.trim();
         });
-        let storePickupSet = new dw.util.HashSet();
+        var storePickupSet = new dw.util.HashSet();
         storePickupSet.add(arr);
         return storePickupSet;
     },
     getShippingMethodForID: function (shipId) {
-        let shippingMethods = dw.order.ShippingMgr.getAllShippingMethods();
-        let shipMethods = shippingMethods.toArray().filter(function (method) {
+        var shippingMethods = dw.order.ShippingMgr.getAllShippingMethods();
+        var shipMethods = shippingMethods.toArray().filter(function (method) {
             return method.ID == shipId;
         });
         return shipMethods[0] || null;
@@ -25,19 +24,19 @@ var storePickupTools = {
         var ShippingHelper = require('*/cartridge/scripts/checkout/shippingHelpers');
         var basketCalculationHelpers = require('*/cartridge/scripts/helpers/basketCalculationHelpers');
 
-        let shipment = basket.defaultShipment;
-        let Transaction = require('dw/system/Transaction');
+        var shipment = basket.defaultShipment;
+        var Transaction = require('dw/system/Transaction');
         Transaction.wrap(function () {
             ShippingHelper.selectShippingMethod(shipment, shippingMethodID);
             basketCalculationHelpers.calculateTotals(basket);
         });
     },
     getInstorePickupShipMethodFromCart: function (cart) {
-        let plis = cart.getAllProductLineItems();
+        var plis = cart.getAllProductLineItems();
         for (var i = 0; i < plis.length; i++) {
             var pli = plis[i];
             if (pli.shipment.shippingMethod && pli.shipment.shippingMethod.custom.storePickupEnabled) {
-                let method = pli.shipment.shippingMethod;
+                var method = pli.shipment.shippingMethod;
                 return method;
             }
         }
@@ -80,12 +79,14 @@ var storePickupTools = {
             }
         );
 
-        let grandTotal = parsePrice(basketModel.totals.grandTotal).toString();
-        let taxTotal = parsePrice(basketModel.totals.totalTax).toString();
-        let shipTotal = parsePrice(basketModel.totals.totalShippingCost).toString();
-        return { totalCost: new dw.value.Money(grandTotal, basket.currencyCode),
+        var grandTotal = parsePrice(basketModel.totals.grandTotal).toString();
+        var taxTotal = parsePrice(basketModel.totals.totalTax).toString();
+        var shipTotal = parsePrice(basketModel.totals.totalShippingCost).toString();
+        return {
+            totalCost: new dw.value.Money(grandTotal, basket.currencyCode),
             tax: new dw.value.Money(taxTotal, basket.currencyCode),
-            shippingCost: new dw.value.Money(shipTotal, basket.currencyCode) };
+            shippingCost: new dw.value.Money(shipTotal, basket.currencyCode)
+        };
     }
 };
 

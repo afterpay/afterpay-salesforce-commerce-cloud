@@ -1,5 +1,4 @@
 'use strict';
-/* global $ */
 
 var afterpay;
 
@@ -16,6 +15,7 @@ function openAfterpayModal(e) {
         if ($('#afterpayModal').length) {
             $('#afterpayModal').remove();
         }
+        /* eslint-disable operator-linebreak */
         var htmlString = '<!-- Modal -->' +
             '<div class="modal fade afterpayModal" id="afterpayModal" role="dialog">' +
             '<div class="modal-dialog quick-view-dialog">' +
@@ -30,6 +30,7 @@ function openAfterpayModal(e) {
             '</div>' +
             '</div>' +
             '</div>';
+        /* eslint-enable operator-linebreak */
         $('body').append(htmlString);
         $('body').addClass('modal-open');
         $('#afterpayModal').addClass('show');

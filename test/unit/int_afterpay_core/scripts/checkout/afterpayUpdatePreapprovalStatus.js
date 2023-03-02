@@ -4,6 +4,7 @@ var expect = require('chai').expect;
 var proxyquire = require('proxyquire').noCallThru().noPreserveCache();
 var sinon = require('sinon');
 var loggerMock = require('../../../../mocks/dw/system/Logger');
+var isCashAppPay = false;
 
 var transaction = {
     wrap: function (callBack) {
@@ -37,23 +38,44 @@ var utilitiesMock = {
     checkoutUtilities: {
         getPaymentTransaction: function () {
             return paymentTransaction;
+        },
+        getPaymentMethodName: function (isCashAppPay) {
+            return 'AFTERPAY';
         }
     }
 };
 
 var lineItemCtnrStub = {
-    paymentInstruments: [{
-        paymentMethod: {
-            equals: function (value) {
-                return value === 'AFTERPAY';
+    getPaymentInstruments: function () {
+        return {
+            paymentMethod: {
+                equals: function (value) {
+                    return value === 'AFTERPAY';
+                },
+                value: 'AFTERPAY'
             },
-            value: 'AFTERPAY'
-        },
-        paymentTransaction: {
-            transactionID: '11148651345',
-            amount: {value: 100}
+            paymentTransaction: {
+                transactionID: '11148651345',
+                amount: {value: 100},
+                custom: {
+                    apInitialStatus: "approved"
+                }
+            }
         }
-    }]
+    }
+};
+
+var customLogger = {
+    getLogger: function() {
+	return Logger;
+	}
+};
+
+var Logger = {
+    debug: function () {
+    },
+    error: function () {
+    },
 };
 
 describe('afterpayUpdatePreapprovalStatus', function () {
@@ -62,7 +84,7 @@ describe('afterpayUpdatePreapprovalStatus', function () {
         'dw/system/Transaction': transaction,
         '*/cartridge/scripts/models/preapprovalModel': stubPreapprovalModel,
         '*/cartridge/scripts/util/afterpayUtilities': utilitiesMock,
-        'dw/system/Logger': loggerMock
+        '*/cartridge/scripts/util/afterpayLogUtils': customLogger
     });
 
     describe('#parsePreapprovalResult()', function () {
@@ -79,7 +101,7 @@ describe('afterpayUpdatePreapprovalStatus', function () {
                 apToken: 'shjdjadgejdksbfcdjfgbdsnkc'
             });
 
-            var result = afterpayUpdatePreapprovalStatus.updatePreapprovalStatus(stubPreapprovalModel, lineItemCtnrStub);
+            var result = afterpayUpdatePreapprovalStatus.updatePreapprovalStatus(stubPreapprovalModel, lineItemCtnrStub, isCashAppPay);
             expect(result).to.be.object;
         });
     });

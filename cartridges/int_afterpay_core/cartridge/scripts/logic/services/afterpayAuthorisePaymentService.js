@@ -1,4 +1,5 @@
 'use strict';
+
 var afterpayHttpService = require('*/cartridge/scripts/logic/services/afterpayHttpService');
 var afterpayUtils = require('*/cartridge/scripts/util/afterpayUtils');
 
@@ -15,8 +16,8 @@ var AuthorisePaymentService = {
             var shippingObj = null;
             var itemsObj = null;
             var isCheckoutAdjusted = false;
-            let CaptureHelpers = require('*/cartridge/scripts/payment/expressCaptureHelpers');
-            let body = CaptureHelpers.generateItemsAndShippingBody(order);
+            var CaptureHelpers = require('*/cartridge/scripts/payment/expressCaptureHelpers');
+            var body = CaptureHelpers.generateItemsAndShippingBody(order);
             if (expressCheckoutModel.apTempShippingAddressChanged) {
                 shippingObj = body.shipping;
                 isCheckoutAdjusted = true;

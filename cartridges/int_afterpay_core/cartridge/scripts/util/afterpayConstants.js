@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  *  definitions of  payment status
  */
@@ -7,6 +9,7 @@ var PAYMENT_STATUS = {
     FAILED: 'FAILED',
     PENDING: 'PENDING',
     SUCCESS: 'SUCCESS',
+    ACTIVE: 'ACTIVE',
     UNKNOWN: 'Payment was Declined by Afterpay'
 };
 

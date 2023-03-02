@@ -63,7 +63,7 @@ function authorisePaymentService(queryString)
  * Module exports
  */
 module.exports = {
-	authorisePaymentService: function(queryString){
+	authorisePaymentService: function (queryString){
 		return authorisePaymentService(queryString);
 	}
 }

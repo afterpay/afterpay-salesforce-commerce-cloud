@@ -49,7 +49,7 @@ function checkValidIPAddress(ipAddress)
  * Module exports
  */
 module.exports = {
-	checkValidIPAddress: function(ipAddress){
+	checkValidIPAddress: function (ipAddress){
 		return checkValidIPAddress(ipAddress);
 	}
 }

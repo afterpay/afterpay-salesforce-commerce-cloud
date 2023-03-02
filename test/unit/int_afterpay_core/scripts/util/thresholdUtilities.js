@@ -45,6 +45,9 @@ var utilitiesMock = {
         },
         getCountryCode: function () {
             return 'US';
+        },
+        isAfterpayApplicable: function () {
+            return true;
         }
     },
     checkoutUtilities: {
@@ -113,16 +116,12 @@ global.request = {
 
 describe('thresholdUtilities', function () {
 
-    var thresholdUtilitiesBase = proxyquire('../../../../../cartridges/int_afterpay_core/cartridge/scripts/util/thresholdUtilities.js', {
+    var thresholdUtilities = proxyquire('../../../../../cartridges/int_afterpay_core/cartridge/scripts/util/thresholdUtilities.js', {
         'dw/system/Transaction': transaction,
         'dw/order/PaymentMgr': PaymentMgrMock,
         '*/cartridge/scripts/util/afterpayUtilities': utilitiesMock,
         '*/cartridge/scripts/logic/services/afterpayConfigurationService': afterpayConfigurationServiceMock,
         '*/cartridge/scripts/util/afterpayLogUtils': customLogger
-    });
-
-    var thresholdUtilities = proxyquire('../../../../../cartridges/int_afterpay_core/cartridge/scripts/util/v2/thresholdUtilities.js', {
-        '*/cartridge/scripts/util/thresholdUtilities': thresholdUtilitiesBase
     });
 
     it('detect that provided price is below an actual threshold', function () {

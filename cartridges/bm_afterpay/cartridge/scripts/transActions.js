@@ -1,3 +1,5 @@
+'use strict';
+
 /**
 * AfterPay Transaction Actions
 *
@@ -16,7 +18,7 @@ var UUIDUtils = require('dw/util/UUIDUtils');
 /* Script Modules */
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('TransActions');
-var { brandUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
+var brandUtilities = require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities;
 
 /**
  * updates the order status
@@ -86,9 +88,8 @@ function refund(orderNo, amountString) {
     var apPaymentInstrument;
     var paymentTransaction;
     var status = false;
-    var amountArray = amountString.split(' ');
-    var currency = amountArray[0];
-    var amount = amountArray[1];
+    var currency = order.getCurrencyCode();
+    var amount = amountString;
     var response;
     var paymentID;
     var request;

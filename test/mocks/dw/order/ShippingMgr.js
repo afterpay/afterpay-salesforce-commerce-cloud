@@ -1,5 +1,5 @@
 
-var ArrayList = require('../../../mocks/dw.util.Collection');
+var ArrayList = require('../../../mocks/dw/util/Collection');
 
 var defaultShippingMethod =
     {

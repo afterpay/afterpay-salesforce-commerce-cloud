@@ -216,7 +216,7 @@ ResourceHelper.getPreferences = function(pageContext) {
     var consentTrackingHintAsset = ContentMgr.getContent('consent_tracking_hint');
     // @TODO remove this file and update documentation about placing these lines in app_storefront_core sitegen cartridge
     var AfterpayUtilities = require('*/cartridge/scripts/util/afterpayUtilities.js');
-    var { brandUtilities } = AfterpayUtilities;
+    var brandUtilities = AfterpayUtilities.brandUtilities;
     return {
         LISTING_INFINITE_SCROLL: (Site.getCurrent().getCustomPreferenceValue('enableInfiniteScroll') ? true : false),
         LISTING_REFINE_SORT: true,

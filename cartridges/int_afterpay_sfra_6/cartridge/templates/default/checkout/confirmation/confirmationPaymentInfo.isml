@@ -20,4 +20,7 @@
     <isif condition="${payment.paymentMethod === 'CLEARPAY'}">
         <span>${Resource.msg('clearpay.orderconfirmation.payment.method.name', 'clearpay', null)}</span>
     </isif>
+    <isif condition="${payment.paymentMethod === 'CASHAPPPAY'}">
+        <span>${Resource.msg('cashapppay.orderconfirmation.payment.method.name', 'afterpay', null)}</span>
+    </isif>
 </isloop>

@@ -1,3 +1,5 @@
+'use strict';
+
 var RefundService = require('*/cartridge/scripts/logic/services/afterpayRefundService');
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('RefundUtilities');

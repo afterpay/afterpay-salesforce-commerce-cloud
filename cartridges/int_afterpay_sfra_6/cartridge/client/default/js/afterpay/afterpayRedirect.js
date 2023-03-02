@@ -1,5 +1,4 @@
 'use strict';
-/* global $ */
 
 var formHelpers = require('base/checkout/formErrors');
 var scrollAnimate = require('base/components/scrollAnimate');
@@ -54,8 +53,7 @@ var afterpay = {
                                         errorCode: redirectData.redirectTokenResponse.errorMessage.httpStatusCode
                                     };
                                 }
-                                redirectUrl += (redirectUrl.indexOf('?') !== -1 ? '&' : '?') +
-                                Object.keys(urlParams).map(function (key) {
+                                redirectUrl += (redirectUrl.indexOf('?') !== -1 ? '&' : '?') + Object.keys(urlParams).map(function (key) {
                                     return key + '=' + encodeURIComponent(urlParams[key]);
                                 }).join('&');
                                 window.location.href = redirectUrl;
@@ -119,25 +117,19 @@ var afterpay = {
             // if payment method is credit card
             if ($('.payment-information').data('payment-method-id') === 'CREDIT_CARD') {
                 if (!($('.payment-information').data('is-new-payment'))) {
-                    var cvvCode = $('.saved-payment-instrument.' +
-                        'selected-payment .saved-payment-security-code').val();
+                    var cvvCode = $('.saved-payment-instrument.selected-payment .saved-payment-security-code').val();
 
                     if (cvvCode === '') {
-                        var cvvElement = $('.saved-payment-instrument.' +
-                            'selected-payment ' +
-                            '.form-control');
+                        var cvvElement = $('.saved-payment-instrument.selected-payment .form-control');
                         cvvElement.addClass('is-invalid');
                         scrollAnimate(cvvElement);
                         defer.reject();
                         return defer;
                     }
 
-                    var $savedPaymentInstrument = $('.saved-payment-instrument' +
-                        '.selected-payment'
-                    );
+                    var $savedPaymentInstrument = $('.saved-payment-instrument.selected-payment');
 
-                    paymentForm += '&storedPaymentUUID=' +
-                        $savedPaymentInstrument.data('uuid');
+                    paymentForm += '&storedPaymentUUID=' + $savedPaymentInstrument.data('uuid');
 
                     paymentForm += '&securityCode=' + cvvCode;
                 }
@@ -151,7 +143,7 @@ var afterpay = {
             method: 'POST',
             data: paymentForm,
             success: function (data) {
-                 // enable the next:Place Order button here
+                // enable the next:Place Order button here
                 $('body').trigger('checkout:enableButton', '.next-step-button button');
                 // look for field validation errors
                 if (data.error) {

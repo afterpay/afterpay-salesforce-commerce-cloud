@@ -6,5 +6,9 @@
     "clearpay": {
         "paymentMethod": "CLEARPAY",
         "paymentProcessor": "*/cartridge/scripts/payment/processor/CLEARPAY"
+    },
+    "cashapp": {
+        "paymentMethod": "CASHAPPPAY",
+        "paymentProcessor": "*/cartridge/scripts/payment/processor/CASHAPPPAY"
     }
 }

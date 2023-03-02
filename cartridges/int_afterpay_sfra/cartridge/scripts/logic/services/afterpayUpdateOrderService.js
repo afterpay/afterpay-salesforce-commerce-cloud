@@ -1,3 +1,5 @@
+'use strict';
+
 var Site = require('dw/system/Site');
 var Resource = require('dw/web/Resource');
 
@@ -6,10 +8,11 @@ var afterpayUpdateOrderService = module.superModule;
 afterpayUpdateOrderService.sendConfirmationEmail = function (order, containerView) {
     var OrderModel = require('*/cartridge/models/order');
     var emailHelpers = require('*/cartridge/scripts/helpers/emailHelpers');
+    var brandUtilities = require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities;
 
     var orderModel = new OrderModel(order, {
         containerView: containerView || 'basket',
-        countryCode: order.getBillingAddress().getCountryCode().value
+        countryCode: brandUtilities.getCountryCode()
     });
 
     var orderObject = { order: orderModel };

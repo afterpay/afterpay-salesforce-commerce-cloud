@@ -23,11 +23,12 @@ server.prepend(
         var paymentMethodID = paymentForm.paymentMethod.value;
         var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
 
+        AfterpaySession.clearSession();
         if (paymentMethodID !== 'AFTERPAY' && paymentMethodID !== 'CLEARPAY') {
             // For express checkout, it's possible there was a Afterpay payment method in the basket,
             // so remove it if a non-Afterpay payment method was selected
             require('~/cartridge/scripts/checkout/afterpayRefArchCheckoutHelpers').removeAfterpayPayments(currentBasket);
-            AfterpaySession.clearSession();
+            // AfterpaySession.clearSession();
             next();
             return;
         }
@@ -81,8 +82,7 @@ server.prepend(
         };
         if (Object.prototype.hasOwnProperty
             .call(paymentForm.addressFields, 'states')) {
-            viewData.address.stateCode =
-                { value: paymentForm.addressFields.states.stateCode.value };
+            viewData.address.stateCode = { value: paymentForm.addressFields.states.stateCode.value };
         }
         viewData.paymentMethod = {
             value: paymentForm.paymentMethod.value,
@@ -139,8 +139,7 @@ server.prepend(
         // if there is no selected payment option and balance is greater than zero
         if (!paymentMethodID && currentBasket.totalGrossPrice.value > 0) {
             var noPaymentMethod = {};
-            noPaymentMethod[billingData.paymentMethod.htmlName] =
-                Resource.msg('error.no.selected.payment.method', 'creditCard', null);
+            noPaymentMethod[billingData.paymentMethod.htmlName] = Resource.msg('error.no.selected.payment.method', 'creditCard', null);
             delete billingData.paymentInformation;
             res.json({
                 form: billingForm,
@@ -161,7 +160,8 @@ server.prepend(
         var processor = PaymentMgr.getPaymentMethod(paymentMethodID).getPaymentProcessor();
         var processorResult = null;
         if (HookMgr.hasHook('app.payment.processor.' + processor.ID.toLowerCase())) {
-            processorResult = HookMgr.callHook('app.payment.processor.' + processor.ID.toLowerCase(),
+            processorResult = HookMgr.callHook(
+                'app.payment.processor.' + processor.ID.toLowerCase(),
                 'Handle',
                 currentBasket,
                 billingData.paymentInformation

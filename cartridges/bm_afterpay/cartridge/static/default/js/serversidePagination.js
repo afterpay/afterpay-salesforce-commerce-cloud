@@ -1,3 +1,5 @@
+'use strict';
+
 /* global jQuery */
 (function ($) {
     $('#filtertableProjects').DataTable({ // eslint-disable-line

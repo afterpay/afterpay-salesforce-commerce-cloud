@@ -2,7 +2,6 @@
 
 var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
 var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
-var ExpressCaptureRequestBuilder = require('~/cartridge/scripts/payment/expressCaptureRequestBuilder');
 var apUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
 var apCheckoutUtilities = apUtilities.checkoutUtilities;
 
@@ -16,16 +15,16 @@ var ExpressCheckoutPaymentHelpers = {
         expressCheckoutModel.apExpressCheckout = order.getPaymentInstruments(paymentMethod)[0].getPaymentTransaction().custom.apExpressCheckout;
         expressCheckoutModel.apExpressCheckoutChecksum = order.getPaymentInstruments(paymentMethod)[0].getPaymentTransaction().custom.apExpressCheckoutChecksum;
         if (expressCheckoutModel.apExpressCheckout) {
-            let orderToken = order.getPaymentInstruments(paymentMethod)[0].getPaymentTransaction().custom.apToken;
+            var orderToken = order.getPaymentInstruments(paymentMethod)[0].getPaymentTransaction().custom.apToken;
             // May need a way to get a session snapshot
             if (AfterpaySession.getToken(orderToken) == orderToken) {
-                let lineItemsChanged = this.checkIfLineItemsChanged(order);
-                let shippingChanged = this.checkIfShippingChanged(order);
+                var lineItemsChanged = this.checkIfLineItemsChanged(order);
+                var shippingChanged = this.checkIfShippingChanged(order);
                 expressCheckoutModel.apTempShippingAddressChanged = shippingChanged;
                 expressCheckoutModel.apTempBasketItemsChanged = lineItemsChanged;
-                let initialCheckoutAmount = new dw.value.Money(AfterpaySession.getExpressCheckoutAmount(), AfterpaySession.getExpressCheckoutCurrency());
-                let pt = order.getPaymentInstruments(paymentMethod)[0].getPaymentTransaction();
-                let amount = pt.amount;
+                var initialCheckoutAmount = new dw.value.Money(AfterpaySession.getExpressCheckoutAmount(), AfterpaySession.getExpressCheckoutCurrency());
+                var pt = order.getPaymentInstruments(paymentMethod)[0].getPaymentTransaction();
+                var amount = pt.amount;
                 if (!initialCheckoutAmount.equals(amount)) {
                     expressCheckoutModel.apTempCheckoutAmountChanged = true;
                 }
@@ -34,7 +33,7 @@ var ExpressCheckoutPaymentHelpers = {
         return expressCheckoutModel;
     },
     checkIfLineItemsChanged: function (order) {
-        let cksum = AfterpayCOHelpers.computeBasketProductLineItemChecksum(order);
+        var cksum = AfterpayCOHelpers.computeBasketProductLineItemChecksum(order);
         if (cksum != AfterpaySession.getItemsChecksum()) {
             return true;
         }
@@ -53,7 +52,7 @@ var ExpressCheckoutPaymentHelpers = {
             return false;
         }
 
-        let cksum = AfterpayCOHelpers.computeBasketShippingChecksum(order);
+        var cksum = AfterpayCOHelpers.computeBasketShippingChecksum(order);
         if (cksum != AfterpaySession.getItemsChecksum()) {
             return true;
         }

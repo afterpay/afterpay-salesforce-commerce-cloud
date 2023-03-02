@@ -1,3 +1,5 @@
+'use strict';
+
 var Amount = require('*/cartridge/scripts/order/amount');
 
 /**

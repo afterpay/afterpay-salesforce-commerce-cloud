@@ -16,6 +16,7 @@ var AfterpaySession = {
         session.custom.afterpay_express_checkout_items_checksum = 0;
         session.custom.afterpay_express_instore_pickup = false;
         session.custom.afterpay_express_split_shipment = false;
+        session.custom.is_cashapp = false;
     },
     // Call this whenever the Afterpay Express transaction should be completely cleared
     clearSession: function () {
@@ -30,6 +31,7 @@ var AfterpaySession = {
         delete session.custom.afterpay_express_checkout_items_checksum;
         delete session.custom.afterpay_express_instore_pickup;
         delete session.custom.afterpay_express_split_shipment;
+        delete session.custom.is_cashapp;
     },
     isValid: function () {
         return (!empty(session.custom.afterpay_token));
@@ -43,15 +45,12 @@ var AfterpaySession = {
     isExpressCheckout: function () {
         return session.custom.afterpay_express_checkout == true;
     },
-
     setExpressCheckoutFinalizeFlow: function (val) {
         session.custom.afterpay_express_checkout_finalize_flow = val;
     },
     isExpressCheckoutFinalizeFlow: function () {
         return session.custom.afterpay_express_checkout_finalize_flow == true;
     },
-
-
     setExpressCheckoutAmount: function (amount) {
         session.custom.afterpay_express_checkout_amount = amount;
     },
@@ -98,6 +97,12 @@ var AfterpaySession = {
         return 'token: ' + session.custom.afterpay_token + ' express_checkout: ' + session.custom.afterpay_express_checkout
           + ' finalize_flow: ' + session.custom.afterpay_express_checkout_finalize_flow + ' checkout_amount: ' + session.custom.afterpay_express_checkout_amount
           + ' instore_pickup: ' + session.custom.afterpay_express_checkout_amount;
+    },
+    setIsCashAppPay: function (val) {
+        session.custom.is_cashapp = val;
+    },
+    getIsCashAppPay: function () {
+        return session.custom.is_cashapp;
     }
 };
 

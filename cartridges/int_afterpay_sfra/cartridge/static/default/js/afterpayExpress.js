@@ -1,14 +1,14 @@
 function initAfterpay(settings) {
     settings = settings || {};
-    let commenceDelay = settings.commenceDelay || 0;
+    var commenceDelay = settings.commenceDelay || 0;
 
-    let pickupflag = settings.pickupflag || false;
+    var pickupflag = settings.pickupflag || false;
 
-    let target = settings.target || '#afterpay-express-button';
+    var target = settings.target || '#afterpay-express-button';
 
-    let productIdSelector = settings.productIdSelector || null;
-    let productQuantitySelector = settings.productQuantitySelector || null;
-    let afterpayCreateTokenErrorMessage = '';
+    var productIdSelector = settings.productIdSelector || null;
+    var productQuantitySelector = settings.productQuantitySelector || null;
+    var afterpayCreateTokenErrorMessage = '';
     AfterPay.initializeForPopup({
         countryCode: $('#afterpay-express-countrycode').val(),
         pickup: pickupflag,
@@ -21,21 +21,20 @@ function initAfterpay(settings) {
                     url: getShippingOptionUrl,
                     method: 'GET',
                     success: function (data) {
-                        if(data.shipmentType){
+                        if (data.shipmentType) {
                             if (data.shipmentType == 'SplitShipment' || data.shipmentType == 'MultiplePickup') {
                                 AfterPay.shippingOptionRequired = false;
                             }
                         }
-                       
-                        console.log('onCommenceCheckout(). Actions=', actions);
+
                         var afterpayExpressTokenUrl = $('#afterpay-express-url-createtoken').val() + '?s_url=' + encodeURIComponent(window.location.href);
                         // This is to support Afterpay Express from product details page. Add product to cart and checkout.
                         if (productIdSelector && productQuantitySelector) {
-                            let p_elem = document.querySelector(productIdSelector);
-                            let q_elem = document.querySelector(productQuantitySelector);
+                            var p_elem = document.querySelector(productIdSelector);
+                            var q_elem = document.querySelector(productQuantitySelector);
                             afterpayExpressTokenUrl += '&cartAction=add&pid=' + (p_elem.innerText || '') + '&Quantity=' + (q_elem.value || '');
                         }            
-                        console.log('onCommenceCheckout(). TokenUrl: ', afterpayExpressTokenUrl);
+
                         var currentLocation = window.location.href;
                         sleep(commenceDelay).then(() => {
                             $.ajax({
@@ -43,35 +42,29 @@ function initAfterpay(settings) {
                                 url: afterpayExpressTokenUrl,
                                 success: function (res) {
                                     if (res.status == 'SUCCESS') {
-                                        console.log('Result of CreateToken: ', res);
-                                        // var afterpaytoken = res.response.afterpaytoken;
                                         var afterpaytoken = res.token.apToken;
-                                        console.log('Got token from afterpay: ', afterpaytoken);
                                         actions.resolve(afterpaytoken);
                                     } else {
                                         alert(res.error);
-                                        console.log('Afterpay Express Checkout: Token Creation Failure: ', res.error);
                                         actions.reject(AfterPay.CONSTANTS.SERVICE_UNAVAILABLE);
                                     }
                                 },
                                 error: function () {
-                                    console.log('Afterpay Express Checkout: request failure.');
+                                    alert('Afterpay payment failed.');
                                 }
                             });
                         });
                         
                     },
                     error: function () {
-                        console.log('Afterpay Express Checkout: request failure.');
+                        alert('Afterpay payment failed.');
                     }
                 });
             }
         },
         // NOTE: onShippingAddressChange only needed if shippingOptionRequired is true
         onShippingAddressChange: function (data, actions) {
-            console.log('onShippingAddressChange called. data=', data);
             var shippingMetthodsUrl = $('#afterpay-express-url-getshippingmethods').val();
-            console.log('Calling this to get shipping methods: ' + shippingMetthodsUrl);
             $.ajax({
                 type: 'POST',
                 url: shippingMetthodsUrl,
@@ -87,7 +80,6 @@ function initAfterpay(settings) {
                     phoneNumber: data.phoneNumber
                 },
                 success: function (response) {
-                    console.log('shipping method computed successfully. Returning data to Afterpay portal via resolve. shippingMethods=', response);
                         // Need to handle case where address is unsupported/invalid
                     if (!response.shipmethods || response.shipmethods.length == 0) {
                         actions.reject(AfterPay.CONSTANTS.SHIPPING_ADDRESS_UNSUPPORTED);
@@ -96,19 +88,15 @@ function initAfterpay(settings) {
                     }
                 },
                 error: function () {
-                    console.log('Afterpay Express Checkout: failure in get shipping methods');
+                    alert('Afterpay payment failed.');
                 }
             });
         },
         onComplete: function (event) {
             if (event.data.status == 'SUCCESS') {
-                console.log('onComplete called with SUCCESS');
-                console.log(event.data);
                 var afterpayExpressProcessUrl = $('#afterpay-express-url-processorder').val() + '?orderToken=' + event.data.orderToken + '&merchantReference=' + event.data.merchantReference;
                 $(location).attr('href', afterpayExpressProcessUrl);
             } else {
-                console.log('onComplete failed');
-                console.log(event.data);
                 var errorUrl = $('#afterpay-express-url-cancelorder').val() + '?orderToken=' + event.data.orderToken + '&merchantReference=' + event.data.merchantReference;
                 $(location).attr('href', errorUrl);
             }
@@ -125,17 +113,16 @@ function sleep(ms) {
 // call to the server to determine eligibility for Afterpay Express
 // and calling initAfterpay with the setting
 function reinitializeAfterpayPopup() {
-    let getCartStatusUrl = $('#afterpay-express-url-cartstatus').val();
+    var getCartStatusUrl = $('#afterpay-express-url-cartstatus').val();
     $.ajax({
         type: 'GET',
         url: getCartStatusUrl,
         success: function (res) {
             var instorepickup = res.instorepickup;
-            console.log('Instorepickup setting: ', instorepickup);
             initAfterpay(instorepickup);
         },
         error: function () {
-            console.log('Afterpay Express cart status request failure.');
+            alert('Afterpay payment failed.');
         }
     });
 }
@@ -149,11 +136,11 @@ function reinitializeAfterpayPopup() {
  * .item-delivery-options, so wait for that to disappear.
  */
 function initializeDeliveryOptionChangeListener() {
-    let elements = document.querySelectorAll('.delivery-option');
+    var elements = document.querySelectorAll('.delivery-option');
     for (var i = 0; i < elements.length; i++) {
         elements[i].addEventListener('change', function () {
-            let loadingElement = document.querySelector('.item-delivery-options');
-            let observer = new MutationObserver(function (entries) {
+            var loadingElement = document.querySelector('.item-delivery-options');
+            var observer = new MutationObserver(function (entries) {
                 if (!document.querySelector('.item-delivery-options.loading')) {
                     reinitializeAfterpayPopup();
                     observer.disconnect();
@@ -163,3 +150,4 @@ function initializeDeliveryOptionChangeListener() {
         });
     }
 }
+

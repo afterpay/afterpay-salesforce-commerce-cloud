@@ -1,12 +1,10 @@
 'use strict';
+
 var LocalServiceRegistry = require('dw/svc/LocalServiceRegistry');
 var afterpayUtils = require('*/cartridge/scripts/util/afterpayUtils');
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('afterpayHttpService');
 var AfterpayUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
-var URLUtils = require('dw/web/URLUtils');
-var Site = require('dw/system/Site');
-var Resource = require('dw/web/Resource');
 
 /**
  * generic method  to process  all service type requests and responses
@@ -31,7 +29,14 @@ function getServiceID() {
     return serviceID;
 }
 
+/**
+ * Provides differernt request - response services
+ * @returns {Object} - object
+ * */
 function getAfterpayHttpService() {
+    var URLUtils = require('dw/web/URLUtils');
+    var Site = require('dw/system/Site');
+    var Resource = require('dw/web/Resource');
     var serviceID = getServiceID();
 
     var afterpayHttpService = LocalServiceRegistry.createService(serviceID, {
@@ -42,12 +47,13 @@ function getAfterpayHttpService() {
             service.setRequestMethod(requestBody.requestMethod);
             service.addHeader('Content-Type', 'application/json');
 
-            const afterpayCartridge = 'AfterpayCartridge/23.1.0';
-            const merchantID = 'Merchant/' + service.configuration.credential.user;
-            const siteURL = URLUtils.httpsHome().toString();
-            const storeFront = Site.getCurrent().getID();
-            const hostURL = siteURL.substring(0, siteURL.indexOf('/', 14));
-            const compatibilityMode = dw.system.System.getCompatibilityMode();
+            var afterpayCartridge = 'AfterpayCartridge/23.2.0-rc1';
+            var merchantID = service.configuration.credential.user;
+            var siteURL = URLUtils.httpsHome().toString();
+            var storeFront = Site.getCurrent().getID();
+            var hostURL = siteURL.substring(0, siteURL.indexOf('/', 14));
+            var compatibilityMode = dw.system.System.getCompatibilityMode();
+            var cashAppEnabled = apSitePreferencesUtilities.isCashAppEnabled() ? '1' : '0';
             var storefrontVersion = '';
             if (storeFront.includes('SiteGenesis')) {
                 storefrontVersion = Resource.msg('revisioninfo.revisionnumber', 'revisioninfo', null);
@@ -55,7 +61,7 @@ function getAfterpayHttpService() {
                 storefrontVersion = Resource.msg('global.version.number', 'version', null);
             }
 
-            var userAgent = afterpayCartridge + ' (SalesforceCommmerceCloud; ' + storeFront + '/' + storefrontVersion + '; CompatibilityMode/' + compatibilityMode + '; Merchant/' + merchantID + ') ' + hostURL;
+            var userAgent = afterpayCartridge + ' (SalesforceCommmerceCloud; ' + storeFront + '/' + storefrontVersion + '; CompatibilityMode/' + compatibilityMode + '; Merchant/' + merchantID + '; CashAppEnabled/' + cashAppEnabled + ') ' + hostURL;
 
             service.addHeader('User-Agent', userAgent);
 
@@ -67,7 +73,7 @@ function getAfterpayHttpService() {
         },
 
         parseResponse: function (service, httpClient) {
-            if (httpClient.statusCode === 200 || httpClient.statusCode === 201) {
+            if (httpClient.statusCode === 200 || httpClient.statusCode === 201 || httpClient.statusCode === 202) {
                 var parseResponse = httpClient.text;
                 var filterResponse = parseResponse;
                 Logger.debug('Parsed Response : ' + afterpayUtils.filterLogData(filterResponse));

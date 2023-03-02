@@ -1,3 +1,5 @@
+$screen_width : 767px;
+
 .product-detail .afterpay-widget-message .afterpay-link {
     font-size: 0.75em;
     padding: 0.375em 0.9375em;
@@ -135,7 +137,7 @@
 .redirect-text {
     text-align: center;
     margin-top: 2.1875em;
-    font-size: 1.375em;
+    font-size: 2.375em;
 }
 
 .checkout-afterpay-message {
@@ -159,37 +161,12 @@
     padding: 25px;
 }
 
-#afterpaInstallmentChart {
-    margin: 20px 0;
-}
-
 /* Afterpay checkout widget */
 .checkout-afterpay-message {
     background: #f9f9f9;
     padding: 25px;
-    @media screen and (max-width: 767px) {
+    @media screen and (max-width: $screen_width) {
         padding: 25px 10px;
-    }
-}
-
-#afterpaInstallmentChart th {
-    text-align: center;
-    color: #9bcee8;
-    font-size: 1em;
-    width: 25%;
-    @media screen and (max-width: 767px) {
-        font-size: .85em;
-    }
-}
-
-#afterpaInstallmentChart td {
-    text-align: center;
-    padding-top: 0.9375em;
-    padding-bottom: 0;
-    color: #999;
-    font-size: .85em;
-    @media screen and (max-width: 767px) {
-        font-size: .75em;
     }
 }
 
@@ -222,46 +199,46 @@
 .afterpay-checkout-button {
     background-color: #000;
     color: #fff !important;
-    background-image: url('https://static.afterpay.com/button/checkout-with-afterpay/white-on-black.svg'); 
+    background-image: url('https://static.afterpay.com/button/checkout-with-afterpay/white-on-black.svg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position-x: center;
     background-position-y: center;
-  }
+}
 
-  .clearpay-checkout-button {
+.clearpay-checkout-button {
     background-color: #000;
     color: #fff !important;
-    background-image: url('https://static.afterpay.com/button/checkout-with-clearpay/white-on-black.svg'); 
+    background-image: url('https://static.afterpay.com/button/checkout-with-clearpay/white-on-black.svg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position-x: center;
     background-position-y: center;
-  }
-  
-  .afterpay-buynow-button {
+}
+
+.afterpay-buynow-button {
     background-color: #000;
     color: #fff !important;
-    background-image: url('https://static.afterpay.com/button/buy-now-with-afterpay/white-on-black.svg'); 
+    background-image: url('https://static.afterpay.com/button/buy-now-with-afterpay/white-on-black.svg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position-x: center;
     background-position-y: center;
     min-width: 250px;
-  }
+}
 
-  .clearpay-buynow-button {
+.clearpay-buynow-button {
     background-color: #000;
     color: #fff !important;
-    background-image: url('https://static.afterpay.com/button/buy-now-with-clearpay/white-on-black.svg'); 
+    background-image: url('https://static.afterpay.com/button/buy-now-with-clearpay/white-on-black.svg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position-x: center;
     background-position-y: center;
     min-width: 250px;
-  }
-  
-  .afterpay-placeorder-button {
+}
+
+.afterpay-placeorder-button {
     background-color: #000;
     color: #fff !important;
     background-image: url('https://static.afterpay.com/button/place-order-with-afterpay/white-on-black.svg');
@@ -270,9 +247,9 @@
     background-position-x: center;
     background-position-y: center;
     min-width: 250px;
-  }
+}
 
-  .clearpay-placeorder-button {
+.clearpay-placeorder-button {
     background-color: #000;
     color: #fff !important;
     background-image: url('https://static.afterpay.com/button/place-order-with-clearpay/white-on-black.svg');
@@ -281,18 +258,17 @@
     background-position-x: center;
     background-position-y: center;
     min-width: 250px;
-  }
+}
 
-  .afterpay-hide {
-      display: none !important;
-  }
+.afterpay-hide {
+    display: none !important;
+}
 
-  .afterpay-widget-hideuntilready {
+.afterpay-widget-hideuntilready {
     visibility: hidden;
-  }
-  
-  .cart-and-ipay .add-to-cart{
-      width:100%;
-      display: block;
-  }
-  
+}
+
+.cart-and-ipay .add-to-cart {
+    width: 100%;
+    display: block;
+}

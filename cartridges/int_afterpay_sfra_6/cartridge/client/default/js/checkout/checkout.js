@@ -1,5 +1,6 @@
 'use strict';
 
+/* eslint-disable */
 var customerHelpers = require('base/checkout/customer');
 var addressHelpers = require('base/checkout/address');
 var shippingHelpers = require('base/checkout/shipping');
@@ -7,7 +8,6 @@ var billingHelpers = require('./billing');
 var summaryHelpers = require('base/checkout/summary');
 var formHelpers = require('base/checkout/formErrors');
 var scrollAnimate = require('base/components/scrollAnimate');
-
 
 /**
  * Create the jQuery Checkout Plugin.
@@ -360,7 +360,6 @@ var scrollAnimate = require('base/components/scrollAnimate');
                                     defer.reject(data);
                                 }
                             } else {
-                                console.log(data.continueUrl);
                                 var redirect = $('<form>')
                                     .appendTo(document.body)
                                     .attr({

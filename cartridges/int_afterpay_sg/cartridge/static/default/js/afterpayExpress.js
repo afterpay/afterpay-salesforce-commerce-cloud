@@ -1,13 +1,13 @@
 function initAfterpay(settings) {
     settings = settings || {};
-    let commenceDelay = settings.commenceDelay || 0;
+    var commenceDelay = settings.commenceDelay || 0;
 
-    let pickupflag = settings.pickupflag || false;
+    var pickupflag = settings.pickupflag || false;
 
-    let target = settings.target || '#afterpay-express-button';
+    var target = settings.target || '#afterpay-express-button';
 
-    let productIdSelector = settings.productIdSelector || null;
-    let productQuantitySelector = settings.productQuantitySelector || null;
+    var productIdSelector = settings.productIdSelector || null;
+    var productQuantitySelector = settings.productQuantitySelector || null;
     AfterPay.initializeForPopup({
         countryCode: $('#afterpay-express-countrycode').val(),
         pickup: pickupflag,
@@ -17,8 +17,8 @@ function initAfterpay(settings) {
             var afterpayExpressTokenUrl = $('#afterpay-express-url-createtoken').val() + '?s_url=' + encodeURIComponent(window.location.href);
             // This is to support Afterpay Express from product details page. Add product to cart and checkout.
             if (productIdSelector && productQuantitySelector) {
-                let p_elem = document.querySelector(productIdSelector);
-                let q_elem = document.querySelector(productQuantitySelector);
+                var p_elem = document.querySelector(productIdSelector);
+                var q_elem = document.querySelector(productQuantitySelector);
                 afterpayExpressTokenUrl += '&cartAction=add&pid=' + (p_elem.value || '') + '&Quantity=' + (q_elem.value || '');
             }
 
@@ -34,12 +34,11 @@ function initAfterpay(settings) {
                         } else {
                             afterpayCreateTokenErrorMessage = res.error;
                             alert(res.error);
-                            console.log('Afterpay Express Checkout: Token Creation Failure: ', res.error);
                             actions.reject(AfterPay.CONSTANTS.SERVICE_UNAVAILABLE);
                         }
                     },
                     error: function () {
-                        console.log('Afterpay Express Checkout: request failure.');
+                        alert('Afterpay payment failed.');
                     }
                 });
             });
@@ -72,7 +71,7 @@ function initAfterpay(settings) {
                     }
                 },
                 error: function () {
-                    console.log('Afterpay Express Checkout: failure in get shipping methods');
+                    alert('Afterpay payment failed.');
                 }
             });
         },
@@ -97,7 +96,7 @@ function sleep(ms) {
 // call to the server to determine eligibility for Afterpay Express
 // and calling initAfterpay with the setting
 function reinitializeAfterpayPopup() {
-    let getCartStatusUrl = $('#afterpay-express-url-cartstatus').val();
+    var getCartStatusUrl = $('#afterpay-express-url-cartstatus').val();
     $.ajax({
         type: 'GET',
         url: getCartStatusUrl,
@@ -106,7 +105,7 @@ function reinitializeAfterpayPopup() {
             initAfterpay({ pickupflag: instorepickup });
         },
         error: function () {
-            console.log('Afterpay Express cart status request failure.');
+            alert('Afterpay payment failed.');
         }
     });
 }
@@ -120,12 +119,12 @@ function reinitializeAfterpayPopup() {
  * .item-delivery-options, so wait for that to disappear.
  */
 function initializeDeliveryOptionChangeListener() {
-    let elements = document.querySelectorAll('.delivery-option');
+    var elements = document.querySelectorAll('.delivery-option');
     for (var i = 0; i < elements.length; i++) {
         elements[i].addEventListener('change', function () {
             if ('MutationObserver' in window) {
-                let loadingElement = document.querySelector('.item-delivery-options');
-                let observer = new MutationObserver(function (entries) {
+                var loadingElement = document.querySelector('.item-delivery-options');
+                var observer = new MutationObserver(function (entries) {
                     if (!document.querySelector('.item-delivery-options.loading')) {
                         reinitializeAfterpayPopup();
                         observer.disconnect();

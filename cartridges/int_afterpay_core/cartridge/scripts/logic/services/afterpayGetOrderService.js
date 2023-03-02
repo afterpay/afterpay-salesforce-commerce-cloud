@@ -1,4 +1,5 @@
 'use strict';
+
 var StringUtils = require('dw/util/StringUtils');
 
 var afterpayHttpService = require('*/cartridge/scripts/logic/services/afterpayHttpService');

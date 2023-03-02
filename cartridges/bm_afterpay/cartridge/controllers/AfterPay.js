@@ -1,5 +1,4 @@
 'use strict';
-/* global request */
 
 /**
  * Controller for Order management pages
@@ -31,7 +30,6 @@ function orderList() {
 
     ISML.renderTemplate('application/orderlist', orderListResponse);
 }
-
 
 /**
  * AfterPay Order Details page

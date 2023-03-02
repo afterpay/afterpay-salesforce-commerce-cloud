@@ -1,6 +1,6 @@
-/* eslint-disable no-new-wrappers */
 'use strict';
 
+/* eslint-disable no-new-wrappers */
 /**
 *
 * Controller to render the Afterpay messages and terms
@@ -10,7 +10,8 @@
 var Money = require('dw/value/Money');
 
 /* Script Modules */
-var { brandUtilities: BrandUtilities, sitePreferencesUtilities: SitePreferences } = require('*/cartridge/scripts/util/afterpayUtilities');
+var BrandUtilities = require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities;
+var SitePreferences = require('*/cartridge/scripts/util/afterpayUtilities').sitePreferencesUtilities;
 var ctrlCartridgeName = SitePreferences.getControllerCartridgeName();
 var thresholdUtilities = require('*/cartridge/scripts/util/thresholdUtilities');
 
@@ -27,7 +28,7 @@ function renderMessage() {
     var afterpayBrand = params.afterpayBrand.stringValue;
     var applyCaching;
 
-    if (totalprice && !isNaN(totalprice)) {
+    if (totalprice && !(totalprice.isNaN)) {
         totalprice = new Money(totalprice, session.currency);
     } else {
         return;

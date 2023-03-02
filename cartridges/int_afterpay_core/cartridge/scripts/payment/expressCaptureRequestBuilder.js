@@ -8,7 +8,7 @@
 'use strict';
 
 var Builder = require('../util/builder');
-
+var expressOrderObject = require('*/cartridge/scripts/order/expressOrder');
 /**
  * @class
  * @abstract
@@ -23,37 +23,18 @@ ExpressCaptureRequestBuilder.prototype.get = function () {
     return this.context;
 };
 
-function Amount() {
-    this.amount = '';
-    this.currency = '';
-}
-
-function Address() {
-    this.name = '';
-    this.line1 = '';
-    this.line2 = '';
-    this.area1 = '';
-    this.area2 = '';
-    this.region = '';
-    this.postcode = '';
-    this.countryCode = '';
-    this.phoneNumber = '';
-}
-
+/**
+ * Capture request
+ */
 function Capture() {
-    this.shipping = new Address();
+    this.shipping = new expressOrderObject.Shipping();
     this.items = [];
-}
-
-function LineItem() {
-    this.name = '';
-    // this.sku = '';
-    this.quantity = '';
-    this.price = new Amount();
 }
 
 /**
  * Build Address
+ * @param {string} type - shipping / billing address
+ * @param {Object} address - empty address object
  */
 function buildAddress(type, address) {
     this.context[type].name = address.firstName + ' ' + address.lastName;
@@ -66,23 +47,36 @@ function buildAddress(type, address) {
     this.context[type].phoneNumber = address.phone || '';
 }
 
-/*
-        Build request here
-    */
+/**
+ * Build request here
+ * @param {Object} params - pareameter object passed
+ * @returns {Object} - capture request object
+ */
 ExpressCaptureRequestBuilder.prototype.buildRequest = function (params) {
     var basket = params.basket;
 
     return this.init()
-    .buildShipping(basket)
-    .buildItems(basket);
+        .buildShipping(basket)
+        .buildItems(basket);
 };
 
+/**
+ * Creates capture request object
+ * @returns {Object} - capture request object
+ */
 ExpressCaptureRequestBuilder.prototype.init = function () {
     this.context = new Capture();
 
     return this;
 };
 
+/**
+ * Builds shipping details
+ * /**
+ * Builds product details
+ * @param {dw.order.Basket} basket - basket
+ * @returns {Object} - shipping address
+ */
 ExpressCaptureRequestBuilder.prototype.buildShipping = function (basket) {
     var shippingAddress = basket.defaultShipment.shippingAddress;
 
@@ -91,27 +85,31 @@ ExpressCaptureRequestBuilder.prototype.buildShipping = function (basket) {
     return this;
 };
 
+/**
+ * Builds product details
+ * @param {dw.order.Basket} basket - basket
+ * @returns {Object} - product details
+ */
 ExpressCaptureRequestBuilder.prototype.buildItems = function (basket) {
     var lineItems = basket.getAllProductLineItems().toArray();
 
     this.context.items = lineItems.map(function (li) {
-        var item = new LineItem();
+        var item = new expressOrderObject.LineItem();
         var product = li.product;
 
-    // Some lineitems may not be products
-    // e.g. extended warranties
+        // Some lineitems may not be products
+        // e.g. extended warranties
         if (!product) {
             item.name = li.getLineItemText();
-            item.quantity = li.getQuantity().value;
-            item.price.amount = 0;
-            item.price.currency = basket.currencyCode;
+            item.sku = li.productID;
+            item.price.currency = li.adjustedNetPrice.currencyCode;
         } else {
             item.name = product.name;
             item.sku = product.ID;
-            item.quantity = li.getQuantity().value;
-            item.price.amount = product.getPriceModel().getPrice().value;
             item.price.currency = product.getPriceModel().getPrice().currencyCode;
         }
+        item.quantity = li.getQuantity().value;
+        item.price.amount = (li.adjustedPrice.value / item.quantity).toString();
         return item;
     });
 

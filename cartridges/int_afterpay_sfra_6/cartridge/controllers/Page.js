@@ -8,7 +8,7 @@ server.extend(Page);
 server.append(
     'SetLocale',
     function (req, res, next) {
-        var { brandUtilities: apBrandUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
+        var apBrandUtilities = require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities;
 
         apBrandUtilities.initBrand(req.querystring.code);
 

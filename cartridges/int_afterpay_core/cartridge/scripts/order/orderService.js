@@ -10,9 +10,9 @@ var OrderRequestBuilder = require('*/cartridge/scripts/order/orderRequestBuilder
 var requestUrl = null;
 var requestBody = {};
 var orderService = {
-    generateRequest: function (lineItemCtnr, url) {
+    generateRequest: function (lineItemCtnr, isCashAppPay) {
         requestUrl = afterpayUtils.getEndpoint('createOrders');
-        this.generateRequestBody(lineItemCtnr, url);
+        this.generateRequestBody(lineItemCtnr, isCashAppPay);
     },
 
     getResponse: function () {
@@ -22,12 +22,11 @@ var orderService = {
         return response;
     },
 
-    generateRequestBody: function (lineItemCtnr, url) {
+    generateRequestBody: function (lineItemCtnr, isCashAppPay) {
         var orderRequestBuilder = new OrderRequestBuilder();
-
         requestBody = orderRequestBuilder.buildRequest({
             basket: lineItemCtnr,
-            url: url,
+            isCashAppPay: isCashAppPay,
             requestMethod: 'POST'
         }).get();
     }

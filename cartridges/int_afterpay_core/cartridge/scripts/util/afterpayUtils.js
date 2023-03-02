@@ -1,5 +1,5 @@
 'use strict';
-/* global empty */
+
 /*
 *    Get formatted amount currency value
 */
@@ -38,18 +38,18 @@ afterpayUtils.filterLogData = function (requestJSON) {
 */
 afterpayUtils.maskDetails = function (requestJSON) {
     if (requestJSON.shipping) {
-        if(Object.keys(requestJSON.shipping).length > 1) {
-            for (var index in requestJSON.shipping) {
-                requestJSON.shipping[index] = '***';
-            }
+        if (Object.keys(requestJSON.shipping).length > 1) {
+            Object.keys(requestJSON.shipping).forEach(function (shippingIndex) {
+                requestJSON.shipping[shippingIndex] = '***';
+            });
         }
     }
 
     if (requestJSON.billing) {
-        if(Object.keys(requestJSON.billing).length > 1) {
-            for (var index in requestJSON.billing) {
-                requestJSON.billing[index] = '***';
-            }
+        if (Object.keys(requestJSON.billing).length > 1) {
+            Object.keys(requestJSON.billing).forEach(function (billingIndex) {
+                requestJSON.billing[billingIndex] = '***';
+            });
         }
     }
 
@@ -161,21 +161,21 @@ function logResponseData(urlPath, httpVerb, requestBody, result, errorWasThrown)
 
         if (!empty(result.object) && !empty(result.status === 'OK')) {
             message = StringUtils.format('Response for request urlPath={0}, httpVerb={1}, requestBody=[{2}], responseBody=[{3}]',
-                        urlPath,
-                        httpVerb,
-                        requestBodyJson,
-                        responseBodyJson);
+                urlPath,
+                httpVerb,
+                requestBodyJson,
+                responseBodyJson);
         } else if (!errorWasThrown) {
             message = StringUtils.format('Response for EMPTY request urlPath={0}, httpVerb={1}, requestBody=[{2}], responseBody=[{3}] - CHECK ERROR LOGS FOR RESPONSE',
-                        urlPath,
-                        httpVerb,
-                        requestBodyJson,
-                        result);
+                urlPath,
+                httpVerb,
+                requestBodyJson,
+                result);
         } else if (errorWasThrown) {
             message = StringUtils.format('ERROR thrown for request. urlPath={0}, httpVerb={1}, requestBody=[{2}]. SEE previous error logged',
-                        urlPath,
-                        httpVerb,
-                        requestBodyJson);
+                urlPath,
+                httpVerb,
+                requestBodyJson);
         }
 
         if (errorWasThrown) {

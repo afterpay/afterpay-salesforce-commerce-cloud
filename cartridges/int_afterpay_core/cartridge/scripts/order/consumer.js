@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * definition for customer details
  */

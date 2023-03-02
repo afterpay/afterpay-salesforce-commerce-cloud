@@ -30,19 +30,19 @@
                 },
                 "ES": {
                     "brand": "clearpay",
-                    "service": "clearpay.service.EU.v2",
+                    "service": "clearpay.service.ES.v2",
                     "javaScriptUrl": "https://merchant-tools.sandbox.clearpay.com/clearpay.js",
                     "learnMoreUrl": "https://www.clearpay.com/es/terms/"
                 },
                 "FR": {
                     "brand": "clearpay",
-                    "service": "clearpay.service.EU.v2",
+                    "service": "clearpay.service.FR.v2",
                     "javaScriptUrl": "https://merchant-tools.sandbox.clearpay.com/clearpay.js",
                     "learnMoreUrl": "https://www.clearpay.com/fr/terms/"
                 },
                 "IT": {
                     "brand": "clearpay",
-                    "service": "clearpay.service.EU.v2",
+                    "service": "clearpay.service.IT.v2",
                     "javaScriptUrl": "https://merchant-tools.sandbox.clearpay.com/clearpay.js",
                     "learnMoreUrl": "https://www.clearpay.com/it/terms/"
                 },
@@ -57,6 +57,7 @@
             <preference preference-id="apDisplayPlpInfo">false</preference>
             <preference preference-id="apPaymentMode">DIRECT_CAPTURE</preference>
             <preference preference-id="enableAfterpay">false</preference>
+            <preference preference-id="enableCashAppPay">false</preference>
             <preference preference-id="apEnableExpressCheckout">true</preference>
             <preference preference-id="apExpressCheckoutShippingStrategy">integrated</preference>
             <preference preference-id="apEnableExpressCheckoutBuyNow">true</preference>

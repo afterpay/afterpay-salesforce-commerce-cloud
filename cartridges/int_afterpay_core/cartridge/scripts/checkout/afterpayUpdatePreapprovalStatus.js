@@ -1,4 +1,5 @@
 'use strict';
+
 var Transaction = require('dw/system/Transaction');
 var PreapprovalModel = require('*/cartridge/scripts/models/preapprovalModel');
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
@@ -22,10 +23,14 @@ function parsePreapprovalResult(parameter) {
  * saves preapproved payment status in PaymentTransaction object
  * @param {Object} preapprovalModel - preApproval Model
  * @param {Object} lineItemCtnr - line Item Container
+ * @param {Object} parameterMap - parameters objects
  */
-function updatePreapprovalStatus(preapprovalModel, lineItemCtnr) {
-    const { checkoutUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
-    var paymentTransaction = checkoutUtilities.getPaymentTransaction(lineItemCtnr);
+function updatePreapprovalStatus(preapprovalModel, lineItemCtnr, parameterMap) {
+    var checkoutUtilities = require('*/cartridge/scripts/util/afterpayUtilities').checkoutUtilities;
+    var isCashAppPayment = parameterMap.isCashAppPay || false;
+    var paymentMethodName = checkoutUtilities.getPaymentMethodName(isCashAppPayment);
+    var paymentInstrument = lineItemCtnr.getPaymentInstruments(paymentMethodName)[0];
+    var paymentTransaction = paymentInstrument ? paymentInstrument.getPaymentTransaction() : null;
     if (paymentTransaction) {
         Logger.debug('Payment status after token generation : ' + preapprovalModel.status);
         Transaction.begin();
@@ -52,7 +57,7 @@ function getPreApprovalResult(lineItemCtnr, parameterMap) {
         return { error: true };
     }
     try {
-        updatePreapprovalStatus(preapprovalModel, lineItemCtnr);
+        updatePreapprovalStatus(preapprovalModel, lineItemCtnr, parameterMap);
     } catch (exception) {
         var e = exception;
         Logger.error('Update payment transaction: ' + e);

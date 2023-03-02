@@ -6,7 +6,7 @@ var ExpressCaptureHelpers = {
     generateItemsAndShippingBody: function (lineItemCtnr) {
         var expressCaptureRequestBuilder = new ExpressCaptureRequestBuilder();
 
-        let body = expressCaptureRequestBuilder.buildRequest({
+        var body = expressCaptureRequestBuilder.buildRequest({
             basket: lineItemCtnr
         }).get();
         return body;

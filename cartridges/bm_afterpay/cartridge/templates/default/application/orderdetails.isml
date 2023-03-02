@@ -16,33 +16,33 @@
     <tbody>
         <tr>
             <td class="table_detail left e w s" nowrap="nowrap"><label class="item-label" for="">${Resource.msg('order.information','afterpay',null)}</label></td>
-            <td class="table_detail left e s" nowrap="nowrap" width="75%><label class="item-label" for="">
+            <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for="">
                 ${Resource.msg('order.information.body1','afterpay',null)+' '+order.getAllProductLineItems().size()+' '+Resource.msg('order.information.body2','afterpay',null)+Resource.msg('order.information.body3','afterpay',null)+' '+order.getTotalGrossPrice()}
                 </label></td>
         </tr>
         <tr>    
             <td class="table_detail left e w s" nowrap="nowrap"><label class="item-label" for="">${Resource.msg('order.creation.date','afterpay',null)}</label></td>
-            <td class="table_detail left e s" nowrap="nowrap" width="75%><label class="item-label" for="">${order.creationDate}</label></td>
+            <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for="">${order.creationDate}</label></td>
         </tr>
         <tr>
             <td class="table_detail left e w s" nowrap="nowrap"><label class="item-label" for="">${Resource.msg('order.site','afterpay',null)}</label></td>
-            <td class="table_detail left e s" nowrap="nowrap" width="75%><label class="item-label" for="">${dw.system.Site.current.ID}</label></td>
+            <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for="">${dw.system.Site.current.ID}</label></td>
         </tr>
         <tr>
             <td class="table_detail left e w s" nowrap="nowrap"><label class="item-label" for="">${Resource.msg('order.createdby','afterpay',null)}</label></td>
-            <td class="table_detail left e s" nowrap="nowrap" width="75%><label class="item-label" for="">${order.createdBy}</label></td>
+            <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for="">${order.createdBy}</label></td>
         </tr>
         <tr>
             <td class="table_detail left e w s" nowrap="nowrap"><label class="item-label" for="">${Resource.msg('order.customer','afterpay',null)}</label></td>
-            <td class="table_detail left e s" nowrap="nowrap" width="75%><label class="item-label" for="">${order.getCustomerName()}</label></td>
+            <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for="">${order.getCustomerName()}</label></td>
         </tr>
         <tr>
             <td class="table_detail left e w s" nowrap="nowrap"><label class="item-label" for="">${Resource.msg('order.customerno','afterpay',null)}</label></td>
-            <td class="table_detail left e s" nowrap="nowrap" width="75%><label class="item-label" for="">${order.getCustomerNo() ? order.getCustomerNo() : "anonymous" + order.getCustomer().getID()}</label></td>        
+            <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for="">${order.getCustomerNo() ? order.getCustomerNo() : "anonymous" + order.getCustomer().getID()}</label></td>        
         </tr>
         <tr>
             <td class="table_detail left e w s" nowrap="nowrap"><label class="item-label" for="">${Resource.msg('order.customer.email','afterpay',null)}</label></td>
-            <td class="table_detail left e s" nowrap="nowrap" width="75%><label class="item-label" for="">${order.getCustomerEmail()}</label></td>        
+            <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for="">${order.getCustomerEmail()}</label></td>        
         </tr>
         <tr>
             <td class="table_detail left e w s" nowrap="nowrap"><label class="item-label" for="">${Resource.msg('transaction.status','afterpay',null)}</label></td>
@@ -55,6 +55,7 @@
             <isset name="currentStatus" value="${Resource.msg('option.refunded','afterpay',null)}" scope="page" />
             <isset name="isDirectPayment" value="${true}" scope="page" />
             <isif condition="${paymentTransaction}">
+                <isset name="afterpayTotalAmount" value="${paymentTransaction.amount.value}" scope="page" />
                 <isset name="isDirectPayment" value="${paymentTransaction.custom.apPaymentMode === 'DIRECT_CAPTURE'}" scope="page" />
                 <isset name="apPaymentStatus" value="${isDirectPayment ? paymentTransaction.custom.apDirectPaymentStatus : paymentTransaction.custom.apAuthoriseStatus}" scope="page" />
                 <isset name="canRefund" value="${isDirectPayment && apPaymentStatus.toLowerCase() == 'approved' && empty(paymentTransaction.custom.apRefundID)}" scope="page" />
@@ -62,7 +63,7 @@
                     <isset name="currentStatus" value="${apPaymentStatus}" scope="page" />
                 </isif>
             </isif>
-            <td class="table_detail left e s" nowrap="nowrap" width="75%><label class="item-label" for="">${isDirectPayment ? paymentTransaction.custom.apDirectPaymentStatus : paymentTransaction.custom.apAuthoriseStatus}</label></td>
+            <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for="">${isDirectPayment ? paymentTransaction.custom.apDirectPaymentStatus : paymentTransaction.custom.apAuthoriseStatus}</label></td>
         </tr>
     </tbody>
 </table>
@@ -122,31 +123,19 @@
      <tbody>
         <tr>
             <td class="table_detail left e w s" nowrap="nowrap"><label class="item-label" for="">${Resource.msg('payment.total','afterpay',null)}</label></td>
-            <td class="table_detail left e s" nowrap="nowrap" width="75%><label class="item-label" for="">${order.getTotalGrossPrice()}</label></td>
+            <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for="">${order.getCurrencyCode()}&nbsp;${afterpayTotalAmount}</label></td>
         </tr>
         <tr>
             <td class="table_detail left e w s" nowrap="nowrap"><label class="item-label" for="">${Resource.msg('payment.invoice.number','afterpay',null)}</label></td>
-            <td class="table_detail left e s" nowrap="nowrap" width="75%><label class="item-label" for="">${order.invoiceNo}</label></td>
+            <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for="">${order.invoiceNo}</label></td>
         </tr>
         <tr>
             <td class="table_detail left e w s" nowrap="nowrap"><label class="item-label" for="">${Resource.msg('payment.status','afterpay',null)}</label></td>
-            <td class="table_detail left e s" nowrap="nowrap" width="75%><label class="item-label" for="">${currentStatus}</label></td>
+            <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for="">${currentStatus}</label></td>
         </tr>
-        <iscomment>Payment Details 
-        <isset name="paymentProcessor" value="${dw.order.PaymentMgr.getPaymentMethod(paymentInstrument.getPaymentMethod()).getPaymentProcessor()}" scope ="page"/>
-        <tr>
-            <td class="table_detail left e w s" nowrap="nowrap"><label class="item-label" for="">${Resource.msg('payment.method','afterpay',null)}</label></td>
-            <td class="table_detail left e s" nowrap="nowrap" width="75%><label class="item-label" for="">
-                ${paymentInstrument.paymentMethod}<br>
-                ${Resource.msg('payment.processor','afterpay',null) +' '+ paymentProcessor.getID()}<br>
-                ${Resource.msg('payment.transaction','afterpay',null) +' '+ orderNo}<br>
-                ${Resource.msg('payment.amount','afterpay',null) +' '}<span>${order.getTotalGrossPrice()}</span><br>
-            </label></td>
-        </tr>
-        </iscomment>
         <tr>
             <td class="table_detail left e w s" nowrap="nowrap"><label class="item-label" for="">${Resource.msg('payment.billing.address','afterpay',null)}</label></td>
-            <td class="table_detail left e s" nowrap="nowrap" width="75%><label class="item-label" for=""></label>
+            <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for=""></label>
                 ${order.getBillingAddress().firstName+' '+order.getBillingAddress().lastName}<br>
                 ${order.getBillingAddress().address1}<br>${order.getBillingAddress().address2 ? order.getBillingAddress().address2 : ''}
                 ${order.getBillingAddress().city+' '+order.getBillingAddress().stateCode+' '+order.getBillingAddress().postalCode}<br>
@@ -170,7 +159,7 @@
                     <td class="center" colspan="2">
                         <button name="submit" class="button">${Resource.msg('operations.submit.label','afterpay',null)}</button>
                         <input type="hidden" name="orderno" value="${orderNo}">
-                        <input type="hidden" name="amount" value="${order.getTotalGrossPrice()}">
+                        <input type="hidden" name="amount" value="${afterpayTotalAmount}">
                     </td>
                 </tr>
             </table>

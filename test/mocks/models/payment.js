@@ -4,7 +4,7 @@ var proxyquire = require('proxyquire').noCallThru().noPreserveCache();
 var collections = require('../util/collections');
 
 function proxyModel() {
-    return proxyquire('../../../../storefront-reference-architecture/cartridges/app_storefront_base/cartridge/models/payment', {
+    return proxyquire('../../../../storefront-reference-architecture-master/cartridges/app_storefront_base/cartridge/models/payment', {
         '*/cartridge/scripts/util/collections': collections,
         'dw/order/PaymentMgr': {
             getApplicablePaymentMethods: function () {

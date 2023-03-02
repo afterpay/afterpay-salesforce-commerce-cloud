@@ -1,36 +1,38 @@
 'use strict';
-/* global empty */
 
 /* API Includes */
 var Transaction = require('dw/system/Transaction');
 var Order = require('dw/order/Order');
 var Status = require('dw/system/Status');
-var OrderMgr = require('dw/order/OrderMgr');
-var Resource = require('dw/web/Resource');
 
 /* Script Modules */
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('updatePaymentStatus');
-let AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
-let ECPaymentHelpers = require('*/cartridge/scripts/payment/expressCheckoutPaymentHelpers');
 
 var updatePaymentStatus = {};
 
+/* eslint-disable no-useless-escape */
 /**
 * update Afterpay payment status.
-* @param {Object} order - order
-* @returns {Object} - authorization or error
+* @param {object} order - order
+* @param {boolean} isCashAppPay - is payment CashApp Pay
+* @returns {object} - authorization or error
 */
-updatePaymentStatus.handlePaymentStatus = function (order) {
-    var { checkoutUtilities: apCheckoutUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
-    var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
+/* eslint-enable no-useless-escape */
+updatePaymentStatus.handlePaymentStatus = function (order, isCashAppPay) {
+    var OrderMgr = require('dw/order/OrderMgr');
+    var Resource = require('dw/web/Resource');
+    var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
+    var apCheckoutUtilities = require('*/cartridge/scripts/util/afterpayUtilities').checkoutUtilities;
+    var ECPaymentHelpers = require('*/cartridge/scripts/payment/expressCheckoutPaymentHelpers');
     var response;
     var finalPaymentStatus;
     var errorMessage;
     var responseCode;
     var paymentTransaction;
     var apInitialStatus;
-
+    var isCashAppPayment = isCashAppPay || false;
+    var paymentMethodName = apCheckoutUtilities.getPaymentMethodName(isCashAppPayment);
     var impactOrder = order;
 
     if (!paymentMethodName) {
@@ -61,11 +63,7 @@ updatePaymentStatus.handlePaymentStatus = function (order) {
         // make sure the token in the session is still the one we expect. If not, we
         // fail the order
         if (AfterpaySession.getToken() != orderToken) {
-            Transaction.begin();
-            Order.getPaymentInstruments(paymentMethodName)[0].getPaymentTransaction().custom.apInitialStatus = apInitialStatus;
-            Order.setPaymentStatus(dw.order.Order.PAYMENT_STATUS_NOTPAID);
-            OrderMgr.failOrder(Order);
-            Transaction.commit();
+            Transaction.wrap(function () { OrderMgr.failOrder(order, true); });
             Logger.error('Payment has been declined. Session changed so there is no way to verify that order created was correct.');
             AfterpaySession.clearSession();
 
@@ -76,7 +74,7 @@ updatePaymentStatus.handlePaymentStatus = function (order) {
         }
     }
 
-    finalPaymentStatus = require('*/cartridge/scripts/checkout/afterpayHandlePaymentOrder').getPaymentStatus(order, apInitialStatus, expressCheckoutModel);
+    finalPaymentStatus = require('*/cartridge/scripts/checkout/afterpayHandlePaymentOrder').getPaymentStatus(order, apInitialStatus, expressCheckoutModel, isCashAppPayment);
     response = (finalPaymentStatus.errorMessage) ? finalPaymentStatus.errorMessage : finalPaymentStatus;
     responseCode = apCheckoutUtilities.getPaymentResponseCode(finalPaymentStatus);
 
@@ -86,7 +84,7 @@ updatePaymentStatus.handlePaymentStatus = function (order) {
 
     Logger.debug('Afterpay final payment status :' + finalPaymentStatus);
 
-    if (finalPaymentStatus === 'APPROVED') {
+    if (finalPaymentStatus === 'APPROVED' || finalPaymentStatus === 'ACTIVE') {
         return { authorized: true };
     } else if (finalPaymentStatus === 'PENDING') {
         return {

@@ -1,7 +1,7 @@
 'use strict';
-var { sitePreferencesUtilities: sitePreferences } = require('*/cartridge/scripts/util/afterpayUtilities');
-var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
 
+var sitePreferences = require('*/cartridge/scripts/util/afterpayUtilities').sitePreferencesUtilities;
+var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
 
 /* Script Modules */
 var ctrlCartridgeName = sitePreferences.getControllerCartridgeName();
@@ -20,8 +20,8 @@ var checkoutTools = {
             basket.defaultShipment
         );
         */
-        let name = AfterpayCOHelpers.splitName(apShipping.name || '');
-        let stripLeadingOne = AfterpayCOHelpers.stripUSPhoneNumberLeadingOne;
+        var name = AfterpayCOHelpers.splitName(apShipping.name || '');
+        var stripLeadingOne = AfterpayCOHelpers.stripUSPhoneNumberLeadingOne;
         Transaction.wrap(function () {
             if (shippingAddress === null) {
                 shippingAddress = shipment.createShippingAddress();
@@ -55,10 +55,10 @@ var checkoutTools = {
         return applicableShippingMethods;
     },
     getDefaultShippingMethodForAddress: function (cart, apShipping) {
-        let shipMethods = this.getShippingMethodsForAddress(cart, apShipping);
-        let shipIter = shipMethods.iterator();
+        var shipMethods = this.getShippingMethodsForAddress(cart, apShipping);
+        var shipIter = shipMethods.iterator();
         while (shipIter.hasNext()) {
-            let shipMethod = shipIter.next();
+            var shipMethod = shipIter.next();
             if (shipMethod.defaultMethod == true) {
                 return shipMethod;
             }
@@ -67,26 +67,26 @@ var checkoutTools = {
     },
     shouldEnableExpressPickupMode: function (cart) {
         if (!cart) {
-            cart = app.getModel('Cart').get();
+            cart = app.getModel('Cart').get(); // eslint-disable-line
         }
         if (!cart) {
             return false;
         }
-        let storeMap = AfterpayCOHelpers.getInStorePickupsMap(cart.object);
+        var storeMap = AfterpayCOHelpers.getInStorePickupsMap(cart.object);
         // items that are being shipped
-        let numNonStorePickups = AfterpayCOHelpers.getNumHomeDeliveries(cart.object);
+        var numNonStorePickups = AfterpayCOHelpers.getNumHomeDeliveries(cart.object);
         if ((numNonStorePickups == 0) && (Object.keys(storeMap).length == 1)) {
             return true;
         }
         return false;
     },
     removeAllNonGiftCertificatePayments: function (cart) {
-        let PaymentInstrument = require('dw/order/PaymentInstrument');
+        var PaymentInstrument = require('dw/order/PaymentInstrument');
 
-        let payInstr = cart.getPaymentInstruments();
-        let iter = payInstr.iterator();
+        var payInstr = cart.getPaymentInstruments();
+        var iter = payInstr.iterator();
         while (iter.hasNext()) {
-            let pi = iter.next();
+            var pi = iter.next();
             if (!PaymentInstrument.METHOD_GIFT_CERTIFICATE.equals(pi.getPaymentMethod())) {
                 cart.removePaymentInstrument(pi);
             }
@@ -95,14 +95,14 @@ var checkoutTools = {
     disableSummaryForAfterpay: function (cart, viewContext) {
         var afterpayEnable = sitePreferences.isAfterpayEnabled();
         var expressCheckoutEnable = sitePreferences.isExpressCheckoutEnabled();
-        let isExpressCheckout = require('*/cartridge/scripts/util/afterpaySession').isExpressCheckout();
-    
+        var isExpressCheckout = require('*/cartridge/scripts/util/afterpaySession').isExpressCheckout();
+
         var apPaymentInstrument;
         var iter = cart.object.getPaymentInstruments().iterator();
-    
+
         while (iter.hasNext()) {
             apPaymentInstrument = iter.next();
-    
+
             // don't disable summary for express checkout when the current order is an express checkout order.
             // Non-express-checkout still skips summary screen
             if ((expressCheckoutEnable && isExpressCheckout) || afterpayEnable == false || apPaymentInstrument.paymentMethod !== 'AFTERPAY' || apPaymentInstrument.paymentMethod !== 'CLEARPAY') {

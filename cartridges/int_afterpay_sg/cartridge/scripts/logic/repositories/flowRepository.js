@@ -1,4 +1,5 @@
-/* global empty */
+'use strict';
+
 var System = require('dw/system/System');
 /**
  * Flow repository

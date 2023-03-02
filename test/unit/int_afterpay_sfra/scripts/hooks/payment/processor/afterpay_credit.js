@@ -3,7 +3,7 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 var proxyquire = require('proxyquire').noCallThru().noPreserveCache();
 var sinon = require('sinon');
-var ArrayList = require('../../../../../../mocks/dw.util.Collection.js');
+var ArrayList = require('../../../../../../mocks/dw/util/Collection.js');
 var collections = require('../../../../../../mocks/afterpayCollections');
 
 function MockBasket() {

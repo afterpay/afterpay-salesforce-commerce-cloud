@@ -10,7 +10,7 @@ var TotalsModel = require('./totals');
 var ProductLineItemsModel = require('./productLineItems');
 
 function proxyModel() {
-    return proxyquire('../../../../storefront-reference-architecture/cartridges/app_storefront_base/cartridge/models/order', {
+    return proxyquire('../../../../storefront-reference-architecture-master/cartridges/app_storefront_base/cartridge/models/order', {
         'dw/web/URLUtils': {
         },
         'dw/order/PaymentMgr': {

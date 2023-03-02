@@ -8,7 +8,7 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
 <isscript>
     var BrandUtilities = require("*/cartridge/scripts/util/afterpayUtilities.js").brandUtilities;
     var countrycode = BrandUtilities.getCountryCode();
-    var expressCheckoutJS = BrandUtilities.getBrandSettings().javaScriptUrl + "?merchant_key=demo";
+    var expressCheckoutJS = BrandUtilities.getBrandSettings().javaScriptUrl;
     var sitePreferences = require("*/cartridge/scripts/util/afterpayUtilities.js").sitePreferencesUtilities;
     var afterpayEnabled = sitePreferences.isAfterpayEnabled();
     var afterpayExpressCheckoutEnabled = afterpayEnabled ? sitePreferences.isExpressCheckoutEnabled() : false;
@@ -17,7 +17,7 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     var AfterpayRefArchCOHelpers = require('~/cartridge/scripts/checkout/afterpayRefArchCheckoutHelpers');
     var afterpayExpressPickupEnabled = AfterpayRefArchCOHelpers.shouldEnableExpressPickupMode();
     var buttonClass = 'afterpay-buynow-button add-to-cart btn';
-    if(countrycode === 'GB'){
+    if (countrycode === 'GB') {
         buttonClass = 'clearpay-buynow-button add-to-cart btn';
     }
 </isscript>
@@ -26,32 +26,32 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     <isinclude template="product/components/afterpayexpresscheckout" />
     <isscript>
         var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
-        var disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isBasketAmountWithinThreshold();
-        // for pdp, we don't use the basket amount, we just check if the current product > max thresshold
-        if (afterpayExpressCheckoutPage === 'product_detail' && afterpayExpressCheckoutPdpEnabled) {
-            if (product && product.price) {
-                disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isPriceWithinThreshold(
-                    AfterpayRefArchCOHelpers.getProductPriceForMessaging(product.price));
-            }
+        var disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isPDPBasketAmountWithinThreshold();
+
+        if (product && product.price) {
+            disableAfterpayPaymentMethod =  disableAfterpayPaymentMethod || ! AfterpayCOHelpers.isPriceWithinThreshold(
+                AfterpayRefArchCOHelpers.getProductPriceForMessaging(product.price));
+        }
+        
+        if (disableAfterpayPaymentMethod) {
+            buttonClass += ' afterpay-hide';
         }
     </isscript>
-    <isif condition="${!disableAfterpayPaymentMethod}">
-        <div class="col-12 pdp-checkout-button">
-            <isif condition="${isExpressCheckoutFinalize}">
-                <button id="afterpay-continue-finalize-button" class="${buttonClass}"
-                    data-toggle="modal"
-                    data-pid="${product.id}"
-                    ${!product.readyToOrder || !product.available ? "disabled" : ""}>
-                    &nbsp;
-                </button>            
-            <iselse/>
-                <button id="afterpay-express-pdp-button" class="${buttonClass}"
-                    data-toggle="modal"
-                    data-pid="${product.id}"
-                    ${!product.readyToOrder || !product.available ? "disabled" : ""}>
-                    &nbsp;
-                </button>
-            </isif>
-        </div>
-    </isif>
+    <div class="col-12 pdp-checkout-button">
+        <isif condition="${isExpressCheckoutFinalize}">
+            <button id="afterpay-continue-finalize-button" class="${buttonClass}"
+                data-toggle="modal"
+                data-pid="${product.id}"
+                ${!product.readyToOrder || !product.available ? "disabled" : ""}>
+                &nbsp;
+            </button>            
+        <iselse/>
+            <button id="afterpay-express-pdp-button" class="${buttonClass}"
+                data-toggle="modal"
+                data-pid="${product.id}"
+                ${!product.readyToOrder || !product.available ? "disabled" : ""}>
+                &nbsp;
+            </button>
+        </isif>
+    </div>
 </isif>

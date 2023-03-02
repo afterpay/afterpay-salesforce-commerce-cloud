@@ -1,3 +1,5 @@
+'use strict';
+
 /*
 *    Creates custom log file for the cartridge
 */

@@ -1,5 +1,4 @@
 'use strict';
-/* global request */
 
 /**
  * redirects to specific actions
@@ -22,7 +21,7 @@ function performAction() {
     var r = require('~/cartridge/scripts/util/response');
     r.renderJSON(result);
 
-    return;
+    return; // eslint-disable-line no-useless-return
 }
 
 /*

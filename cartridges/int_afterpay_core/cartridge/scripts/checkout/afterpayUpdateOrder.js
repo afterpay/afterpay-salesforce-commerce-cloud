@@ -1,8 +1,9 @@
+'use strict';
+
 var afterpayConstants = require('*/cartridge/scripts/util/afterpayConstants');
 var apUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
 var apCheckoutUtilities = apUtilities.checkoutUtilities;
 var Transaction = require('dw/system/Transaction');
-var Logger = require('dw/system/Logger');
 
 var afterpayUpdateOrder = {
     /**
@@ -10,15 +11,18 @@ var afterpayUpdateOrder = {
      * @param {dw.order.Order} order - order
      * @param {Object} paymentResult - payment result
      * @param {'DIRECT_CAPTURE'|'AUTHORISE'} paymentMode - payment mode
+     * @param {boolean} isCashAppPay - is payment CashApp Pay
      */
-    handleUpdateOrder: function (order, paymentResult, paymentMode) {
+    handleUpdateOrder: function (order, paymentResult, paymentMode, isCashAppPay) {
+        var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
+        var Logger = LogUtils.getLogger('afterpayUpdateOrder');
         var paymentTransaction;
 
         try {
-            paymentTransaction = this.getPaymentTransaction(order);
+            paymentTransaction = this.getPaymentTransaction(order, isCashAppPay);
             if (paymentResult.status !== afterpayConstants.PAYMENT_STATUS.DECLINED) {
-                this.savePaymentTransaction(paymentTransaction, paymentResult, paymentMode);
-                this.saveOrder(order, paymentResult);
+                this.savePaymentTransaction(paymentTransaction, paymentResult, paymentMode, isCashAppPay);
+                this.saveOrder(order, paymentResult, isCashAppPay);
             } else {
                 this.savePaymentTransactionDeclined(paymentTransaction, paymentMode);
             }
@@ -36,7 +40,7 @@ var afterpayUpdateOrder = {
      * @returns {dw.order.PaymentTransaction} - transaction
      */
     // eslint-disable-next-line no-unused-vars
-    savePaymentTransaction: function (paymentTransaction, paymentResult, paymentMode) {
+    savePaymentTransaction: function (paymentTransaction, paymentResult, paymentMode, isCashAppPay) {
         var Money = require('dw/value/Money');
         var BrandUtilities = apUtilities.brandUtilities;
         var payTrans = paymentTransaction;
@@ -44,7 +48,7 @@ var afterpayUpdateOrder = {
 
         Transaction.wrap(function () {
             payTrans.setTransactionID(paymentResult.id || null);
-            payTrans.setPaymentProcessor(afterpayUpdateOrder.getPaymentProcessor());
+            payTrans.setPaymentProcessor(afterpayUpdateOrder.getPaymentProcessor(isCashAppPay));
             payTrans.custom.apPaymentID = paymentResult.id || null;
             payTrans.custom.apPaymentMode = paymentMode;
             payTrans.custom.apCountryCode = BrandUtilities.getCountryCode();
@@ -57,6 +61,9 @@ var afterpayUpdateOrder = {
                 amount = empty(paymentResult.openToCaptureAmount) ? null : new Money(parseFloat(paymentResult.openToCaptureAmount.amount), paymentResult.openToCaptureAmount.currency);
             }
 
+            if (paymentResult.status === afterpayConstants.PAYMENT_STATUS.ACTIVE && amount === null) {
+                amount = empty(paymentResult.amount) ? null : new Money(parseFloat(paymentResult.amount.amount), paymentResult.amount.currency);
+            }
             payTrans.setAmount(amount);
         });
 
@@ -66,10 +73,11 @@ var afterpayUpdateOrder = {
      * retrieves payment transaction status
      * @param {dw.order.Order} order - order
      * @returns {dw.order.PaymentTransaction} - payment transaction
+     * @param {boolean} isCashAppPay - is payment CashApp Pay
      */
-    getPaymentTransaction: function (order) {
+    getPaymentTransaction: function (order, isCashAppPay) {
         var paymentTransaction;
-        var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
+        var paymentMethodName = apCheckoutUtilities.getPaymentMethodName(isCashAppPay);
 
         if (!paymentMethodName) {
             return null;
@@ -87,10 +95,11 @@ var afterpayUpdateOrder = {
     /**
      * retrieves payment processor
      * @returns {dw.order.PaymentProcessor} - processor
+     *  @param {boolean} isCashAppPay - is payment CashApp Pay
      */
-    getPaymentProcessor: function () {
+    getPaymentProcessor: function (isCashAppPay) {
         var PaymentMgr = require('dw/order/PaymentMgr');
-        var paymentMethodName = apCheckoutUtilities.getPaymentMethodName();
+        var paymentMethodName = apCheckoutUtilities.getPaymentMethodName(isCashAppPay);
 
         if (!paymentMethodName) {
             return null;
@@ -103,13 +112,19 @@ var afterpayUpdateOrder = {
      * saves order status based on payment transaction status
      * @param {dw.order.Order} order - order
      * @param {Object} paymentResult - result
+     * @param {boolean} isCashAppPay - is payment CashApp Pay
      * @returns {dw.order.Order} - order
      */
-    saveOrder: function (order, paymentResult) {
+    saveOrder: function (order, paymentResult, isCashAppPay) {
         var Order = require('dw/order/Order');
         var outOrder = order;
         Transaction.begin();
-        outOrder.custom.apIsAfterpayOrder = true;
+        if (!isCashAppPay) {
+            outOrder.custom.apIsAfterpayOrder = true;
+        } else {
+            outOrder.custom.isCashAppPayOrder = true;
+        }
+
         if (paymentResult.status === afterpayConstants.PAYMENT_STATUS.APPROVED) {
             outOrder.setPaymentStatus(Order.PAYMENT_STATUS_PAID);
         } else {
@@ -123,12 +138,13 @@ var afterpayUpdateOrder = {
      * saves declined payment transaction status
      * @param {dw.order.PaymentTransaction} paymentTransaction - transaction
      * @param {'DIRECT_CAPTURE'|'AUTHORISE'} paymentMode - payment mode
+     *  @param {boolean} isCashAppPay - is payment CashApp Pay
      * @returns {dw.order.PaymentTransaction} - transaction
      */
-    savePaymentTransactionDeclined: function (paymentTransaction, paymentMode) {
+    savePaymentTransactionDeclined: function (paymentTransaction, paymentMode, isCashAppPay) {
         var payTrans = paymentTransaction;
         Transaction.begin();
-        payTrans.setPaymentProcessor(this.getPaymentProcessor());
+        payTrans.setPaymentProcessor(this.getPaymentProcessor(isCashAppPay));
         payTrans.custom.apPaymentMode = paymentMode;
         payTrans.custom.apInitialStatus = afterpayConstants.PAYMENT_STATUS.DECLINED;
         payTrans.custom.apToken = null;

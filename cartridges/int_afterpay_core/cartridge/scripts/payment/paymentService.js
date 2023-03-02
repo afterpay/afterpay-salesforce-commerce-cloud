@@ -1,5 +1,4 @@
 'use strict';
-/* global empty */
 
 var StringUtils = require('dw/util/StringUtils');
 

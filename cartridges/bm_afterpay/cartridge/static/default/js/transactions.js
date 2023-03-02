@@ -1,4 +1,5 @@
 'use strict';
+
 /* global jQuery, Resources, Urls */
 
 var j = jQuery.noConflict();

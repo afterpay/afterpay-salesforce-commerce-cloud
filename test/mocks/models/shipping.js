@@ -38,7 +38,7 @@ var shippingHelpers = {
 };
 
 function proxyModel() {
-    return proxyquire('../../../../storefront-reference-architecture/cartridges/app_storefront_base/cartridge/models/shipping', {
+    return proxyquire('../../../../storefront-reference-architecture-master/cartridges/app_storefront_base/cartridge/models/shipping', {
         '*/cartridge/models/address': AddressModel,
         '*/cartridge/models/productLineItems': ProductLineItemsModel,
         '*/cartridge/models/shipping/shippingMethod': ShippingMethodModel,
@@ -50,7 +50,7 @@ function proxyModel() {
                 return 'formattedMoney';
             }
         },
-        'dw/value/Money': require('../dw.value.Money'),
+        'dw/value/Money': require('../dw/value/Money'),
         'dw/order/ShippingMgr': ShippingMgr
     });
 }

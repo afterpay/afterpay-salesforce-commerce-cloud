@@ -1,10 +1,9 @@
-/* global request */
+'use strict';
+
 /**
 *
 * Controller to test the afterpay services
 */
-
-'use strict';
 
 /* Global variables */
 var sitePreferences = require('*/cartridge/scripts/util/afterpayUtilities.js').sitePreferencesUtilities;

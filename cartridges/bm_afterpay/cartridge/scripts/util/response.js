@@ -1,5 +1,5 @@
 'use strict';
-/* global response */
+
 /**
  * This module provides often-needed helper methods for sending responses.
  *

@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * definition for address details
  */

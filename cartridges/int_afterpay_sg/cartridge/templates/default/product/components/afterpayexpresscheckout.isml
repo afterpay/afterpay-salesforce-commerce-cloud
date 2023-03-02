@@ -18,15 +18,15 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
 
     var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
     var afterpayExpressPickupEnabled = afterpayExpressCheckoutEnabled ? require('~/cartridge/scripts/checkout/afterpaySGCheckoutHelpers').shouldEnableExpressPickupMode() : false;
-    var disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isBasketAmountWithinThreshold();
-    // for pdp, we don't use the basket amount, we just check if the current product > max thresshold
+    var disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isPDPBasketAmountWithinThreshold();
     if (pdict.pagetype === 'product_detail' && afterpayExpressCheckoutPdpEnabled) {
-        disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isPriceWithinThreshold(SalesPrice ? SalesPrice : StandardPrice);
+        disableAfterpayPaymentMethod = disableAfterpayPaymentMethod || ! AfterpayCOHelpers.isPriceWithinThreshold(SalesPrice ? SalesPrice : StandardPrice);
     }
     var BrandUtilities = require("*/cartridge/scripts/util/afterpayUtilities.js").brandUtilities;
     var countrycode = BrandUtilities.getCountryCode();
     var expressCheckoutJS = BrandUtilities.getBrandSettings().javaScriptUrl + "?merchant_key=demo";
 </isscript>
+
 <isif condition="${afterpayExpressCheckoutEnabled && (pdict.pagetype != 'product_detail' || afterpayExpressCheckoutPdpEnabled)}">
     <input id="afterpay-express-countrycode" type="hidden" value="${countrycode}" />
     <input id="afterpay-express-storepickup" type="hidden" value="${afterpayExpressPickupEnabled}" />

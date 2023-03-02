@@ -1,3 +1,5 @@
+'use strict';
+
 var Site = require('dw/system/Site');
 var Resource = require('dw/web/Resource');
 var Template = require('dw/util/Template');

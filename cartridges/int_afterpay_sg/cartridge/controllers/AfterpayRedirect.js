@@ -1,5 +1,4 @@
 'use strict';
-/* global empty, request */
 
 /**
  * Controller to handle the response from Afterpay
@@ -59,14 +58,8 @@ function HandleResponse() {
             orderToken: orderTokenString
         });
 
-        if (!productExists) {
-            if (productExists.error) {
-                redirectURL = URLUtils.https('COBilling-Start', 'afterpay', Resource.msg('apierror.flow.default', session.privacy.afterpayBrand, null));
-            }
-
-            redirectURL = URLUtils.https('COBilling-Start', 'afterpay', Resource.msg('apierror.token.conflict', session.privacy.afterpayBrand, null));
-        } else if (PreapprovalResult.error) {
-            redirectURL = URLUtils.https('COBilling-Start', 'afterpay', Resource.msg('apierror.flow.default', session.privacy.afterpayBrand, null));
+        if (!productExists || PreapprovalResult.error) {
+            redirectURL = URLUtils.https('COBilling-Start', 'afterpay', Resource.msg('apierror.flow.invalid', session.privacy.afterpayBrand, null));
         } else {
             try {
                 placeOrderResult = COPlaceOrder.Start(); // eslint-disable-line

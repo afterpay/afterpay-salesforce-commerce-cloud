@@ -1,4 +1,5 @@
 'use strict';
+
 var afterpayHttpService = require('*/cartridge/scripts/logic/services/afterpayHttpService');
 var afterpayUtils = require('*/cartridge/scripts/util/afterpayUtils');
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');

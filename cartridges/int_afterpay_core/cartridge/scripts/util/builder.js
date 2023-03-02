@@ -1,4 +1,5 @@
 'use strict';
+
 (function () {
     /**
      *  builder class to build all request params

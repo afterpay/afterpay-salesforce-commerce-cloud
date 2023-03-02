@@ -1,8 +1,7 @@
 'use strict';
+
 var afterpayHttpService = require('*/cartridge/scripts/logic/services/afterpayHttpService');
 var afterpayUtils = require('*/cartridge/scripts/util/afterpayUtils');
-var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
-var Logger = LogUtils.getLogger('afterpayDirectCapturePaymentService');
 
 /**
  *  request and response definitions for payment service type 'direct capture'
@@ -17,8 +16,8 @@ var DirectCapturePaymentService = {
             var shippingObj = null;
             var itemsObj = null;
             var isCheckoutAdjusted = false;
-            let CaptureHelpers = require('*/cartridge/scripts/payment/expressCaptureHelpers');
-            let body = CaptureHelpers.generateItemsAndShippingBody(order);
+            var CaptureHelpers = require('*/cartridge/scripts/payment/expressCaptureHelpers');
+            var body = CaptureHelpers.generateItemsAndShippingBody(order);
             if (expressCheckoutModel.apTempShippingAddressChanged) {
                 shippingObj = body.shipping;
                 isCheckoutAdjusted = true;
@@ -35,7 +34,7 @@ var DirectCapturePaymentService = {
             // and one does not (usually BuyNow)
             if (expressCheckoutModel.apExpressCheckoutChecksum) {
                 requestBody = this.generateRequestBodyExpressCheckoutWithChecksum(token, orderNo,
-                     amount, expressCheckoutModel.apExpressCheckoutChecksum, itemsObj, shippingObj, isCheckoutAdjusted);
+                    amount, expressCheckoutModel.apExpressCheckoutChecksum, itemsObj, shippingObj, isCheckoutAdjusted);
             } else {
                 requestBody = this.generateRequestBodyExpressCheckout(token, orderNo, amount);
             }

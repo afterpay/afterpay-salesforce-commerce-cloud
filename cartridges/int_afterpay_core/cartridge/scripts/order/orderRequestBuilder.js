@@ -1,10 +1,13 @@
+'use strict';
+
 /* eslint no-underscore-dangle: 0 */
 
 var Resource = require('dw/web/Resource');
 var TaxMgr = require('dw/order/TaxMgr');
-
 var Builder = require('../util/builder');
-var { checkoutUtilities, brandUtilities, sitePreferencesUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
+var checkoutUtilities = require('*/cartridge/scripts/util/afterpayUtilities').checkoutUtilities;
+var brandUtilities = require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities;
+var sitePreferencesUtilities = require('*/cartridge/scripts/util/afterpayUtilities').sitePreferencesUtilities;
 var Order = require('*/cartridge/scripts/order/order');
 var LineItem = require('*/cartridge/scripts/order/lineItem');
 var Discount = require('*/cartridge/scripts/order/discount');
@@ -36,10 +39,7 @@ OrderRequestBuilder.prototype._log = function (errorCode) {
  * @param {Object} params - params
  */
 OrderRequestBuilder.prototype._handleRequire = function (params) {
-    if (empty(params) ||
-        empty(params.basket) ||
-        empty(params.basket.billingAddress) ||
-        empty(params.basket.defaultShipment.shippingAddress)) {
+    if (empty(params) || empty(params.basket) || empty(params.basket.billingAddress) || empty(params.basket.defaultShipment.shippingAddress)) {
         throw new Error('404');
     }
 };
@@ -58,17 +58,18 @@ OrderRequestBuilder.prototype._buildAddress = function (type, address) {
     this.context[type].countryCode = (address.countryCode.value && address.countryCode.value.toUpperCase()) || '';
     this.context[type].phoneNumber = address.phone || '';
     this.context[type].area1 = address.city || '';
-    this.context[type].region = address.stateCode || '';
+    this.context[type].region = address.stateCode != 'undefined' ? address.stateCode : '';
 };
 
 /**
  * @description Retrieves payment transaction from basket
  * @private
  * @param {dw.order.Basket} basket - source cart
+ * @param {boolean} isCashAppPay - is payment CashApp Pay
  * @returns {dw.order.PaymentTransaction} - payment transaction associated with provided basket
  */
-OrderRequestBuilder.prototype._getPaymentTransaction = function (basket) {
-    var paymentMethod = checkoutUtilities.getPaymentMethodName();
+OrderRequestBuilder.prototype._getPaymentTransaction = function (basket, isCashAppPay) {
+    var paymentMethod = checkoutUtilities.getPaymentMethodName(isCashAppPay);
 
     if (!paymentMethod) {
         return null;
@@ -95,21 +96,21 @@ OrderRequestBuilder.prototype.buildRequest = function (params) {
     }
 
     var basket = params.basket;
-    var url = params.url;
-    var requestMethod = params.requestMethod;
-
+    var isCashAppPay = params.isCashAppPay;
     return this.init()
         .buildConsumer(basket)
         .buildBilling(basket)
         .buildShipping(basket)
         .buildItems(basket)
         .applyDiscounts(basket)
-        .buildTotalAmount(basket)
+        .buildTotalAmount(basket, isCashAppPay)
+        .buildInitialOrderAmount(basket, isCashAppPay)
         .buildShippingAmount(basket)
         .buildTotalTax(basket)
-        .buildMerchantInformation(url)
+        .buildMerchantInformation(isCashAppPay)
         .buildPurchaseCountry()
-        .buildRequestMethod(requestMethod);
+        .buildRequestMethod(params.requestMethod)
+        .buildCashAppPay(isCashAppPay);
 };
 
 /**
@@ -196,14 +197,13 @@ OrderRequestBuilder.prototype.buildPurchaseCountry = function () {
  */
 OrderRequestBuilder.prototype.buildShipping = function (basket) {
     var shippingAddress = basket.defaultShipment.shippingAddress;
-    if(shippingAddress.address1 !== null){
+    if (shippingAddress.address1 !== null) {
         this._buildAddress('shipping', shippingAddress);
-    }
-    else{
+    } else {
         var storeMap = {};
-        let lineItemsIter = basket.allProductLineItems.iterator();
-        while(lineItemsIter.hasNext()) {
-            let lineItem = lineItemsIter.next();
+        var lineItemsIter = basket.allProductLineItems.iterator();
+        while (lineItemsIter.hasNext()) {
+            var lineItem = lineItemsIter.next();
             if (lineItem.custom.fromStoreId) {
                 storeMap[lineItem.custom.fromStoreId] = dw.catalog.StoreMgr.getStore(lineItem.custom.fromStoreId);
             }
@@ -211,14 +211,13 @@ OrderRequestBuilder.prototype.buildShipping = function (basket) {
 
         if (Object.keys(storeMap).length == 1) {
             storePickup = true;
-            for (var key in storeMap) {
+            Object.keys(storeMap).forEach(function (key) {
                 store = storeMap[key];
-            }
-            if(store){
+            });
+            if (store) {
                 this._buildShiptoStore('shipping', store);
             }
-        }
-        else{
+        } else {
             return null;
         }
     }
@@ -234,24 +233,22 @@ OrderRequestBuilder.prototype.buildItems = function (basket) {
     var lineItems = basket.getAllProductLineItems().toArray();
 
     this.context.items = lineItems.map(function (li) {
-                var item = new LineItem();
+        var item = new LineItem();
         var product = li.product;
 
-    // Some lineitems may not be products
-    // e.g. extended warranties
+        // Some lineitems may not be products
+        // e.g. extended warranties
         if (!product) {
             item.name = li.getLineItemText();
             item.sku = li.productID;
-            item.quantity = li.getQuantity().value;
-            item.price.amount = li.adjustedNetPrice.value;
             item.price.currency = li.adjustedNetPrice.currencyCode;
         } else {
-                item.name = product.name;
-                item.sku = product.ID;
-            item.quantity = li.getQuantity().value;
-            item.price.amount = product.getPriceModel().getPrice().value;
-                item.price.currency = product.getPriceModel().getPrice().currencyCode;
-            }
+            item.name = product.name;
+            item.sku = product.ID;
+            item.price.currency = product.getPriceModel().getPrice().currencyCode;
+        }
+        item.quantity = li.getQuantity().value;
+        item.price.amount = (li.adjustedPrice.value / item.quantity).toString();
         return item;
     });
     return this;
@@ -259,13 +256,26 @@ OrderRequestBuilder.prototype.buildItems = function (basket) {
 
 /**
  * builds merchant details
- * @param {string} url - url
+ * @param {boolean} isCashAppPay - is payment CashApp Pay
  * @returns {Object} - this object
  */
-OrderRequestBuilder.prototype.buildMerchantInformation = function (url) {
-    this.context.merchant.redirectConfirmUrl = !empty(url) ? url : sitePreferencesUtilities.getRedirectConfirmUrl();
-    this.context.merchant.redirectCancelUrl = !empty(url) ? url : sitePreferencesUtilities.getRedirectCancelUrl();
+OrderRequestBuilder.prototype.buildMerchantInformation = function (isCashAppPay) {
+    var merchantURL = sitePreferencesUtilities.getRedirectConfirmUrl(isCashAppPay);
+    this.context.merchant.redirectConfirmUrl = merchantURL;
+    this.context.merchant.redirectCancelUrl = merchantURL;
 
+    return this;
+};
+
+/**
+ * builds CashAppPay
+ * @param {boolean} isCashAppPay - is payment CashApp Pay
+ * @returns {Object} - this object
+ */
+OrderRequestBuilder.prototype.buildCashAppPay = function (isCashAppPay) {
+    if (isCashAppPay) {
+        this.context.isCashAppPay = 'true';
+    }
     return this;
 };
 
@@ -300,16 +310,66 @@ OrderRequestBuilder.prototype.applyDiscounts = function (basket) {
 
     return this;
 };
+/**
+ * builds initial order amount details
+ * @param {dw.order.Basket} basket - basket
+ * @param {boolean} isCashAppPay - is payment CashApp Pay
+ * @returns {Object} - this object
+ */
+OrderRequestBuilder.prototype.buildInitialOrderAmount = function (basket, isCashAppPay) {
+    var paymentTransaction = this._getPaymentTransaction(basket, isCashAppPay);
+    var preOrderHelper = require('*/cartridge/scripts/checkout/afterpayPreOrderHelpers');
+    var productAvailabilityModel = require('dw/catalog/ProductAvailabilityModel');
+    var ProductMgr = require('dw/catalog/ProductMgr');
+    var Amount = require('*/cartridge/scripts/order/amount');
+
+    if (!paymentTransaction) {
+        return this;
+    }
+    var productLineItems = basket.getAllProductLineItems().iterator();
+    var preOrderAmount = 0.00;
+
+    while (productLineItems.hasNext()) {
+        var productLineItem = productLineItems.next();
+        var product = productLineItem.product;
+
+        if (!product) {
+            var parentProductID = productLineItem.parent.productID;
+            product = ProductMgr.getProduct(parentProductID);
+        }
+
+        if (product) {
+            var productAvailabiltyStatus = product.availabilityModel.getAvailabilityStatus();
+            if (productAvailabiltyStatus == productAvailabilityModel.AVAILABILITY_STATUS_PREORDER || productAvailabiltyStatus == productAvailabilityModel.AVAILABILITY_STATUS_BACKORDER) {
+                var productPrice = productLineItem.proratedPrice.value;
+                preOrderAmount += productPrice;
+            }
+        }
+    }
+
+    var orderSubTotal = preOrderHelper.getCartSubtotal(basket);
+
+    if (preOrderAmount > 0 && orderSubTotal) {
+        var initialOrderAmount = (paymentTransaction.amount.value - preOrderAmount).toFixed(2);
+        if ((orderSubTotal - preOrderAmount).toFixed(2) == 0) {
+            initialOrderAmount = 0.00;
+        }
+        this.context.initialOrderAmount = new Amount();
+        this.context.initialOrderAmount.amount = initialOrderAmount;
+        this.context.initialOrderAmount.currency = basket.getCurrencyCode();
+    }
+
+    return this;
+};
 
 /**
  * builds total amount details
  * @param {dw.order.Basket} basket - basket
+ * @param {boolean} isCashAppPay - is payment CashApp Pay
  * @returns {Object} - this object
  */
-// eslint-disable-next-line no-unused-vars
-OrderRequestBuilder.prototype.buildTotalAmount = function (basket) {
-    var paymentTransaction = this._getPaymentTransaction(basket);
-
+OrderRequestBuilder.prototype.buildTotalAmount = function (basket, isCashAppPay) {
+    var paymentTransaction = this._getPaymentTransaction(basket, isCashAppPay);
     if (!paymentTransaction) {
         return null;
     }
@@ -364,7 +424,7 @@ OrderRequestBuilder.prototype.buildTotalTax = function (basket) {
     return this;
 };
 
-OrderRequestBuilder.prototype._buildShiptoStore = function(type, store) {
+OrderRequestBuilder.prototype._buildShiptoStore = function (type, store) {
     this.context[type].name = store.name || 'UNKNOWN';
     this.context[type].line1 = store.address1 || '';
     this.context[type].line2 = store.address2 || '';
@@ -374,6 +434,5 @@ OrderRequestBuilder.prototype._buildShiptoStore = function(type, store) {
     this.context[type].countryCode = store.countryCode.value || '';
     this.context[type].phoneNumber = store.phone || '';
 };
-
 
 module.exports = OrderRequestBuilder;

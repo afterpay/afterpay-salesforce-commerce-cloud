@@ -1,6 +1,5 @@
 'use strict';
 
-
 /**
  *  calls TokenModel object
  */

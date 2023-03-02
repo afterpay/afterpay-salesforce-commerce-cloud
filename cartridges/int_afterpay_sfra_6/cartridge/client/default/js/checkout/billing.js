@@ -1,5 +1,6 @@
 'use strict';
 
+/* eslint-disable */
 var addressHelpers = require('base/checkout/address');
 var cleave = require('base/components/cleave');
 
@@ -125,7 +126,7 @@ function validateAndUpdateBillingPaymentInstrument(order) {
  * Updates the billing address form values within payment forms
  * @param {Object} order - the order model
  */
- function updateBillingAddressFormValues(order) {
+function updateBillingAddressFormValues(order) {
     module.exports.methods.updateBillingAddress(order);
     module.exports.methods.validateAndUpdateBillingPaymentInstrument(order);
 }
@@ -149,10 +150,10 @@ function clearBillingAddressFormValues() {
  * update billing address summary and contact information
  * @param {Object} order - checkout model to use as basis of new truth
  */
- function updateBillingAddressSummary(order) {
+function updateBillingAddressSummary(order) {
     // update billing address summary
     addressHelpers.methods.populateAddressSummary('.billing .address-summary',
-        order.billing.billingAddress.address);
+    order.billing.billingAddress.address);
 
     // update billing parts of order summary
     $('.order-summary-email').text(order.orderEmail);

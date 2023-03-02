@@ -1,11 +1,11 @@
 'use strict';
 
 var afterpayRedirect = require('../afterpay/afterpayRedirect');
-//var afterpayWidget = require('../afterpay/afterpayWidget');
 var afterpayExpressWidget = require('../afterpay/afterpayExpressWidget');
-var baseCheckout = require('base/checkout/checkout');
 
-// Hide all states
+/**
+ * Hide all states
+ */
 function hideAllStates() {
     $('.ap-checkout-ship').addClass('afterpay-hide');
 
@@ -21,10 +21,12 @@ function hideAllStates() {
     $('.ap-checkout-po-noecf').addClass('afterpay-hide');
 }
 
-// Handle changes between different checkout stages
+/**
+ * Handle changes between different checkout stages
+ */
 function handleStateChange() {
-    let cmElem = document.querySelector('#checkout-main');
-    let stage = cmElem.getAttribute('data-checkout-stage');
+    var cmElem = document.querySelector('#checkout-main');
+    var stage = cmElem.getAttribute('data-checkout-stage');
 
     var ecFinalize = false;
     if ($('#afterpay-express-checkout-finalize').length > 0 && $('#afterpay-express-checkout-finalize').val() === 'true') {
@@ -50,7 +52,7 @@ function handleStateChange() {
             $('.ap-checkout-pay-notab-noecf').removeClass('afterpay-hide');
         }
     } else if (stage === 'placeOrder') {
-        let isAfterpayPayment = $('#afterpay-payment-shown').length;
+        var isAfterpayPayment = $('#afterpay-payment-shown').length;
 
         hideAllStates();
         if (isAfterpayPayment) {
@@ -81,58 +83,59 @@ var exports = {
                     afterpayRedirect.generalValidation();
                 }
             });
-         // update the widget with correct amounts on initial page load
+            // update the widget with correct amounts on initial page load
             afterpayExpressWidget.updateExpressWidget();
 
-         // Call handleStage when page is loaded/reloaded
+            // Call handleStage when page is loaded/reloaded
             handleStateChange();
 
-            let cmElem = document.querySelector('#checkout-main');            
-         // Call handleStage with new stage whenever we detect the stage change
-         // SFRA base changes attributes on #checkout-main to indicate stage of checkout flow changes
+            var cmElem = document.querySelector('#checkout-main');
+            // Call handleStage with new stage whenever we detect the stage change
+            // SFRA base changes attributes on #checkout-main to indicate stage of checkout flow changes
             if (window.MutationObserver) {
-                var observer = new MutationObserver(function (mutations) {
-                    for (let mutation of mutations) {
+                var cmElemObserver = new MutationObserver(function (mutations) {
+                    Object.values(mutations).forEach(function (mutation) {
                         if (mutation.type === 'attributes') {
                             handleStateChange();
                         }
-                    }
+                    });
                 });
-                observer.observe(cmElem, { attributes: true });
+                cmElemObserver.observe(cmElem, { attributes: true });
             } else {
-             // If no MutationObserver support, just use interval to poll state
-                var checkState = setInterval(function () {
+                // If no MutationObserver support, just use interval to poll state
+                setInterval(function () {
                     handleStateChange();
                 }, 500);
             }
 
-         // Call handleStage with new stage whenever afterpay payment tab is pressed
-            let tabelem = document.querySelector('.afterpay-tab') ? document.querySelector('.afterpay-tab') : document.querySelector('.clearpay-tab');
+            // Call handleStage with new stage whenever afterpay payment tab is pressed
+            var tabelem = document.querySelector('.afterpay-tab') ? document.querySelector('.afterpay-tab') : document.querySelector('.clearpay-tab');
             if (window.MutationObserver) {
-                var observer = new MutationObserver(function (mutations) {
+                var tabelemObserver = new MutationObserver(function () {
+                    if ($('.afterpay-tab').hasClass('active') || $('.clearpay-tab').hasClass('active')) {
+                        afterpayExpressWidget.updateExpressWidget();
+                    }
                     handleStateChange();
                 });
-                observer.observe(tabelem, { attributes: true });
+                tabelemObserver.observe(tabelem, { attributes: true });
             }
-
 
             if (typeof createAfterpayWidget === 'function') {
                 createAfterpayWidget();
             }
 
-         // Handle place-order button click
+            // Handle place-order button click
             $('#afterpay-placeorder-button').on('click', function () {
                 if (typeof afterpayWidget !== 'undefined') {
-                    let url = $('#afterpay-express-url-finalize').val();
-                    let checksum = afterpayWidget.paymentScheduleChecksum;
+                    var url = $('#afterpay-express-url-finalize').val();
+                    var checksum = afterpayWidget.paymentScheduleChecksum;
                     window.location.href = url + '?checksum=' + checksum;
                 }
             });
 
-         // if express checkout finalization flow, then select the afterpay payment
-         // tab by default
-            if (($('#afterpay-express-checkout-finalize').val() === 'true') &&
-             (parseFloat($('#afterpay-widget-amount').val()) > 0.0)) {
+            // if express checkout finalization flow, then select the afterpay payment
+            // tab by default
+            if (($('#afterpay-express-checkout-finalize').val() === 'true') && (parseFloat($('#afterpay-widget-amount').val()) > 0.0)) {
                 $('.afterpay-content').addClass('active');
                 $('.afterpay-tab').addClass('active');
                 $('.clearpay-content').addClass('active');

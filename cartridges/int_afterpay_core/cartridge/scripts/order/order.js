@@ -1,3 +1,5 @@
+'use strict';
+
 var Consumer = require('*/cartridge/scripts/order/consumer');
 var Address = require('*/cartridge/scripts/order/address');
 var Amount = require('*/cartridge/scripts/order/amount');

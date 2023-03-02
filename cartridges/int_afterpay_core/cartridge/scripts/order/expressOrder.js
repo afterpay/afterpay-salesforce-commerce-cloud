@@ -1,4 +1,5 @@
 'use strict';
+
 /**
  * definition for amount and currency details
  */
@@ -11,7 +12,6 @@ function Amount() {
  */
 function LineItem() {
     this.name = '';
-  // this.sku = '';
     this.quantity = '';
     this.price = new Amount();
 }

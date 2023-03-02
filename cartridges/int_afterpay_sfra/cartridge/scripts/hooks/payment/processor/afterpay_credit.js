@@ -13,7 +13,7 @@ var collections = require('*/cartridge/scripts/util/collections');
 */
 function Handle(basket) {
     var currentBasket = basket;
-    var { checkoutUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
+    var checkoutUtilities = require('*/cartridge/scripts/util/afterpayUtilities').checkoutUtilities;
     var paymentMethodName = checkoutUtilities.getPaymentMethodName();
 
     if (!paymentMethodName) {

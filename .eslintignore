@@ -1,6 +1,12 @@
 bin/
 cartridges/bm_afterpay/cartridge/static/default/lib/
-cartridges/int_afterpay_sfra/cartridge/static/
+cartridges/int_afterpay_sfra/cartridge/static/default/
+cartridges/int_afterpay_sfra/cartridge/client/default/js/cashappCheckoutMobile.js
+cartridges/int_afterpay_sfra_6/cartridge/static/default/
+cartridges/int_afterpay_sg/cartridge/static/default/
+cartridges/int_afterpay_sfra_6/cartridge/client/default/js/cashappCheckoutMobile.js
+cartridges/int_afterpay_sfra/cartridge/scripts/util/parsePriceAfterpay.js
+cartridges/int_afterpay_sfra_6/cartridge/scripts/util/parsePriceAfterpay.js
 documentation/
 metadata/
 node_modules/

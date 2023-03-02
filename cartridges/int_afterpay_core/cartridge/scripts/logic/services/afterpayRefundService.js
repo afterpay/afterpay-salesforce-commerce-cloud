@@ -1,3 +1,5 @@
+'use strict';
+
 var Context = require('*/cartridge/scripts/context/context');
 var afterpayHttpService = require('*/cartridge/scripts/logic/services/afterpayHttpService');
 var StringUtils = require('dw/util/StringUtils');

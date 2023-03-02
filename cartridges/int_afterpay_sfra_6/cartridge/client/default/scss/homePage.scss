@@ -5,20 +5,24 @@
 .afterpay-checkout-button {
     background-color: #000;
     color: #fff !important;
-    background-image: url('https://static.afterpay.com/button/checkout-with-afterpay/white-on-black.svg'); 
+    background-image: url('https://static.afterpay.com/button/checkout-with-afterpay/white-on-black.svg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position-x: center;
     background-position-y: center;
-  }
+}
 
-  .clearpay-checkout-button {
+.clearpay-checkout-button {
     background-color: #000;
     color: #fff !important;
-    background-image: url('https://static.afterpay.com/button/checkout-with-clearpay/white-on-black.svg'); 
+    background-image: url('https://static.afterpay.com/button/checkout-with-clearpay/white-on-black.svg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position-x: center;
     background-position-y: center;
-  }
-  
+}
+
+.afterpay-hide {
+    display: none !important;
+}
+

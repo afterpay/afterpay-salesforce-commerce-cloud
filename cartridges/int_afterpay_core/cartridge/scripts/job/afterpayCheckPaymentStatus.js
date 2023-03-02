@@ -1,11 +1,11 @@
+'use strict';
+
 /* eslint no-underscore-dangle: 0 */
 var Transaction = require('dw/system/Transaction');
 var OrderMgr = require('dw/order/OrderMgr');
 var Order = require('dw/order/Order');
-var { 
-    checkoutUtilities: AfterpayCheckoutUtilities,
-    brandUtilities
-} = require('*/cartridge/scripts/util/afterpayUtilities');
+var AfterpayCheckoutUtilities = require('*/cartridge/scripts/util/afterpayUtilities').checkoutUtilities;
+var brandUtilities = require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities;
 var PAYMENT_MODE = require('*/cartridge/scripts/util/afterpayConstants').PAYMENT_MODE;
 var PAYMENT_STATUS = require('*/cartridge/scripts/util/afterpayConstants').PAYMENT_STATUS;
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
@@ -89,7 +89,6 @@ var checkPaymentStatus = function () {
                 UpdateOrderService.handleOrder(order, paymentResult.status);
             }
         } catch (exception) {
-            var ex = exception;
             Logger.error('Error when update the order ID: {0}. Exception Details:\n{1}', order.orderNo, exception);
         }
     }
@@ -107,13 +106,12 @@ function execute() {
         var result = checkPaymentStatus();
         var OrdersAvailable = result;
         Logger.debug('Orders Available :' + OrdersAvailable);
-    } catch (ex) {
-        var exception = ex;
+    } catch (exception) {
         Logger.error('Error when checking payment status' + exception);
     }
 }
 
-/** Exported functions **/
+/** Exported functions */
 module.exports = {
     execute: execute
 };

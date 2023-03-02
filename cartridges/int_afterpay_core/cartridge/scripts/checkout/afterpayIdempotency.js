@@ -1,5 +1,5 @@
 'use strict';
-/* global empty */
+
 var Site = require('dw/system/Site');
 
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
@@ -28,6 +28,7 @@ function sleep(milliseconds) {
 * Delays the payment retry by 5 secs.
 * @param {Object} Order - order
 * @param {number} initialStatus - initial status
+* @param {Object} expressCheckoutModel - express checkout params
 * @returns {number} - payment status
 */
 function delayPayment(Order, initialStatus, expressCheckoutModel) {

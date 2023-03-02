@@ -31,7 +31,5 @@ exports.getCurrent = function getCurrent(pdict, locale) {
         }
     });
 
-    return pdict.CurrentRequest.httpProtocol + '://' +
-        pdict.CurrentRequest.httpHost +
-        URLUtils.url.apply(null, args);
+    return pdict.CurrentRequest.httpProtocol + '://' + pdict.CurrentRequest.httpHost + URLUtils.url.apply(null, args);
 };

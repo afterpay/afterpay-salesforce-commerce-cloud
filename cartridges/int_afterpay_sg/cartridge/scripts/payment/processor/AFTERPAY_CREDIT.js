@@ -3,7 +3,7 @@
 /* Script Modules */
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('AFTERPAY_CREDIT');
-var { brandUtilities } = require('*/cartridge/scripts/util/afterpayUtilities');
+var brandUtilities = require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities;
 var BrandMapping = require('*/cartridge/scripts/brandMapping');
 
 /**

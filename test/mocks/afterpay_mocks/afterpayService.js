@@ -1,6 +1,8 @@
 'use strict';
 
 var proxyquire = require('proxyquire').noCallThru().noPreserveCache();
+var urlUtilsMock = require('../dw/web/URLUtils');
+var SiteMock = require('../dw/system/Site');
 
 var afterpayServiceHandler = {
     data: {},
@@ -83,6 +85,13 @@ var afterpayUtilities = {
 function proxyModel() {
     return proxyquire('../../../cartridges/int_afterpay_core/cartridge/scripts/logic/services/afterpayHttpService',
         {
+            'dw/web/URLUtils': urlUtilsMock,
+            'dw/system/Site': SiteMock,
+            'dw/web/Resource': {
+                msg: function () {
+                    return 'someString';
+                }
+            },
             'dw/svc/LocalServiceRegistry': {
                 createService: function (serviceId, configObj) {
                     return {

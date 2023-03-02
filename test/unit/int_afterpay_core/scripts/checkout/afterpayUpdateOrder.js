@@ -6,8 +6,8 @@ var sinon = require('sinon');
 var loggerMock = require('../../../../mocks/dw/system/Logger');
 var afterpayConstants = require('../../../../../cartridges/int_afterpay_core/cartridge/scripts/util/afterpayConstants');
 var OrderMock = require('../../../../mocks/models/order');
-var moneyMock = require('../../../../mocks/dw.value.Money');
-var ArrayList = require('../../../../mocks/dw.util.Collection.js');
+var moneyMock = require('../../../../mocks/dw/value/Money');
+var ArrayList = require('../../../../mocks/dw/util/Collection.js');
 var PaymentMgrMock = require('../../../../mocks/dw/order/PaymentMgr');
 
 var order = new OrderMock();
@@ -56,22 +56,11 @@ global.empty = function (value) {
     return !value;
 };
 
-var abstractAfterpayUpdateOrder = proxyquire('../../../../../cartridges/int_afterpay_core/cartridge/scripts/checkout/afterpayUpdateOrder.js', {
-    '*/cartridge/scripts/util/afterpayConstants': afterpayConstants,
-    '*/cartridge/scripts/util/afterpayUtilities': apUtilities,
-    'dw/system/Transaction': transaction,
-    'dw/system/Logger': loggerMock,
-    'dw/order/Order': OrderMock,
-    'dw/value/Money': moneyMock,
-    'dw/order/PaymentMgr': PaymentMgrMock
-});
-
 describe('afterpayUpdateOrder', function () {
 
-    var afterpayUpdateOrder = proxyquire('../../../../../cartridges/int_afterpay_core/cartridge/scripts/checkout/v2/afterpayUpdateOrder.js', {
+    var afterpayUpdateOrder = proxyquire('../../../../../cartridges/int_afterpay_core/cartridge/scripts/checkout/afterpayUpdateOrder.js', {
         '*/cartridge/scripts/util/afterpayConstants': afterpayConstants,
         '*/cartridge/scripts/util/afterpayUtilities': apUtilities,
-        '*/cartridge/scripts/checkout/afterpayUpdateOrder': abstractAfterpayUpdateOrder,
         'dw/system/Transaction': transaction,
         'dw/system/Logger': loggerMock,
         'dw/order/Order': OrderMock,
