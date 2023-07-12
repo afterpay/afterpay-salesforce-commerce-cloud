@@ -51,7 +51,7 @@ var getUpdateOrderService = function () {
         var paymentTransaction = AfterpayCheckoutUtilities.getPaymentTransaction(order);
 
         Transaction.wrap(function () {
-            if (paymentMode === PAYMENT_MODE.AUTHORISE) {
+            if (paymentMode == PAYMENT_MODE.AUTHORISE) {
                 paymentTransaction.custom.apAuthoriseStatus = status;
             } else {
                 paymentTransaction.custom.apDirectPaymentStatus = status;

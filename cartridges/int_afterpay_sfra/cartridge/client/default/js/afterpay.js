@@ -4,18 +4,18 @@ var processInclude = require('base/util');
 /**
  * Gets Widget HTML from AfterPay API
  * @param {string} updatedProductID - product ID
- * @param {number} updatedProductPrice - product price
+ * @param {number} updatedPrice - product price
  * @param {string} className - HTML class name
  * @param {jquery} $productContainer - DOM container for product
  */
-function getWidget(updatedProductID, updatedProductPrice, className, $productContainer) {
+function getWidget(updatedProductID, updatedPrice, className, $productContainer) {
     var getUpdatedWidgetUrl = $('.updated-widget').val();
-    var queryString = '?productID=' + updatedProductID + '&updatedProductPrice=' + updatedProductPrice + '&className=' + className;
+    var queryString = '?productID=' + updatedProductID + '&updatedPrice=' + updatedPrice + '&className=' + className;
     $.ajax({
         url: getUpdatedWidgetUrl + queryString,
         method: 'GET',
         success: function (data) {
-            if (data.apApplicable && data.updatedWidget) {
+            if (data.updatedWidget) {
                 if (typeof $productContainer !== 'undefined') {
                     $productContainer.find('.afterpay-widget').html(data.updatedWidget);
                     $productContainer.find('.afterpay-widget').show();
@@ -23,15 +23,8 @@ function getWidget(updatedProductID, updatedProductPrice, className, $productCon
                     $('.afterpay-widget').html(data.updatedWidget);
                     $('.afterpay-widget').show();
                 }
-            } else if (typeof $productContainer !== 'undefined') {
-                $productContainer.find('.afterpay-widget').empty().show();
-            } else if (typeof $productContainer === 'undefined') {
-                $('.afterpay-widget').empty().show();
             }
-            $('#afterpay-express-pdp-button').addClass('afterpay-hide');
-            if (data.withinThreshold) {
-                $('#afterpay-express-pdp-button').removeClass('afterpay-hide');
-            }
+            $('#afterpay-express-pdp-button').toggleClass('afterpay-hide', !data.apApplicable);
         }
     });
 }
@@ -62,7 +55,7 @@ function updateStorePickupState() {
                     initAfterpay({ pickupflag: data.instorepickup });
                 }
 
-                $('#afterpay-express-button').toggleClass('afterpay-hide', !data.withinThreshold);
+                $('#afterpay-express-button').toggleClass('afterpay-hide', !data.apApplicable);
             }
         });
     }
@@ -112,7 +105,7 @@ $(document).ready(function () {
             $('.afterpay-widget').removeClass('loading');
 
             if ($('.afterpay-widget').length && cartTotal !== newCartTotal) {
-                $('afterpay-placement').attr('data-amount', newCartTotal);
+                getWidget(null, null, 'cart-afterpay-message');
             }
 
             if ($('.afterpay-widget .pdp-afterpay-message').length) {

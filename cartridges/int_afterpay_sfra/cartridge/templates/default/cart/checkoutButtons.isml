@@ -22,6 +22,8 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     var afterpayExpressCheckoutPdpEnabled = sitePreferences.isExpressCheckoutPdpEnabled();
     var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
     var afterpayExpressPickupEnabled = require('~/cartridge/scripts/checkout/afterpayRefArchCheckoutHelpers').shouldEnableExpressPickupMode();
+    var afterpayExpressCheckoutBuyNowEnabled = sitePreferences.isExpressCheckoutBuyNowEnabled();
+    var afterpayExpressCheckoutShippingStrategy = sitePreferences.getExpressCheckoutShippingStrategy() == 'integrated';
     var disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isBasketAmountWithinThreshold();
 
     var checkoutButtonClass = 'afterpay-checkout-button';
@@ -34,9 +36,9 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     }
 </isscript>
 <iscomment>Start of Afterpay</iscomment>
-<isset name="afterpayExpressCheckoutPage" value="cart" scope="page" />
-<isinclude template="product/components/afterpayexpresscheckout" />
 <isif condition="${afterpayExpressCheckoutEnabled}">
+    <isset name="afterpayExpressCheckoutPage" value="cart" scope="page" />
+    <isinclude template="product/components/afterpayexpresscheckout" />
     <div class="mb-sm-3">
         <isif condition="${isExpressCheckoutFinalize}">
             <a href="${URLUtils.url('AfterpayExpress-ContinueFinalize')}" class="${checkoutButtonClass} btn btn-block checkout-btn ${pdict.valid.error ? 'disabled' : ''}">

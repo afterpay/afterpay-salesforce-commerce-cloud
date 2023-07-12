@@ -56,7 +56,7 @@ var UpdateOrderService = {
 
     getAuthoriseDirectCaptureService: function () {
         var paymentMode = apSitePreferencesUtilities.getPaymentMode();
-        if (paymentMode === PAYMENT_MODE.AUTHORISE) {
+        if (paymentMode == PAYMENT_MODE.AUTHORISE) {
             return afterpayAuthoriseService;
         }
         return afterpayDirectCaptureService;

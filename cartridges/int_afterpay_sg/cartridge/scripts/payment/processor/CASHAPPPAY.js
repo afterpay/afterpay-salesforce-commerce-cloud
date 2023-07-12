@@ -17,6 +17,7 @@ var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('CASHAPP');
 var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
 var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
+var PAYMENT_STATUS = require('*/cartridge/scripts/util/afterpayConstants').PAYMENT_STATUS;
 
 /**
  * Handles Afterpay token generation process
@@ -108,15 +109,15 @@ function Authorise(args) {
 
     Logger.debug('Afterpay final payment status :' + finalPaymentStatus);
 
-    if (finalPaymentStatus === 'APPROVED') {
+    if (finalPaymentStatus === PAYMENT_STATUS.APPROVED) {
         return { authorized: true };
-    } else if (finalPaymentStatus === 'PENDING') {
+    } else if (finalPaymentStatus === PAYMENT_STATUS.PENDING) {
         return {
             error: true,
             PlaceOrderError: new Status(Status.ERROR, apInitialStatus, 'afterpay.api.declined'),
             apInitialStatus: !empty(Order.getPaymentInstruments('CASHAPPPAY')[0].getPaymentTransaction().custom.apInitialStatus) ? Order.getPaymentInstruments('CASHAPPPAY')[0].getPaymentTransaction().custom.apInitialStatus : null
         };
-    } else if (finalPaymentStatus === 'DECLINED') {
+    } else if (finalPaymentStatus === PAYMENT_STATUS.DECLINED) {
         errorMessage = require('*/cartridge/scripts/util/afterpayErrors').getErrorResponses(responseCode, true);
         Transaction.begin();
         Order.getPaymentInstruments('CASHAPPPAY')[0].getPaymentTransaction().custom.apInitialStatus = apInitialStatus;

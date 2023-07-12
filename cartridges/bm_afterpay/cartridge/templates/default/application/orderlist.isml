@@ -1,9 +1,9 @@
 <!--- TEMPLATENAME: homelanding.isml --->
 <isdecorate template="application/MenuFrame">
  
-<iscontent type="text/html" charset="UTF-8"> 
+<iscontent type="text/html" charset="UTF-8" /> 
 <isinclude template="custom/modules" /> 
-<isinclude template="inc/Modules">
+<isinclude template="inc/Modules" />
 <isbreadcrumbs bcurl1="${URLUtils.url('AfterPay-OrderList')}" 
     bctext1="${Resource.msg('order.list.label','afterpay',null)}" />
 
@@ -76,7 +76,6 @@
         </tbody>
     </table>
     <isinclude template="application/orderlistpagination" />
-
-    </isif>
-<script type="text/javascript"><isinclude template="application/appresources"/></script>
+</isif>
+<script><isinclude template="application/appresources"/></script>
 </isdecorate>

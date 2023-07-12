@@ -14,6 +14,7 @@ var BrandUtilities = require('*/cartridge/scripts/util/afterpayUtilities').brand
 var SitePreferences = require('*/cartridge/scripts/util/afterpayUtilities').sitePreferencesUtilities;
 var ctrlCartridgeName = SitePreferences.getControllerCartridgeName();
 var thresholdUtilities = require('*/cartridge/scripts/util/thresholdUtilities');
+var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
 
 var app = require(ctrlCartridgeName + '/cartridge/scripts/app');
 var guard = require(ctrlCartridgeName + '/cartridge/scripts/guard');
@@ -34,19 +35,20 @@ function renderMessage() {
         return;
     }
 
-    var isWithinThreshold = thresholdUtilities.checkThreshold(totalprice);
     var afterpayApplicable = BrandUtilities.isAfterpayApplicable();
-
-    afterpayApplicable = isWithinThreshold.status && afterpayApplicable;
-
+    var isEligible = true;
     if (classname !== 'cart-afterpay-message') {
         applyCaching = true;
+        var reqProductID = params.productID.stringValue;
+        isEligible = !AfterpayCOHelpers.checkRestrictedProducts(reqProductID);
+    } else {
+        isEligible = !AfterpayCOHelpers.checkRestrictedCart();
     }
 
     if (afterpayApplicable) {
         app.getView({
             applyCaching: applyCaching,
-            belowThreshold: isWithinThreshold.belowThreshold,
+            eligible: isEligible,
             classname: classname,
             afterpaybrand: afterpayBrand,
             totalprice: totalprice.value

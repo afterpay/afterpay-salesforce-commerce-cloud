@@ -15,7 +15,8 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     var afterpayExpressCheckoutEnabled = afterpayEnabled ? sitePreferences.isExpressCheckoutEnabled() : false;
     var isExpressCheckoutFinalize = require('*/cartridge/scripts/util/afterpaySession').isExpressCheckoutFinalizeFlow();
     var afterpayExpressCheckoutPdpEnabled = sitePreferences.isExpressCheckoutPdpEnabled();
-
+    var afterpayExpressCheckoutBuyNowEnabled = sitePreferences.isExpressCheckoutBuyNowEnabled();
+    var afterpayExpressCheckoutShippingStrategy = sitePreferences.getExpressCheckoutShippingStrategy() == 'integrated';
     var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
     var afterpayExpressPickupEnabled = afterpayExpressCheckoutEnabled ? require('~/cartridge/scripts/checkout/afterpaySGCheckoutHelpers').shouldEnableExpressPickupMode() : false;
     var disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isPDPBasketAmountWithinThreshold();
@@ -26,12 +27,20 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     var countrycode = BrandUtilities.getCountryCode();
     var expressCheckoutJS = BrandUtilities.getBrandSettings().javaScriptUrl + "?merchant_key=demo";
 </isscript>
-
-<isif condition="${afterpayExpressCheckoutEnabled && (pdict.pagetype != 'product_detail' || afterpayExpressCheckoutPdpEnabled)}">
+<isif condition="${pdict.pagetype == 'product_detail'}">
+    <isscript>
+        disableAfterpayPaymentMethod =  disableAfterpayPaymentMethod || AfterpayCOHelpers.checkRestrictedProducts(pdict.Product.ID);
+    </isscript>
+<iselse/>
+    <isscript>
+        disableAfterpayPaymentMethod =  disableAfterpayPaymentMethod || AfterpayCOHelpers.checkRestrictedCart();
+    </isscript>
+</isif>
+<isif condition="${afterpayExpressCheckoutEnabled && !disableAfterpayPaymentMethod && (pdict.pagetype != 'product_detail' || afterpayExpressCheckoutPdpEnabled)}">
     <input id="afterpay-express-countrycode" type="hidden" value="${countrycode}" />
     <input id="afterpay-express-storepickup" type="hidden" value="${afterpayExpressPickupEnabled}" />
-    <input id="afterpay-express-buynow" type="hidden" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('apEnableExpressCheckoutBuyNow')}" />
-    <input id="afterpay-express-shipping-option-required" type="hidden" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('apExpressCheckoutShippingStrategy') == 'integrated'}" />
+    <input id="afterpay-express-buynow" type="hidden" value="${afterpayExpressCheckoutBuyNowEnabled}" />
+    <input id="afterpay-express-shipping-option-required" type="hidden" value="${afterpayExpressCheckoutShippingStrategy}" />
     <input id="afterpay-express-url-createtoken" type="hidden" value="${URLUtils.url('AfterpayExpress-CreateToken')}" />
     <input id="afterpay-express-url-getshippingmethods" type="hidden" value="${URLUtils.url('AfterpayExpress-GetShippingMethods')}" />
     <input id="afterpay-express-url-processorder" type="hidden" value="${URLUtils.url('AfterpayExpress-PostAfterpayCheckoutFlow')}" />

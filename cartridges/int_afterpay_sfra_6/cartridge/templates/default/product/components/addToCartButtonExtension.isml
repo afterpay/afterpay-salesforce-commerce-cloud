@@ -14,6 +14,8 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     var afterpayExpressCheckoutEnabled = afterpayEnabled ? sitePreferences.isExpressCheckoutEnabled() : false;
     var isExpressCheckoutFinalize = require('*/cartridge/scripts/util/afterpaySession').isExpressCheckoutFinalizeFlow();
     var afterpayExpressCheckoutPdpEnabled = sitePreferences.isExpressCheckoutPdpEnabled();
+    var afterpayExpressCheckoutBuyNowEnabled = sitePreferences.isExpressCheckoutBuyNowEnabled();
+    var afterpayExpressCheckoutShippingStrategy = sitePreferences.getExpressCheckoutShippingStrategy() == 'integrated';
     var AfterpayRefArchCOHelpers = require('~/cartridge/scripts/checkout/afterpayRefArchCheckoutHelpers');
     var afterpayExpressPickupEnabled = AfterpayRefArchCOHelpers.shouldEnableExpressPickupMode();
     var buttonClass = 'afterpay-buynow-button add-to-cart btn';
@@ -21,7 +23,7 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
         buttonClass = 'clearpay-buynow-button add-to-cart btn';
     }
 </isscript>
-<isif condition="${afterpayExpressCheckoutEnabled && afterpayExpressCheckoutPdpEnabled}">
+<isif condition="${afterpayExpressCheckoutEnabled && afterpayExpressCheckoutPdpEnabled && pdict.apApplicable}">
     <isset name="afterpayExpressCheckoutPage" value="product_detail" scope="page" />
     <isinclude template="product/components/afterpayexpresscheckout" />
     <isscript>

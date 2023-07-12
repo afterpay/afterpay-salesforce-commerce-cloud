@@ -2,8 +2,8 @@
 <isif condition="${afterpayExpressCheckoutEnabled && (pdict.pagetype != 'product_detail' || afterpayExpressCheckoutPdpEnabled)}">
     <input id="afterpay-express-countrycode" type="hidden" value="${countrycode}" />
     <input id="afterpay-express-storepickup" type="hidden" value="${afterpayExpressPickupEnabled}" />
-    <input id="afterpay-express-buynow" type="hidden" value="${dw.system.Site.current.preferences.custom.apEnableExpressCheckoutBuyNow}" />
-    <input id="afterpay-express-shipping-option-required" type="hidden" value="${dw.system.Site.current.preferences.custom.apExpressCheckoutShippingStrategy == 'integrated'}" />
+    <input id="afterpay-express-buynow" type="hidden" value="${afterpayExpressCheckoutBuyNowEnabled}" />
+    <input id="afterpay-express-shipping-option-required" type="hidden" value="${afterpayExpressCheckoutShippingStrategy}" />
     <input id="afterpay-express-url-createtoken" type="hidden" value="${URLUtils.url('AfterpayExpress-CreateToken')}" />
     <input id="afterpay-express-url-getshippingmethods" type="hidden" value="${URLUtils.url('AfterpayExpress-GetShippingMethods')}" />
     <input id="afterpay-express-url-processorder" type="hidden" value="${URLUtils.url('AfterpayExpress-PostAfterpayCheckoutFlow')}" />

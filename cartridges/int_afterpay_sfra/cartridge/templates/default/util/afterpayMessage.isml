@@ -13,8 +13,7 @@
                     data-amount="${pdict.totalprice}"
                     data-modal-link-style="circled-info-icon"
                     data-intro-text="${Resource.msg('checkout.content.intro.text', pdict.brand, null)}"
-                >
-                </afterpay-placement>
+                ></afterpay-placement>
                 <afterpay-placement
                     data-type="price-table"
                     data-amount="${pdict.totalprice}"
@@ -33,14 +32,13 @@
                 </div>
             </span>
         </div>
-        <iselse/>
+    <iselse/>
         <afterpay-placement
-            data-is-eligible="true"
+            data-cart-is-eligible="${pdict.eligible}"
             data-locale="${request.getLocale()}"
             data-badge-theme="black-on-mint"
             data-amount="${pdict.totalprice}"
             data-modal-link-style="circled-info-icon"
-        >
-        </afterpay-placement>
+        ></afterpay-placement>
     </isif>
 </isif>

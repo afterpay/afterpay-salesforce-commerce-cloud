@@ -1,10 +1,9 @@
-<isif condition="${pdict.apApplicable == true}">
+
     <isinclude template="util/modulesAfterpay"/>
 
     <isafterpaymessage
         classname="${pdict.classname}"
-        belowthreshold="${pdict.belowthreshold}"
         brand="${pdict.apBrand}"
         totalprice="${pdict.totalPrice}"
+        eligible="${pdict.apEligible}"
     />
-</isif>

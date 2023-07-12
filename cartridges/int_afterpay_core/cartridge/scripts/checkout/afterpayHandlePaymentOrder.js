@@ -31,7 +31,7 @@ function getPaymentStatus(order, paymentStatus, expressCheckoutModel, isCashAppP
     var paymentResult;
     try {
         paymentResult = baseUpdateOrderService.handleOrder(order, parsedPaymentStatus, expressCheckoutModel, isCashAppPayment);
-        if (paymentResult && paymentResult.status === 'DECLINED') {
+        if (paymentResult && paymentResult.status === PAYMENT_STATUS.DECLINED) {
             parsedPaymentStatus = paymentResult.status;
         }
         afterpayUpdateOrder.handleUpdateOrder(order, paymentResult, sitePreferencesUtilities.getPaymentMode().value, isCashAppPayment);

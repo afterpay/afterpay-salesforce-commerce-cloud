@@ -4,6 +4,7 @@
 var Money = require('dw/value/Money');
 
 /* Script Modules */
+var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
 var apBrandUtilities = require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities;
 var apSitePreferences = require('*/cartridge/scripts/util/afterpayUtilities').sitePreferencesUtilities;
 
@@ -46,16 +47,19 @@ getTemplateSpecificWidget.getWidgetData = function (productObject, className, cu
             totalPrice: totalPrice
         };
 
-        var isWithinThreshold = thresholdUtilities.checkThreshold(totalPrice);
+        var afterpayLimits = thresholdUtilities.checkThreshold(totalPrice);
 
-        if (isWithinThreshold.belowThreshold) {
-            priceContext.belowthreshold = isWithinThreshold.belowThreshold;
+        var isEligible = apBrandUtilities.isAfterpayApplicable();
+        var apBrand = apBrandUtilities.getBrand();
+        var isWithinThreshold = afterpayLimits.status;
+        var reqProductID = productObject.id;
+
+        if (reqProductID != null && AfterpayCOHelpers.checkRestrictedProducts(reqProductID)) {
+            isEligible = false;
         }
 
-        var isApplicable = apBrandUtilities.isAfterpayApplicable() && isWithinThreshold.status;
-        var apBrand = apBrandUtilities.getBrand();
-
-        priceContext.apApplicable = isApplicable;
+        priceContext.apEligible = isEligible;
+        priceContext.apApplicable = isEligible && isWithinThreshold;
         priceContext.apBrand = apBrand;
     }
 
@@ -89,16 +93,19 @@ getTemplateSpecificWidget.getWidgetDataForSet = function (productObject, classNa
                 quickview: false
             };
 
-            var isWithinThreshold = thresholdUtilities.checkThreshold(totalPrice);
+            var afterpayLimits = thresholdUtilities.checkThreshold(totalPrice);
 
-            if (isWithinThreshold.belowThreshold) {
-                afterpayWidgetData.belowthreshold = isWithinThreshold.belowThreshold;
-            }
-
-            var isApplicable = apBrandUtilities.isAfterpayApplicable() && isWithinThreshold.status;
+            var isEligible = apBrandUtilities.isAfterpayApplicable();
             var apBrand = apBrandUtilities.getBrand();
+            var reqProductID = singleSetProduct.id;
 
-            afterpayWidgetData.apApplicable = isApplicable;
+            if (reqProductID != null && AfterpayCOHelpers.checkRestrictedProducts(reqProductID)) {
+                isEligible = false;
+            }
+            var isWithinThreshold = afterpayLimits.status;
+
+            priceContext.apEligible = isEligible;
+            afterpayWidgetData.apApplicable = isEligible && isWithinThreshold;
             afterpayWidgetData.apBrand = apBrand;
 
             getTemplateSpecificWidget.pushWidgetDataToProduct(singleSetProduct, afterpayWidgetData);
@@ -121,39 +128,32 @@ getTemplateSpecificWidget.pushWidgetDataToProduct = function (singleSetProduct, 
  * @returns {string} - request JSON
  */
 getTemplateSpecificWidget.getCheckoutWidgetData = function (currentBasket, className, locale) {
+    var cartProductExcluded = AfterpayCOHelpers.checkRestrictedCart();
+    apBrandUtilities.initBrand(locale);
+
     var priceContext = {};
 
     if (!currentBasket) {
         return priceContext;
     }
 
-    var totalPrice = 0.0;
+    var totalPrice = currentBasket.totalGrossPrice;
 
-    totalPrice = currentBasket.totalGrossPrice;
-
-    apBrandUtilities.initBrand(locale);
     var thresholdUtilities = require('*/cartridge/scripts/util/thresholdUtilities');
 
     priceContext.classname = className;
     priceContext.totalPrice = totalPrice.value;
 
-    var isWithinThreshold = thresholdUtilities.checkThreshold(totalPrice);
-
-    if (isWithinThreshold.belowThreshold) {
-        priceContext.belowthreshold = isWithinThreshold.belowThreshold;
-        priceContext.minthresholdamount = isWithinThreshold.minThresholdAmount;
-    }
-
-    var isApplicable = apBrandUtilities.isAfterpayApplicable();
-    var iscashAppApplicable = apSitePreferences.isCashAppEnabled() && isWithinThreshold.status;
     var apBrand = apBrandUtilities.getBrand();
 
-    if (className === 'checkout-afterpay-message') {
-        isApplicable = isApplicable && !isWithinThreshold.belowThreshold;
-    }
+    var afterpayLimits = thresholdUtilities.checkThreshold(totalPrice);
+    var isEligible = apBrandUtilities.isAfterpayApplicable() && !cartProductExcluded;
+    var iscashAppApplicable = apSitePreferences.isCashAppEnabled();
+    var isWithinThreshold = afterpayLimits.status;
 
-    priceContext.apApplicable = isApplicable;
-    priceContext.cashAppApplicable = iscashAppApplicable;
+    priceContext.apEligible = isEligible;
+    priceContext.apApplicable = isEligible && isWithinThreshold;
+    priceContext.cashAppApplicable = iscashAppApplicable && isWithinThreshold;
     priceContext.apBrand = apBrand;
 
     return priceContext;

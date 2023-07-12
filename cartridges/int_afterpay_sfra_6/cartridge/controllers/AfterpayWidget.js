@@ -2,6 +2,7 @@
 
 /* API Includes */
 var Money = require('dw/value/Money');
+var BasketMgr = require('dw/order/BasketMgr');
 
 /* Script Modules */
 var server = require('server');
@@ -31,21 +32,30 @@ server.get('GetUpdatedWidget', server.middleware.https, function (req, res, next
     var priceContext;
     var totalPrice;
     var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
+    var reqProductID = req.querystring.productID;
     var isWithinThreshold = AfterpayCOHelpers.isPDPBasketAmountWithinThreshold();
 
-    if (req.querystring.className === 'pdp-afterpay-message') {
-        var currencyCode = req.session.currency.currencyCode;
-        totalPrice = req.querystring.updatedProductPrice;
+    var currencyCode = req.session.currency.currencyCode;
+    var apEligible = apBrandUtilities.isAfterpayApplicable();
 
+    if (req.querystring.className === 'pdp-afterpay-message') {
+        totalPrice = req.querystring.updatedPrice;
         if (!empty(totalPrice)) {
             totalPrice = new Money(totalPrice, currencyCode);
         }
+        reqProductID = req.querystring.productID;
+        apEligible = !AfterpayCOHelpers.checkRestrictedProducts(reqProductID);
+    } else if (req.querystring.className === 'cart-afterpay-message') {
+        var currentBasket = BasketMgr.getCurrentBasket();
+        totalPrice = currentBasket.totalGrossPrice;
+        apEligible = !AfterpayCOHelpers.checkRestrictedCart();
     }
 
     priceContext = {
         classname: req.querystring.className,
-        totalprice: totalPrice.value,
-        brand: apBrandUtilities.getBrand()
+        totalprice: totalPrice.value ? totalPrice.value : totalPrice,
+        brand: apBrandUtilities.getBrand(),
+        eligible: apEligible
     };
 
     var updatedWidget = renderTemplateHelper.getRenderedHtml(
@@ -53,11 +63,10 @@ server.get('GetUpdatedWidget', server.middleware.https, function (req, res, next
         updatedTemplate
     );
 
-    isWithinThreshold = isWithinThreshold && thresholdUtilities.checkPriceThreshold(priceContext.totalprice).status;
+    var afterpayLimits = thresholdUtilities.checkThreshold(totalPrice);
 
     res.json({
-        apApplicable: apBrandUtilities.isAfterpayApplicable(),
-        withinThreshold: isWithinThreshold,
+        apApplicable: (isWithinThreshold && afterpayLimits.status) && apEligible,
         error: false,
         updatedWidget: updatedWidget
     });

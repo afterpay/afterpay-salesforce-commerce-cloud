@@ -18,6 +18,7 @@ var Logger = LogUtils.getLogger('AFTERPAY');
 var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
 var ECPaymentHelpers = require('*/cartridge/scripts/payment/expressCheckoutPaymentHelpers');
 var brandUtilities = AfterpayUtilities.brandUtilities;
+var PAYMENT_STATUS = require('*/cartridge/scripts/util/afterpayConstants').PAYMENT_STATUS;
 
 /**
  * Handles Afterpay token generation process
@@ -124,15 +125,15 @@ function Authorise(args) {
 
     Logger.debug('Afterpay final payment status :' + finalPaymentStatus);
 
-    if (finalPaymentStatus === 'APPROVED' || finalPaymentStatus === 'ACTIVE') {
+    if (finalPaymentStatus === PAYMENT_STATUS.APPROVED || finalPaymentStatus === PAYMENT_STATUS.ACTIVE) {
         return { authorized: true };
-    } else if (finalPaymentStatus === 'PENDING') {
+    } else if (finalPaymentStatus === PAYMENT_STATUS.PENDING) {
         return {
             error: true,
             PlaceOrderError: new Status(Status.ERROR, apInitialStatus, 'afterpay.api.declined'),
             apInitialStatus: !empty(Order.getPaymentInstruments('AFTERPAY')[0].getPaymentTransaction().custom.apInitialStatus) ? Order.getPaymentInstruments('AFTERPAY')[0].getPaymentTransaction().custom.apInitialStatus : null
         };
-    } else if (finalPaymentStatus === 'DECLINED') {
+    } else if (finalPaymentStatus === PAYMENT_STATUS.DECLINED) {
         errorMessage = require('*/cartridge/scripts/util/afterpayErrors').getErrorResponses(responseCode, true);
         Transaction.begin();
         Order.getPaymentInstruments('AFTERPAY')[0].getPaymentTransaction().custom.apInitialStatus = apInitialStatus;

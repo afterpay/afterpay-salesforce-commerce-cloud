@@ -156,7 +156,7 @@
         <custom-attribute-definitions>
             <attribute-definition attribute-id="apBrandSettings">
                 <display-name xml:lang="x-default">Brand settings</display-name>
-                <description xml:lang="x-default">Afterpay / Clearpay Brand related settings</description>
+                <description xml:lang="x-default">Afterpay/Clearpay Brand related settings</description>
                 <type>text</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -280,6 +280,13 @@
                 <externally-managed-flag>false</externally-managed-flag>
                 <default-value>false</default-value>
             </attribute-definition>
+            <attribute-definition attribute-id="apRestrictedProducts">
+                <display-name xml:lang="x-default">Restricted Products</display-name>
+                <description xml:lang="x-default">Restricted product ids separated by ","</description>
+                <type>text</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
             <attribute-group group-id="Integration_Afterpay">
@@ -299,6 +306,7 @@
                 <attribute attribute-id="apEnableExpressCheckoutBuyNow"/>
                 <attribute attribute-id="apStorePickupDescription"/>
                 <attribute attribute-id="apEnableExpressCheckoutPdp"/>
+                <attribute attribute-id="apRestrictedProducts"/>
             </attribute-group>
         </group-definitions>
     </type-extension>

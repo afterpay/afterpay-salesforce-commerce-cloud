@@ -15,6 +15,7 @@ var sitePreferences = require('*/cartridge/scripts/util/afterpayUtilities.js').s
 var ctrlCartridgeName = sitePreferences.getControllerCartridgeName();
 var COPlaceOrder = require('*/cartridge/controllers/COPlaceOrder');
 var COSummary = require('*/cartridge/controllers/COSummary');
+var PAYMENT_STATUS = require('*/cartridge/scripts/util/afterpayConstants').PAYMENT_STATUS;
 
 /* Script Modules */
 var app = require(ctrlCartridgeName + '/cartridge/scripts/app');
@@ -50,7 +51,7 @@ function HandleResponse() {
 
     paymentStatus = request.httpParameterMap.status.getStringValue();
 
-    if (paymentStatus === 'SUCCESS') {
+    if (paymentStatus === PAYMENT_STATUS.SUCCESS) {
         var orderTokenString = request.httpParameterMap.orderToken.getStringValue();
         productExists = require('*/cartridge/scripts/checkout/afterpayTokenConflict').checkTokenConflict(cart.object, orderTokenString);
         PreapprovalResult = require('*/cartridge/scripts/checkout/afterpayUpdatePreapprovalStatus').getPreApprovalResult(cart.object, {
@@ -76,7 +77,7 @@ function HandleResponse() {
                 redirectURL = URLUtils.https('COBilling-Start', 'afterpay', Resource.msg('apierror.flow.default', session.privacy.afterpayBrand, null));
             }
         }
-    } else if (paymentStatus === 'CANCELLED') {
+    } else if (paymentStatus === PAYMENT_STATUS.CANCELLED) {
         redirectURL = URLUtils.https('COBilling-Start', 'afterpay', Resource.msg('afterpay.api.cancelled', session.privacy.afterpayBrand, null));
     } else if (paymentInstrument.getPaymentTransaction().custom.apToken !== request.httpParameterMap.orderToken.stringValue) {
         redirectURL = URLUtils.https('COBilling-Start', 'afterpay', Resource.msg('apierror.flow.default', session.privacy.afterpayBrand, null));
@@ -85,8 +86,6 @@ function HandleResponse() {
     }
 
     if (!empty(redirectURL)) {
-        Logger.debug('AfterpayRedirectUrl: ' + redirectURL);
-
         app.getView({
             AfterpayRedirectUrl: redirectURL
         }).render('checkout/redirect');

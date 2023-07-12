@@ -83,7 +83,8 @@ OrderRequestBuilder.prototype.buildRequest = function (params) {
         .buildRequestMethod(requestMethod)
         .buildMerchantReference(merchantReference)
         .buildShiptoStore(store)
-        .buildExpressMode();
+        .buildExpressMode()
+        .buildShippingOptionIdentifier(basket);
 };
 
 /**
@@ -221,6 +222,16 @@ OrderRequestBuilder.prototype.buildShiptoStore = function (store) {
     shipping.postcode = store.postalCode || '';
     shipping.countryCode = store.countryCode.value || '';
     shipping.phoneNumber = store.phone || '';
+
+    return this;
+};
+
+OrderRequestBuilder.prototype.buildShippingOptionIdentifier = function (basket) {
+    var shipment = basket.getDefaultShipment();
+
+    if (shipment.shippingMethod && shipment.shippingMethod.ID) {
+        this.context.shippingOptionIdentifier = shipment.shippingMethod.ID;
+    }
 
     return this;
 };

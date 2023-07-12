@@ -12,8 +12,7 @@ exports.onSession = function () {
     brandUtilities.initBrand(request.locale);
     var thresholdUtilities = require('*/cartridge/scripts/util/thresholdUtilities');
     var brand = brandUtilities.getBrand();
-    var threshold = thresholdUtilities.getThresholdAmounts(brand);
-    thresholdUtilities.saveThresholds(brand, threshold);
+    thresholdUtilities.getThresholdAmounts(brand);
     // here comes a session change
     return new Status(Status.OK);
 };

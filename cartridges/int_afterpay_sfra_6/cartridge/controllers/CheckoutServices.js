@@ -22,6 +22,7 @@ server.prepend(
         var paymentForm = server.forms.getForm('billing');
         var paymentMethodID = paymentForm.paymentMethod.value;
         var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
+
         AfterpaySession.clearSession();
         if (paymentMethodID !== 'AFTERPAY' && paymentMethodID !== 'CLEARPAY') {
             // For express checkout, it's possible there was a Afterpay payment method in the basket,

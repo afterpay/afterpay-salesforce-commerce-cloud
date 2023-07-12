@@ -1,6 +1,6 @@
 {
   "name": "Afterpay",
-  "version": "23.2.0",
+  "version": "23.3.0",
   "description": "Afterpay's official cartridge for SFRA and controllers-based SiteGenesis ",
   "main": "index.js",
   "engines": {
@@ -18,7 +18,8 @@
     "lint:js": "sgmf-scripts --lint js",
     "upload": "sgmf-scripts --upload --",
     "fix-js": "eslint-auto-fix --fix-on-startup",
-    "uploadCartridge": "sgmf-scripts --uploadCartridge bm_afterpay && sgmf-scripts --uploadCartridge int_afterpay_core && sgmf-scripts --uploadCartridge int_afterpay_sfra"
+    "uploadCartridge": "sgmf-scripts --uploadCartridge bm_afterpay && sgmf-scripts --uploadCartridge int_afterpay_core && sgmf-scripts --uploadCartridge int_afterpay_sfra",
+    "watch": "sgmf-scripts --watch"
   },
   "author": "Afterpay",
   "repository": {

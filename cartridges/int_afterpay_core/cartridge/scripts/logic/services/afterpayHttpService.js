@@ -47,7 +47,7 @@ function getAfterpayHttpService() {
             service.setRequestMethod(requestBody.requestMethod);
             service.addHeader('Content-Type', 'application/json');
 
-            var afterpayCartridge = 'AfterpayCartridge/23.2.0-rc1';
+            var afterpayCartridge = 'AfterpayCartridge/23.3.0';
             var merchantID = service.configuration.credential.user;
             var siteURL = URLUtils.httpsHome().toString();
             var storeFront = Site.getCurrent().getID();
@@ -55,13 +55,25 @@ function getAfterpayHttpService() {
             var compatibilityMode = dw.system.System.getCompatibilityMode();
             var cashAppEnabled = apSitePreferencesUtilities.isCashAppEnabled() ? '1' : '0';
             var storefrontVersion = '';
-            if (storeFront.includes('SiteGenesis')) {
+            if (storeFront.indexOf('SiteGenesis') >= 0) {
                 storefrontVersion = Resource.msg('revisioninfo.revisionnumber', 'revisioninfo', null);
-            } else if (storeFront.includes('RefArch')) {
+            } else if (storeFront.indexOf('RefArch') >= 0) {
                 storefrontVersion = Resource.msg('global.version.number', 'version', null);
             }
 
-            var userAgent = afterpayCartridge + ' (SalesforceCommmerceCloud; ' + storeFront + '/' + storefrontVersion + '; CompatibilityMode/' + compatibilityMode + '; Merchant/' + merchantID + '; CashAppEnabled/' + cashAppEnabled + ') ' + hostURL;
+            var uaAdditionalInfo = [
+                'SalesforceCommerceCloud',
+                storeFront + '/' + storefrontVersion,
+                'CompatibilityMode/' + compatibilityMode,
+                'Merchant/' + merchantID,
+                'CashAppEnabled/' + cashAppEnabled
+            ].join('; ');
+
+            var userAgent = [
+                afterpayCartridge,
+                '(' + uaAdditionalInfo + ')',
+                hostURL
+            ].join(' ');
 
             service.addHeader('User-Agent', userAgent);
 

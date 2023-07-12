@@ -1,7 +1,7 @@
 'use strict';
 
 var Site = require('dw/system/Site');
-
+var PAYMENT_STATUS = require('*/cartridge/scripts/util/afterpayConstants').PAYMENT_STATUS;
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('afterpayIdempotency');
 
@@ -43,7 +43,7 @@ function delayPayment(Order, initialStatus, expressCheckoutModel) {
         sleep(Site.getCurrent().getCustomPreferenceValue('apDelayRetry'));
         Logger.debug('After 5 secs time delay : ' + new Date());
         paymentStatus = require('*/cartridge/scripts/checkout/afterpayHandlePaymentOrder').getPaymentStatus(Order, initialStatus, expressCheckoutModel);
-        if (paymentStatus === 'APPROVED') {
+        if (paymentStatus == PAYMENT_STATUS.APPROVED) {
             break;
         }
         Logger.debug('Final Payment Status : ' + paymentStatus);

@@ -17,14 +17,14 @@
             var sitePreferences = require("*/cartridge/scripts/util/afterpayUtilities.js").sitePreferencesUtilities;
             var afterpayPLPEnable = sitePreferences.isDisplayPlpInfo();
         </isscript>
-        <isif condition="${pdict.apApplicable == true && afterpayPLPEnable}">
-            <isinclude template="util/modulesAfterpay"/>
+        <isif condition="${afterpayPLPEnable}">
+            <isinclude template="util/modulesAfterpay" />
 
             <isafterpaymessage
                 classname="${pdict.classname}"
-                belowthreshold="${pdict.belowthreshold}"
                 brand="${pdict.apBrand}"
                 totalprice="${pdict.totalPrice}"
+                eligible="${pdict.apEligible}"
             />
         </isif>
 

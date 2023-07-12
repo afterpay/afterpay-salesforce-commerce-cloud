@@ -51,16 +51,14 @@
 <div class="row">
     <div class="col-12">
         <isinclude template="util/modulesAfterpay"/>
-        <input type="hidden" class="updated-widget" value="${URLUtils.https('AfterpayWidget-GetUpdatedWidget')}">
+        <input type="hidden" class="updated-widget" value="${URLUtils.https('AfterpayWidget-GetUpdatedWidget')}" />
         <div class="afterpay-widget">
-            <isif condition="${pdict.apApplicable == true}">
-                <isafterpaymessage
-                    classname="${pdict.classname}"
-                    belowthreshold="${pdict.belowthreshold}"
-                    brand="${pdict.apBrand}"
-                    totalprice="${pdict.totalPrice}"
-                />
-            </isif>
+            <isafterpaymessage
+                classname="${pdict.classname}"
+                brand="${pdict.apBrand}"
+                totalprice="${pdict.totalPrice}"
+                eligible="${pdict.apEligible}"
+            />
         </div>
     </div>    
 </div>

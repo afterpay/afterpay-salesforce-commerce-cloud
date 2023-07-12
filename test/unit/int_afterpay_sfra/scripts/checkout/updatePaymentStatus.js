@@ -5,6 +5,7 @@ var proxyquire = require('proxyquire').noCallThru().noPreserveCache();
 var sinon = require('sinon');
 const OrderMgr = require('../../../../mocks/dw/order/OrderMgr');
 var OrderMock = require('../../../../mocks/models/order');
+var afterpayConstants = require('../../../../../cartridges/int_afterpay_core/cartridge/scripts/util/afterpayConstants');
 var dwOrder = require('../../../../mocks/dw/order/Order');
 
 var order = new OrderMock();
@@ -114,6 +115,7 @@ describe('updatePaymentStatus', function () {
             '*/cartridge/scripts/util/afterpayLogUtils': customLogger,
             '*/cartridge/scripts/util/afterpayUtilities': afterpayUtilities,
             '*/cartridge/scripts/payment/expressCheckoutPaymentHelpers': ecPaymentHelpers,
+            '*/cartridge/scripts/util/afterpayConstants': afterpayConstants,
             '*/cartridge/scripts/checkout/afterpayHandlePaymentOrder': {
                 getPaymentStatus: function () {
                     return {

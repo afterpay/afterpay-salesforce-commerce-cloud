@@ -7,9 +7,7 @@ server.extend(Product);
 
 var setAfterpayMessageContext = function (req, res, next) {
     var productTileParams = res.getViewData();
-    var priceContext;
-
-    priceContext = require('*/cartridge/scripts/util/getTemplateSpecificWidget').getWidgetData(
+    var priceContext = require('*/cartridge/scripts/util/getTemplateSpecificWidget').getWidgetData(
         productTileParams.product,
         'pdp-afterpay-message',
         req.session.currency.currencyCode,
@@ -17,6 +15,7 @@ var setAfterpayMessageContext = function (req, res, next) {
     );
 
     res.setViewData(priceContext);
+
     next();
 };
 
@@ -47,6 +46,7 @@ server.get('IncludeAfterpayMessage',
     server.middleware.include,
     function (req, res, next) {
         var ProductFactory = require('*/cartridge/scripts/factories/product');
+
         res.setViewData({
             product: ProductFactory.get(req.querystring)
         });

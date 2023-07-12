@@ -149,15 +149,18 @@ server.prepend(
             });
             return;
         }
+
+        var processor = PaymentMgr.getPaymentMethod(paymentMethodID).getPaymentProcessor();
+
         // check to make sure there is a payment processor
-        if (!PaymentMgr.getPaymentMethod(paymentMethodID).paymentProcessor) {
+        if (!processor) {
             throw new Error(Resource.msg(
                 'error.payment.processor.missing',
                 'checkout',
                 null
             ));
         }
-        var processor = PaymentMgr.getPaymentMethod(paymentMethodID).getPaymentProcessor();
+
         var processorResult = null;
         if (HookMgr.hasHook('app.payment.processor.' + processor.ID.toLowerCase())) {
             processorResult = HookMgr.callHook(

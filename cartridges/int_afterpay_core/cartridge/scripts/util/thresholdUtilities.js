@@ -20,17 +20,29 @@ var thresholdUtilities = {
             maxAmount: 0
         };
 
-        if (thresholdResponse) {
-            var minThresholdObj = thresholdResponse.minimumAmount;
-            var maxThresholdObj = thresholdResponse.maximumAmount;
+        var minThresholdObj;
+        var maxThresholdObj;
 
-            if (minThresholdObj) {
-                configuration.minAmount = parseFloat(minThresholdObj.amount, 10);
+        var currentCurrency = session.currency.getCurrencyCode();
+        if (thresholdResponse && thresholdResponse.minimumAmount.currency !== currentCurrency) {
+            if (('CBT' in thresholdResponse) && thresholdResponse.CBT.enabled && thresholdResponse.CBT.limits) {
+                var cbtLimits = thresholdResponse.CBT.limits;
+                if (Object.keys(cbtLimits).length >= 1 && currentCurrency in cbtLimits) {
+                    minThresholdObj = cbtLimits[currentCurrency].minimumAmount;
+                    maxThresholdObj = cbtLimits[currentCurrency].maximumAmount;
+                }
             }
+        } else {
+            minThresholdObj = thresholdResponse.minimumAmount;
+            maxThresholdObj = thresholdResponse.maximumAmount;
+        }
 
-            if (maxThresholdObj) {
-                configuration.maxAmount = parseFloat(maxThresholdObj.amount, 10);
-            }
+        if (minThresholdObj) {
+            configuration.minAmount = parseFloat(minThresholdObj.amount, 10);
+        }
+
+        if (maxThresholdObj) {
+            configuration.maxAmount = parseFloat(maxThresholdObj.amount, 10);
         }
 
         return configuration;
@@ -58,6 +70,7 @@ var thresholdUtilities = {
             }
 
             thresholdResult = this.parseConfigurationResponse(thresholdResponse);
+            this.saveThresholds(brand, thresholdResult);
         }
 
         return thresholdResult;
@@ -92,11 +105,8 @@ var thresholdUtilities = {
 
         if (price) {
             var threshold = this.getThresholdAmounts(afterpayBrand);
-            this.saveThresholds(afterpayBrand, threshold);
             var isApplicable = brandUtilities.isAfterpayApplicable();
             if (isApplicable) {
-                result.belowThreshold = price <= threshold.minAmount;
-                result.aboveThreshold = price >= threshold.maxAmount;
                 result.minThresholdAmount = threshold.minAmount;
                 result.maxThresholdAmount = threshold.maxAmount;
 

@@ -6,7 +6,7 @@
 
 <ismodule template="product/components/afterpaymessage"
     name="afterpaymessage"
-    attribute="message"
+    attribute="eligible"
     attribute="classname"
     attribute="totalprice"
     attribute="brand"

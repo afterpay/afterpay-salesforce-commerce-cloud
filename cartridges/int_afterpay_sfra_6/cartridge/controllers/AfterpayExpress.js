@@ -361,13 +361,9 @@ server.get('CartStatus', server.middleware.https, function (req, res, next) {
         return next();
     }
 
-    var cartTotals = AfterpayShippingHelpers.calculateBasketTaxShipTotals(req, currentBasket);
     res.json({
-        cartTotalAmount: cartTotals.totalCost.value,
-        cartTotalCurrency: cartTotals.totalCost.currencyCode,
-        withinThreshold: AfterpayCOHelpers.isBasketAmountWithinThreshold(),
-        instorepickup: AfterpayRefArchCOHelpers.shouldEnableExpressPickupMode(currentBasket),
-        expressCheckoutFinalize: AfterpaySession.isExpressCheckoutFinalizeFlow()
+        apApplicable: AfterpayCOHelpers.isBasketAmountWithinThreshold(),
+        instorepickup: AfterpayRefArchCOHelpers.shouldEnableExpressPickupMode(currentBasket)
     });
     return next();
 });
@@ -523,7 +519,7 @@ server.post('GetShippingMethods', server.middleware.https, function (req, res, n
     // If there's a shipping method set already, just default to that initially
     // There is always a default
     var shippingMethodID;
-    if (shipment.shippingMethod) {
+    if (shipment.shippingMethod && shipment.shippingMethod.ID) {
         shippingMethodID = shipment.shippingMethod.ID;
     }
 

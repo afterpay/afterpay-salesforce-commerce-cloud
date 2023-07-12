@@ -74,10 +74,8 @@ function CartStatus() {
         return;
     }
 
-    var cartTotals = AfterpayShippingHelpers.calculateCartTaxShipTotals(cart);
-
     var afterpayExpressPickupEnabled = AfterpaySGCOHelpers.shouldEnableExpressPickupMode();
-    responseUtils.renderJSON({ cartTotalAmount: cartTotals.totalCost.value, cartTotalCurrency: cartTotals.totalCost.currencyCode, instorepickup: afterpayExpressPickupEnabled });
+    responseUtils.renderJSON({ instorepickup: afterpayExpressPickupEnabled });
 }
 
 /**

@@ -4,7 +4,7 @@
 var Transaction = require('dw/system/Transaction');
 var Order = require('dw/order/Order');
 var Status = require('dw/system/Status');
-
+var PAYMENT_STATUS = require('*/cartridge/scripts/util/afterpayConstants').PAYMENT_STATUS;
 /* Script Modules */
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('updatePaymentStatus');
@@ -84,15 +84,15 @@ updatePaymentStatus.handlePaymentStatus = function (order, isCashAppPay) {
 
     Logger.debug('Afterpay final payment status :' + finalPaymentStatus);
 
-    if (finalPaymentStatus === 'APPROVED' || finalPaymentStatus === 'ACTIVE') {
+    if (finalPaymentStatus === PAYMENT_STATUS.APPROVED || finalPaymentStatus === PAYMENT_STATUS.ACTIVE) {
         return { authorized: true };
-    } else if (finalPaymentStatus === 'PENDING') {
+    } else if (finalPaymentStatus === PAYMENT_STATUS.PENDING) {
         return {
             error: true,
             AfterpayOrderErrorMessage: new Status(Status.ERROR, apInitialStatus, 'afterpay.api.declined'),
             apInitialStatus: !empty(order.getPaymentInstruments(paymentMethodName)[0].getPaymentTransaction().custom.apInitialStatus) ? Order.getPaymentInstruments(paymentMethodName)[0].getPaymentTransaction().custom.apInitialStatus : null
         };
-    } else if (finalPaymentStatus === 'DECLINED') {
+    } else if (finalPaymentStatus === PAYMENT_STATUS.DECLINED) {
         errorMessage = require('*/cartridge/scripts/util/afterpayErrors').getErrorResponses(responseCode, true);
         Transaction.begin();
         impactOrder.getPaymentInstruments(paymentMethodName)[0].getPaymentTransaction().custom.apInitialStatus = apInitialStatus;

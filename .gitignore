@@ -17,3 +17,4 @@ cartridges/int_afterpay_sfra_6/cartridge/static/default/js/cashappCheckoutMobile
 dw.json
 .DS_Store
 .vscode/system-objecttype-extensions.d.ts
+*.zip

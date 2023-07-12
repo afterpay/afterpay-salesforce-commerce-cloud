@@ -1,8 +1,8 @@
 <!--- TEMPLATENAME: afterpayorder.isml --->
 <isdecorate template="application/MenuFrame"> 
-    <iscontent type="text/html" charset="UTF-8"> 
+    <iscontent type="text/html" charset="UTF-8" /> 
     <isinclude template="custom/modules" /> 
-    <isinclude template="inc/Modules">
+    <isinclude template="inc/Modules" />
     <isset name="orderNo" value="${pdict.CurrentHttpParameterMap.OrderNo.stringValue}" scope ="page"/>
     <isbreadcrumbs bcurl1="${URLUtils.url('AfterPay-OrderList')}" 
         bctext1="${Resource.msg('order.list.label','afterpay',null)}" 
@@ -172,5 +172,5 @@
 </isif>
 
 <script src="${URLUtils.staticURL('/js/transactions.js')}"></script>
-<script type="text/javascript"><isinclude template="application/appresources"/></script>
+<script><isinclude template="application/appresources"/></script>
 </isdecorate>

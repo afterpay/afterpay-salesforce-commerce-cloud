@@ -54,14 +54,6 @@ var utilitiesMock = {
         getPaymentMethodName: function () {
             return 'AFTERPAY';
         }
-    },
-    sitePreferencesUtilities: {
-        getMinThresholdAmount: function () {
-            return 100;
-        },
-        getMaxThresholdAmount: function () {
-            return 1000;
-        }
     }
 };
 
@@ -96,6 +88,10 @@ var session = {
             this.map.set(key, value);
         },
         key: ''
+    },
+    currency: {
+        getCurrencyCode: function() {
+        }
     }
 };
 
@@ -125,9 +121,9 @@ describe('thresholdUtilities', function () {
     });
 
     it('detect that provided price is below an actual threshold', function () {
-        var afterPayIsRangeAvailable = session.privacy.set('afterPayIsRangeAvailable', true);
-        var afterPayMinAmount = session.privacy.set('afterPayMinAmount', 100);
-        var afterPayMaxAmount = session.privacy.set('afterPayMaxAmount', 1000);
+        var afterPayIsRangeAvailable = session.privacy.set('afterpayIsRangeAvailable', true);
+        var afterPayMinAmount = session.privacy.set('afterpayMinAmount', 100);
+        var afterPayMaxAmount = session.privacy.set('afterpayMaxAmount', 1000);
         var result = thresholdUtilities.checkThreshold({
             value: 1
         });

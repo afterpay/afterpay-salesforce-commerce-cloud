@@ -55,12 +55,11 @@ var afterpayUpdateOrder = {
 
             if (paymentMode === afterpayConstants.PAYMENT_MODE.DIRECT_CAPTURE) {
                 payTrans.custom.apDirectPaymentStatus = paymentResult.status;
-                amount = empty(paymentResult.originalAmount) ? null : new Money(parseFloat(paymentResult.originalAmount.amount), paymentResult.originalAmount.currency);
             } else {
                 payTrans.custom.apAuthoriseStatus = paymentResult.status;
-                amount = empty(paymentResult.openToCaptureAmount) ? null : new Money(parseFloat(paymentResult.openToCaptureAmount.amount), paymentResult.openToCaptureAmount.currency);
             }
 
+            amount = empty(paymentResult.originalAmount) ? null : new Money(parseFloat(paymentResult.originalAmount.amount), paymentResult.originalAmount.currency);
             if (paymentResult.status === afterpayConstants.PAYMENT_STATUS.ACTIVE && amount === null) {
                 amount = empty(paymentResult.amount) ? null : new Money(parseFloat(paymentResult.amount.amount), paymentResult.amount.currency);
             }

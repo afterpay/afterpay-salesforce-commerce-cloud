@@ -122,15 +122,12 @@
                 <input type="hidden" class="updated-widget" value="${URLUtils.https('AfterpayWidget-GetUpdatedWidget')}">
                 <div class="afterpay-widget">
                     <isinclude template="util/modulesAfterpay"/>
-
-                    <isif condition="${pdict.apApplicable == true}">
                         <isafterpaymessage
                             classname="${pdict.classname}"
-                            belowthreshold="${pdict.belowthreshold}"
                             brand="${pdict.apBrand}"
                             totalprice="${pdict.totalPrice}"
+                            eligible="${pdict.apEligible}"
                         />
-                    </isif>
                 </div>
 
                 <!-- Cart and [Optionally] Apple Pay -->

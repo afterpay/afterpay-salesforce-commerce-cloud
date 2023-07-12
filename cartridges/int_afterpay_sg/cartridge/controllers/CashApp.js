@@ -10,6 +10,7 @@ var sitePreferences = AfterpayUtilities.sitePreferencesUtilities;
 var apBrandUtilities = AfterpayUtilities.brandUtilities;
 var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
 var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
+var PAYMENT_STATUS = require('*/cartridge/scripts/util/afterpayConstants').PAYMENT_STATUS;
 
 /* Script Modules */
 var ctrlCartridgeName = sitePreferences.getControllerCartridgeName();
@@ -44,7 +45,7 @@ function HandleResponse() {
     }
 
     if (basketValid) {
-        if (paymentStatus === 'SUCCESS') {
+        if (paymentStatus === PAYMENT_STATUS.SUCCESS) {
             var orderTokenString = request.httpParameterMap.orderToken.getStringValue();
             PreapprovalResult = require('*/cartridge/scripts/checkout/afterpayUpdatePreapprovalStatus').getPreApprovalResult(cart.object, {
                 status: paymentStatus,
@@ -70,9 +71,9 @@ function HandleResponse() {
                     redirectURL = URLUtils.https('COBilling-Start', 'afterpay', Resource.msg('apierror.flow.default', session.privacy.afterpayBrand, null));
                 }
             }
-        } else if (paymentStatus === 'CANCELLED') {
+        } else if (paymentStatus === PAYMENT_STATUS.CANCELLED) {
             redirectURL = URLUtils.https('COBilling-Start', 'afterpay', Resource.msg('afterpay.api.cancelled', session.privacy.afterpayBrand, null));
-        } else if (paymentStatus === 'DECLINED') {
+        } else if (paymentStatus === PAYMENT_STATUS.DECLINED) {
             redirectURL = URLUtils.https('COBilling-Start', 'afterpay', Resource.msg('afterpay.api.declined', session.privacy.afterpayBrand, null));
         } else {
             redirectURL = URLUtils.https('COBilling-Start', 'afterpay', Resource.msg('apierror.flow.default', session.privacy.afterpayBrand, null));

@@ -49,7 +49,7 @@
         </div>
     <iselse/>
         <afterpay-placement 
-            data-is-eligible="true" 
+            data-is-eligible="${pdict.eligible}" 
             data-locale="${request.getLocale()}"
             data-badge-theme="black-on-mint" 
             data-amount="${pdict.totalprice}"

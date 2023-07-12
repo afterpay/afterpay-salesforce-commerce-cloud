@@ -33,11 +33,11 @@
                 <div class="afterpay-widget">
                     <isinclude template="util/modulesAfterpay"/>
 
-                    <isif condition="${pdict.apApplicable == true && apDisplayPlpInfo == true}">
+                    <isif condition="${apDisplayPlpInfo == true}">
                         <isafterpaymessage
                             classname="${pdict.classname}"
-                            belowthreshold="${pdict.belowthreshold}"
                             brand="${pdict.apBrand}"
+                            eligible="${pdict.apEligible}"
                         />
                     </isif>
                 </div>
