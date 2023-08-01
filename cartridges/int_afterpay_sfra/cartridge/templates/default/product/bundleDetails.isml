@@ -85,8 +85,8 @@
                     var afterpayPDPEnable = sitePreferences.isDisplayPdpInfo();
                 </isscript>
                 <isif condition="${afterpayPDPEnable == true}">
-                    <div class="afterpay-widget bundle">
-                        <isinclude url="${URLUtils.url('Product-IncludeAfterpayMessage', 'pid', product.id)}" />
+                    <div class="afterpay-widget">
+                        <isinclude url="${URLUtils.url('AfterpayWidget-IncludeAfterpayMessage', 'pid', product.id)}" />
                     </div>
                 </isif>
                 <!-- Cart and [Optionally] Apple Pay -->

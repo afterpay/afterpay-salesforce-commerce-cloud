@@ -7,7 +7,6 @@ var Resource = require('dw/web/Resource');
 /* Global variables */
 var AfterpayUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
 var sitePreferences = AfterpayUtilities.sitePreferencesUtilities;
-var apBrandUtilities = AfterpayUtilities.brandUtilities;
 var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
 var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
 var PAYMENT_STATUS = require('*/cartridge/scripts/util/afterpayConstants').PAYMENT_STATUS;
@@ -94,10 +93,7 @@ function HandleResponse() {
 function HandleMobileResponse() {
     var cashRequestId = request.httpParameterMap.cash_request_id.getStringValue();
     if (!empty(cashRequestId)) {
-        var scriptURL = apBrandUtilities.getBrandSettings().javaScriptUrl;
-        app.getView({
-            apJavascriptURL: scriptURL
-        }).render('checkout/cashAppMobile');
+        app.getView().render('checkout/cashAppMobile');
     } else {
         var redirectURL = URLUtils.https('COBilling-Start', 'afterpay', Resource.msg('cashapppay.error.missmatch', session.privacy.afterpayBrand, null));
         app.getView({

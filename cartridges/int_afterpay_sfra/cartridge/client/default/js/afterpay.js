@@ -107,10 +107,6 @@ $(document).ready(function () {
             if ($('.afterpay-widget').length && cartTotal !== newCartTotal) {
                 getWidget(null, null, 'cart-afterpay-message');
             }
-
-            if ($('.afterpay-widget .pdp-afterpay-message').length) {
-                updatePpdWidget();
-            }
         }
 
         // make sure we call initAfterpay after the minicart loads so checkout click will work

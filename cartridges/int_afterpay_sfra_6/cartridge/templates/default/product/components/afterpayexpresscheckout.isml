@@ -1,4 +1,5 @@
 <iscontent type="text/html" charset="UTF-8" compact="true"/>
+<isinclude template="util/afterpayLibraryInclude" />
 <isif condition="${afterpayExpressCheckoutEnabled && (pdict.pagetype != 'product_detail' || afterpayExpressCheckoutPdpEnabled)}">
     <input id="afterpay-express-countrycode" type="hidden" value="${countrycode}" />
     <input id="afterpay-express-storepickup" type="hidden" value="${afterpayExpressPickupEnabled}" />
@@ -11,8 +12,5 @@
     <input id="afterpay-express-url-cartstatus" type="hidden" value="${URLUtils.url('AfterpayExpress-CartStatus')}" />
     <input id="afterpay-express-url-shippingrequired" type="hidden" value="${URLUtils.url('AfterpayExpress-GetShippingRequired')}" />
     <input id="afterpayurl-continuefinalize" type="hidden" value="${URLUtils.url('AfterpayExpress-ContinueFinalize')}" />
-    <isif condition="${expressCheckoutJS}">
-        <script src="${expressCheckoutJS}"></script>
-    </isif>
     <script src="${URLUtils.staticURL('/js/afterpayExpress.js')}"></script>
 </isif>

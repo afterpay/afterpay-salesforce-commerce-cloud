@@ -7,50 +7,22 @@
                 "GB": {
                     "brand": "clearpay",
                     "service": "clearpay.service.GB.v2",
-                    "javaScriptUrl": "https://portal.sandbox.clearpay.co.uk/afterpay.js",
-                    "learnMoreUrl": "https://www.clearpay.co.uk/en-GB/terms-of-service"
                 },
                 "AU": {
                     "brand": "afterpay",
                     "service": "afterpay.service.AU.v2",
-                    "javaScriptUrl": "https://portal.sandbox.afterpay.com/afterpay.js",
-                    "learnMoreUrl": "https://www.afterpay.com/en-AU/terms-of-service"
                 },
                 "NZ": {
                     "brand": "afterpay",
                     "service": "afterpay.service.NZ.v2",
-                    "javaScriptUrl": "https://portal.sandbox.afterpay.com/afterpay.js",
-                    "learnMoreUrl": "https://www.afterpay.com/en-NZ/terms-of-service"
                 },
                 "CA": {
                     "brand": "afterpay",
                     "service": "afterpay.service.CA.v2",
-                    "javaScriptUrl": "https://portal.sandbox.afterpay.com/afterpay.js",
-                    "learnMoreUrl": "https://www.afterpay.com/en-CA/instalment-agreement"
-                },
-                "ES": {
-                    "brand": "clearpay",
-                    "service": "clearpay.service.ES.v2",
-                    "javaScriptUrl": "https://merchant-tools.sandbox.clearpay.com/clearpay.js",
-                    "learnMoreUrl": "https://www.clearpay.com/es/terms/"
-                },
-                "FR": {
-                    "brand": "clearpay",
-                    "service": "clearpay.service.FR.v2",
-                    "javaScriptUrl": "https://merchant-tools.sandbox.clearpay.com/clearpay.js",
-                    "learnMoreUrl": "https://www.clearpay.com/fr/terms/"
-                },
-                "IT": {
-                    "brand": "clearpay",
-                    "service": "clearpay.service.IT.v2",
-                    "javaScriptUrl": "https://merchant-tools.sandbox.clearpay.com/clearpay.js",
-                    "learnMoreUrl": "https://www.clearpay.com/it/terms/"
                 },
                 "US": {
                     "brand": "afterpay",
                     "service": "afterpay.service.US.v2",
-                    "javaScriptUrl": "https://portal.sandbox.afterpay.com/afterpay.js",
-                    "learnMoreUrl": "https://www.afterpay.com/purchase-payment-agreement"
                 }
             }</preference>
             <preference preference-id="apDisplayPdpInfo">true</preference>

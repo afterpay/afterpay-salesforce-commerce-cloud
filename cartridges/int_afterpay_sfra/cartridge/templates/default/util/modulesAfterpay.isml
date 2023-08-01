@@ -7,9 +7,9 @@
 <ismodule template="util/afterpayMessage"
     name="afterpaymessage"
     attribute="classname"
-    attribute="brand"
     attribute="totalprice"
     attribute="eligible"
+    attribute="mpid"
 />
 
 <ismodule template="product/components/addToCartButtonExtension"

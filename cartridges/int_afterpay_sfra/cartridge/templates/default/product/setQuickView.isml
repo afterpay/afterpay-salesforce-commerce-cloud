@@ -36,8 +36,8 @@
                     <isif condition="${apDisplayPlpInfo == true}">
                         <isafterpaymessage
                             classname="${pdict.classname}"
-                            brand="${pdict.apBrand}"
                             eligible="${pdict.apEligible}"
+                            mpid="${pdict.apMpid}"
                         />
                     </isif>
                 </div>

@@ -130,7 +130,7 @@
                             </isscript>
                             <isif condition="${afterpayPDPEnable}">
                                 <div class="afterpay-widget">
-                                    <isinclude url="${URLUtils.url('Product-IncludeAfterpayMessage', 'pid', product.id)}" />
+                                    <isinclude url="${URLUtils.url('AfterpayWidget-IncludeAfterpayMessage', 'pid', product.id)}" />
                                 </div>
                             </isif>
 

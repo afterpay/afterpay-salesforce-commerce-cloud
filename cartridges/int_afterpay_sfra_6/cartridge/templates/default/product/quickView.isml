@@ -124,9 +124,9 @@
                     <isinclude template="util/modulesAfterpay"/>
                         <isafterpaymessage
                             classname="${pdict.classname}"
-                            brand="${pdict.apBrand}"
                             totalprice="${pdict.totalPrice}"
                             eligible="${pdict.apEligible}"
+                            mpid="${pdict.apMpid}"
                         />
                 </div>
 

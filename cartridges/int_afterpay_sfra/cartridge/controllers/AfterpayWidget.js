@@ -11,15 +11,9 @@ var apBrandUtilities = apUtilities.brandUtilities;
 var thresholdUtilities = require('*/cartridge/scripts/util/thresholdUtilities');
 
 server.get('IncludeAfterpayLibrary', server.middleware.https, server.middleware.include, function (req, res, next) {
-    var scope = {
-        isAfterpayEnabled: apUtilities.sitePreferencesUtilities.isAfterpayEnabled()
-    };
-
-    if (scope.isAfterpayEnabled) {
-        scope.thresholdAmounts = thresholdUtilities.getThresholdAmounts(apBrandUtilities.getBrand());
+    if (apUtilities.sitePreferencesUtilities.isAfterpayEnabled()) {
+        res.render('util/afterpayLibraryInclude');
     }
-
-    res.render('util/afterpayLibraryInclude', scope);
     next();
 });
 
@@ -50,20 +44,19 @@ server.get('GetUpdatedWidget', server.middleware.https, function (req, res, next
         totalPrice = currentBasket.totalGrossPrice;
         apEligible = !AfterpayCOHelpers.checkRestrictedCart();
     }
+    var afterpayLimits = thresholdUtilities.checkThreshold(totalPrice);
 
     priceContext = {
         classname: req.querystring.className,
         totalprice: totalPrice.value ? totalPrice.value : totalPrice,
-        brand: apBrandUtilities.getBrand(),
-        eligible: apEligible
+        eligible: apEligible,
+        mpid: afterpayLimits.mpid
     };
 
     var updatedWidget = renderTemplateHelper.getRenderedHtml(
         priceContext,
         updatedTemplate
     );
-
-    var afterpayLimits = thresholdUtilities.checkThreshold(totalPrice);
 
     res.json({
         apApplicable: (isWithinThreshold && afterpayLimits.status) && apEligible,
@@ -73,5 +66,25 @@ server.get('GetUpdatedWidget', server.middleware.https, function (req, res, next
 
     next();
 });
+
+server.get('IncludeAfterpayMessage',
+    server.middleware.include,
+    function (req, res, next) {
+        var ProductFactory = require('*/cartridge/scripts/factories/product');
+
+        res.setViewData({
+            product: ProductFactory.get(req.querystring)
+        });
+
+        var priceContext = require('*/cartridge/scripts/util/getTemplateSpecificWidget').getWidgetData(
+            ProductFactory.get(req.querystring),
+            'pdp-afterpay-message',
+            req.session.currency.currencyCode,
+            req.locale.id
+        );
+
+        res.render('util/afterpayMessageInclude', priceContext);
+        next();
+    });
 
 module.exports = server.exports();

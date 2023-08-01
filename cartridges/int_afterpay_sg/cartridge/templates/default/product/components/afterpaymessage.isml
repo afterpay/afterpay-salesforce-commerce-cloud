@@ -1,7 +1,6 @@
 <isif condition="${pdict.applyCaching}">
     <iscache type="relative" hour="24" />
 </isif>
-
 <isscript>
     var sitePreferences = require("*/cartridge/scripts/util/afterpayUtilities").sitePreferencesUtilities;
     var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
@@ -12,48 +11,29 @@
 
 <isif condition="${pdict.totalprice}">
     <isif condition="${pdict.classname == 'checkout-afterpay-message'}">
-        <div class="product-afterpay-message ${pdict.classname}">
-            <span title="${Resource.msg('terms.conditions.label', pdict.afterpaybrand, null)}">
-                <isif condition="${afterpayExpressCheckoutEnabled && isExpressCheckoutFinalize}">
-                    <isinclude template="product/components/afterpaywidget" />
-                    <div id="afterpay-widget-container"></div>
-                    <script>
-                        createAfterpayWidget();
-                    </script>
-                <iselse>
-                    <div>${Resource.msg('checkout.content.redirect.label', pdict.afterpaybrand, null)}</div>
-                    <hr>
-                    <afterpay-placement 
-                        data-is-eligible="true" 
-                        data-locale="${request.getLocale()}"
-                        data-badge-theme="black-on-mint" 
-                        data-amount="${pdict.totalprice}"
-                        data-modal-link-style="circled-info-icon"
-                        data-intro-text="${Resource.msg('checkout.content.intro.text', pdict.afterpaybrand, null)}">
-                    </afterpay-placement>
-                    <afterpay-placement 
-                        data-type="price-table" 
-                        data-amount="${pdict.totalprice}"
-                        data-currency="${session.currency.getCurrencyCode()}" 
-                        data-locale="${request.getLocale()}">
-                    </afterpay-placement>
-                </isif>
-                <br>
-                <div>
-                    <a target="_blank" rel="noreferrer noopener"
-                        href="${require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities.getBrandSettings()['learnMoreUrl']}">
-                        ${Resource.msg('terms.conditions.label', pdict.afterpaybrand, null)}
-                    </a>
-                </div>
-            </span>
-        </div>
+        	<div class="afterpay-paymethod-widget-div">
+				<div id="afterpay-widget-container"></div>
+			</div>
+        <script>
+            createAfterpayWidget();
+        </script>
     <iselse/>
-        <afterpay-placement 
-            data-is-eligible="${pdict.eligible}" 
-            data-locale="${request.getLocale()}"
-            data-badge-theme="black-on-mint" 
+        <isif condition="${pdict.classname == 'cart-afterpay-message'}">
+            <isset name="pageType" value="cart" scope ="page"/>
+        <iselseif condition="${pdict.classname == 'pdp-afterpay-message'}" />
+            <isset name="pageType" value="product" scope ="page"/>
+        <iselseif condition="${pdict.classname == 'plp-afterpay-message'}" />
+            <isset name="pageType" value="category" scope ="page"/>
+        </isif>
+        <square-placement
+            data-cart-is-eligible="${pdict.eligible}"
+            data-consumer-locale="${request.getLocale()}"
+            data-badge-theme="black-on-mint"
             data-amount="${pdict.totalprice}"
-            data-modal-link-style="circled-info-icon">
-        </afterpay-placement>
+            data-modal-link-style="circled-info-icon"
+            data-mpid="${pdict.mpid}"
+            data-currency="${session.currency.getCurrencyCode()}"
+            data-page-type="${pageType}"
+        ></square-placement>
     </isif>
 </isif>

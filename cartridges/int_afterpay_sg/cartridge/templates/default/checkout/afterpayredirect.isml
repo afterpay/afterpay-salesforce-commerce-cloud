@@ -1,6 +1,6 @@
 <iscontent type="text/html" charset="UTF-8" compact="true"/>
 <isdecorate template="checkout/pt_checkout"/>
-    <script src="${pdict.apJavascriptURL}" async></script>
+    <isinclude template="util/afterpayLibraryInclude" />
     <script src="${URLUtils.staticURL('/lib/jquery/jquery.min.js')}"></script>
     <script>
         var brand = '${pdict.apBrand}';

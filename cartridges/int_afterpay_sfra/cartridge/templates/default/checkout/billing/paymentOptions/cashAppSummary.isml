@@ -1,4 +1,0 @@
-<div>
-    <isprint value="${payment.paymentMethod}" encoding="on" />
-    <div id="cashApp-payment-shown"></div>
-</div>

@@ -7,8 +7,6 @@
                 "US": {
                     "brand": "afterpay",
                     "service": "afterpay.service.US.v2",
-                    "javaScriptUrl": "https://portal.sandbox.afterpay.com/afterpay.js",
-                    "learnMoreUrl": "https://www.afterpay.com/purchase-payment-agreement"
                 }
             }</preference>
             <preference preference-id="apDisplayPdpInfo">true</preference>

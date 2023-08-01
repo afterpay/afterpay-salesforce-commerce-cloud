@@ -147,9 +147,6 @@ var exports = {
     },
     updateCheckoutView: function () {
         $('body').on('checkout:updateCheckoutView', function () {
-            // Refresh checkout Afterpay Widget
-            // afterpayWidget.getWidget(null, null, 'checkout-afterpay-message');
-            // Refresh Afterpay Express Checkout Widget
             afterpayExpressWidget.updateExpressWidget();
         });
     }

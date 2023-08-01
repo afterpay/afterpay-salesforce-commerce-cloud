@@ -6,9 +6,6 @@
     <div class="checkout-cashapp-message">
         <input id="cashApp-token" type="hidden" value="${afterpayToken}" />
         <input id="cashApp-url-handleresponse" type="hidden" value="${URLUtils.url('CashApp-HandleResponse')}" />
-        <isif condition="${expressCheckoutJS}">
-            <script src="${expressCheckoutJS}"></script>
-        </isif>
     </div>
     <div id="cash-app-pay"></div>
 </isif>

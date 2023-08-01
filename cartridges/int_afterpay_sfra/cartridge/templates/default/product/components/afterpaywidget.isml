@@ -12,7 +12,6 @@ afterpayAmount - total amount for the Afterpay payment instrument in the cart. I
 </iscomment>
 <isscript>
 var sitePreferences = require("*/cartridge/scripts/util/afterpayUtilities.js").sitePreferencesUtilities;
-var afterpayEnable = sitePreferences.isAfterpayEnabled();
 // session state specifically used for Afterpay Express
 var AfterpaySession = require('*/cartridge/scripts/util/afterpaySession');
 // This does a recalculation using the current basket
@@ -28,7 +27,6 @@ var isExpressCheckoutFinalize = AfterpaySession.isExpressCheckoutFinalizeFlow();
 var afterpayEnabled = sitePreferences.isAfterpayEnabled();
 var afterpayExpressCheckoutEnabled = afterpayEnabled && sitePreferences.isExpressCheckoutEnabled();
 var BrandUtilities = require("*/cartridge/scripts/util/afterpayUtilities.js").brandUtilities;
-var expressCheckoutJS = BrandUtilities.getBrandSettings().javaScriptUrl;
 var countrycode = BrandUtilities.getCountryCode();
 var buttonPlaceOrderClass = 'afterpay-placeorder-button';
 if (countrycode === 'GB') {
@@ -58,7 +56,4 @@ if (countrycode === 'GB') {
     <input id="afterpay-widget-currency" type="hidden" value="${afterpayAmount.currencyCode}" />
     <input id="afterpay-token" type="hidden" value="" />
 </isif>
-<script src="${URLUtils.staticURL('/js/afterpayWidget.js')}" type="text/javascript"></script>
-<isif condition="${expressCheckoutJS}">
-        <script src="${expressCheckoutJS}"></script>
-</isif>
+<script src="${URLUtils.staticURL('/js/afterpayWidget.js')}"></script>

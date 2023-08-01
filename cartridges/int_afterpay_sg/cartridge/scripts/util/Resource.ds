@@ -223,8 +223,7 @@ ResourceHelper.getPreferences = function(pageContext) {
         STORE_PICKUP: Site.getCurrent().getCustomPreferenceValue('enableStorePickUp'),
         COOKIE_HINT: (cookieHintAsset && cookieHintAsset.online) || false,
         CONSENT_TRACKING_HINT: (consentTrackingHintAsset && consentTrackingHintAsset.online) || false,
-        CHECK_TLS: Site.getCurrent().getCustomPreferenceValue('checkTLS'),
-        AFTERPAY_PORTAL: brandUtilities.getBrandSettings().javaScriptUrl
+        CHECK_TLS: Site.getCurrent().getCustomPreferenceValue('checkTLS')
     };
 }
 /**

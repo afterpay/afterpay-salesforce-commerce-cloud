@@ -26,7 +26,6 @@ function renderMessage() {
     var params = request.httpParameterMap;
     var totalprice = parseFloat(params.totalprice.stringValue);
     var classname = params.classname.stringValue;
-    var afterpayBrand = params.afterpayBrand.stringValue;
     var applyCaching;
 
     if (totalprice && !(totalprice.isNaN)) {
@@ -44,13 +43,13 @@ function renderMessage() {
     } else {
         isEligible = !AfterpayCOHelpers.checkRestrictedCart();
     }
-
+    var afterpayLimits = thresholdUtilities.checkThreshold(totalprice);
     if (afterpayApplicable) {
         app.getView({
             applyCaching: applyCaching,
             eligible: isEligible,
             classname: classname,
-            afterpaybrand: afterpayBrand,
+            mpid: afterpayLimits.mpid,
             totalprice: totalprice.value
         }).render('product/components/afterpaymessage');
     }
@@ -60,15 +59,9 @@ function renderMessage() {
  * @description Remove include of Afterpay js library needed to render badges and installments
  */
 function includeAfterpayLibrary() {
-    var scope = {
-        isAfterpayEnabled: SitePreferences.isAfterpayEnabled()
-    };
-
-    if (scope.isAfterpayEnabled) {
-        scope.thresholdAmounts = thresholdUtilities.getThresholdAmounts(BrandUtilities.getBrand());
+    if (SitePreferences.isAfterpayEnabled()) {
+        app.getView().render('util/afterpayLibraryInclude');
     }
-
-    app.getView(scope).render('util/afterpayLibraryInclude');
 }
 
 /* Web exposed methods */

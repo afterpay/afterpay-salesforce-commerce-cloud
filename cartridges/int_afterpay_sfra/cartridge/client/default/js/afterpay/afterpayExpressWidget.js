@@ -8,26 +8,16 @@
 function updateExpressWidget() {
     var currency = $('#afterpay-widget-currency').val();
     var grandTotalSum = $('.grand-total-sum').text();
-    if (currency === 'EUR') {
-        $('.afterpay-widget').removeClass('afterpay-hide');
-        if ($('afterpay-placement').length != 0) {
-            $('afterpay-placement').attr('data-amount', grandTotalSum);
-        }
-        grandTotalSum = '0.00';
-    } else if ($('.afterpay-widget').hasClass('afterpay-placement') && $('.afterpay-placement').hasAttribute('data-amount')) {
-        grandTotalSum = $('.afterpay-placement').attr('data-amount');
-    } else {
-        // eslint-disable-next-line no-useless-escape
-        grandTotalSum = Number(grandTotalSum.replace(/[^0-9\.-]+/g, '')).toString();
-    }
 
+    // eslint-disable-next-line no-useless-escape
+    grandTotalSum = Number(grandTotalSum.replace(/[^0-9\.-]+/g, '')).toString();
+    $('#afterpay-widget-amount').val(grandTotalSum);
+    $('#afterpay-widget-currency').val(currency);
     if ('afterpayWidget' in window) {
         afterpayWidget.update({
             amount: { amount: grandTotalSum, currency: currency }
         });
     }
-    $('#afterpay-widget-amount').val(grandTotalSum);
-    $('#afterpay-widget-currency').val(currency);
 }
 
 module.exports.updateExpressWidget = updateExpressWidget;

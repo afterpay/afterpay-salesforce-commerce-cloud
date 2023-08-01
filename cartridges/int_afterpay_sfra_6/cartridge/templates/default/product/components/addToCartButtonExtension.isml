@@ -8,7 +8,6 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
 <isscript>
     var BrandUtilities = require("*/cartridge/scripts/util/afterpayUtilities.js").brandUtilities;
     var countrycode = BrandUtilities.getCountryCode();
-    var expressCheckoutJS = BrandUtilities.getBrandSettings().javaScriptUrl;
     var sitePreferences = require("*/cartridge/scripts/util/afterpayUtilities.js").sitePreferencesUtilities;
     var afterpayEnabled = sitePreferences.isAfterpayEnabled();
     var afterpayExpressCheckoutEnabled = afterpayEnabled ? sitePreferences.isExpressCheckoutEnabled() : false;
@@ -23,17 +22,17 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
         buttonClass = 'clearpay-buynow-button add-to-cart btn';
     }
 </isscript>
-<isif condition="${afterpayExpressCheckoutEnabled && afterpayExpressCheckoutPdpEnabled && pdict.apApplicable}">
+<isif condition="${afterpayExpressCheckoutEnabled && afterpayExpressCheckoutPdpEnabled}">
     <isset name="afterpayExpressCheckoutPage" value="product_detail" scope="page" />
     <isinclude template="product/components/afterpayexpresscheckout" />
     <isscript>
         var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
-        var disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isPDPBasketAmountWithinThreshold();
-
+        var disableAfterpayPaymentMethod = false;
         if (product && product.price) {
-            disableAfterpayPaymentMethod =  disableAfterpayPaymentMethod || ! AfterpayCOHelpers.isPriceWithinThreshold(
-                AfterpayRefArchCOHelpers.getProductPriceForMessaging(product.price));
+            disableAfterpayPaymentMethod =  ! AfterpayCOHelpers.isPriceWithinThreshold(
+                AfterpayRefArchCOHelpers.getProductPriceForMessaging(product.price)) || AfterpayCOHelpers.checkRestrictedProducts(product.id);
         }
+        disableAfterpayPaymentMethod = disableAfterpayPaymentMethod || ! AfterpayCOHelpers.isPDPBasketAmountWithinThreshold();
         
         if (disableAfterpayPaymentMethod) {
             buttonClass += ' afterpay-hide';

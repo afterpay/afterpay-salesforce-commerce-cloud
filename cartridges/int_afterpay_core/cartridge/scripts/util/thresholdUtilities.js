@@ -17,42 +17,50 @@ var thresholdUtilities = {
     parseConfigurationResponse: function (thresholdResponse) {
         var configuration = {
             minAmount: 0,
-            maxAmount: 0
+            maxAmount: 0,
+            mpid: ''
         };
 
         var minThresholdObj;
         var maxThresholdObj;
 
         var currentCurrency = session.currency.getCurrencyCode();
-        if (thresholdResponse && thresholdResponse.minimumAmount.currency !== currentCurrency) {
-            if (('CBT' in thresholdResponse) && thresholdResponse.CBT.enabled && thresholdResponse.CBT.limits) {
-                var cbtLimits = thresholdResponse.CBT.limits;
-                if (Object.keys(cbtLimits).length >= 1 && currentCurrency in cbtLimits) {
-                    minThresholdObj = cbtLimits[currentCurrency].minimumAmount;
-                    maxThresholdObj = cbtLimits[currentCurrency].maximumAmount;
+        if (thresholdResponse && thresholdResponse.maximumAmount) {
+            if (thresholdResponse.maximumAmount.currency !== currentCurrency) {
+                if (('CBT' in thresholdResponse) && thresholdResponse.CBT.enabled && thresholdResponse.CBT.limits) {
+                    var cbtLimits = thresholdResponse.CBT.limits;
+                    if (Object.keys(cbtLimits).length >= 1 && currentCurrency in cbtLimits) {
+                        minThresholdObj = cbtLimits[currentCurrency].minimumAmount;
+                        maxThresholdObj = cbtLimits[currentCurrency].maximumAmount;
+                    }
                 }
+            } else {
+                minThresholdObj = thresholdResponse.minimumAmount;
+                maxThresholdObj = thresholdResponse.maximumAmount;
             }
-        } else {
-            minThresholdObj = thresholdResponse.minimumAmount;
-            maxThresholdObj = thresholdResponse.maximumAmount;
-        }
 
-        if (minThresholdObj) {
-            configuration.minAmount = parseFloat(minThresholdObj.amount, 10);
-        }
+            if (minThresholdObj) {
+                configuration.minAmount = parseFloat(minThresholdObj.amount, 10);
+            }
 
-        if (maxThresholdObj) {
-            configuration.maxAmount = parseFloat(maxThresholdObj.amount, 10);
+            if (maxThresholdObj) {
+                configuration.maxAmount = parseFloat(maxThresholdObj.amount, 10);
+            }
+
+            if ('publicId' in thresholdResponse) {
+                configuration.mpid = thresholdResponse.publicId;
+            }
         }
 
         return configuration;
     },
     getThresholdAmounts: function (brand) {
-        var prefix = request.getLocale() + brand.toUpperCase();
-        var thresholdResult = {
-            minAmount: session.privacy[prefix + 'MinAmount'],
-            maxAmount: session.privacy[prefix + 'MaxAmount']
-        };
+        var thresholdResult = {};
+
+        var prefix = request.getLocale();
+        thresholdResult.minAmount = session.privacy[prefix + 'MinAmount'];
+        thresholdResult.maxAmount = session.privacy[prefix + 'MaxAmount'];
+        thresholdResult.mpid = session.privacy[prefix + 'mpid'];
 
         var thresholdResponse;
 
@@ -60,7 +68,6 @@ var thresholdUtilities = {
             configurationService.generateRequest();
             try {
                 thresholdResponse = configurationService.getResponse();
-                Logger.debug('service response to get the threshold amount :' + JSON.stringify(thresholdResponse));
             } catch (e) {
                 Logger.debug('Exception occured to set the threshold amount in session :' + e);
 
@@ -76,7 +83,8 @@ var thresholdUtilities = {
         return thresholdResult;
     },
     saveThresholds: function (brand, thresholds) {
-        var prefix = request.getLocale() + brand.toUpperCase();
+        var prefix = request.getLocale();
+
         if (thresholds.minAmount) {
             session.privacy[prefix + 'MinAmount'] = thresholds.minAmount;
         } else {
@@ -87,6 +95,7 @@ var thresholdUtilities = {
         } else {
             session.privacy[prefix + 'MaxAmount'] = 0;
         }
+        session.privacy[prefix + 'mpid'] = thresholds.mpid || '';
     },
     checkThreshold: function (price) {
         if (afterpayBrand && (price && price.value)) {
@@ -109,6 +118,7 @@ var thresholdUtilities = {
             if (isApplicable) {
                 result.minThresholdAmount = threshold.minAmount;
                 result.maxThresholdAmount = threshold.maxAmount;
+                result.mpid = threshold.mpid;
 
                 if (price >= threshold.minAmount && price <= threshold.maxAmount) {
                     result.status = true;

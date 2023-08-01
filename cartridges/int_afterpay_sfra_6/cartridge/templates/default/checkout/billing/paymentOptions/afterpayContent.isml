@@ -4,15 +4,5 @@
         <input type="hidden" class="form-control" name="${pdict.customForms.afterpayForm.isAfterpayUrl.htmlName}" value="${URLUtils.url('AfterpayRedirect-IsAfterpay')}">
         <input type="hidden" class="form-control" name="${pdict.customForms.afterpayForm.redirectAfterpayUrl.htmlName}" value="${URLUtils.url('AfterpayRedirect-Redirect')}">
     </fieldset>
-    <div id="afterpay-tab-shown"></div>
-    <input type="hidden" class="updated-widget" value="${URLUtils.https('AfterpayWidget-GetUpdatedWidget')}">
-    <div class="afterpay-widget afterpay-hide">
-        <isinclude template="util/modulesAfterpay"/>
-
-        <isafterpaymessage
-            classname="${pdict.priceContext.classname}"
-            brand="${pdict.priceContext.apBrand}"
-            totalprice="${pdict.priceContext.totalPrice}"
-        />
-    </div>
 </div>
+

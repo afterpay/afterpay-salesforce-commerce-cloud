@@ -73,6 +73,9 @@ var afterpayConfigurationServiceMock = {
         return {
             minimumAmount: {
                 amount: 5
+            },
+            maximumAmount: {
+                amount: 5
             }
         };
     }

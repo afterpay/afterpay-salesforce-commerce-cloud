@@ -93,7 +93,7 @@ var checkoutTools = {
         }
     },
     disableSummaryForAfterpay: function (cart, viewContext) {
-        var afterpayEnable = sitePreferences.isAfterpayEnabled();
+        var afterpayEnabled = sitePreferences.isAfterpayEnabled();
         var expressCheckoutEnable = sitePreferences.isExpressCheckoutEnabled();
         var isExpressCheckout = require('*/cartridge/scripts/util/afterpaySession').isExpressCheckout();
 
@@ -105,7 +105,7 @@ var checkoutTools = {
 
             // don't disable summary for express checkout when the current order is an express checkout order.
             // Non-express-checkout still skips summary screen
-            if ((expressCheckoutEnable && isExpressCheckout) || afterpayEnable == false || apPaymentInstrument.paymentMethod !== 'AFTERPAY' || apPaymentInstrument.paymentMethod !== 'CLEARPAY') {
+            if ((expressCheckoutEnable && isExpressCheckout) || afterpayEnabled == false || apPaymentInstrument.paymentMethod !== 'AFTERPAY' || apPaymentInstrument.paymentMethod !== 'CLEARPAY') {
                 app.getView(viewContext).render('checkout/summary/summary');
             }
         }

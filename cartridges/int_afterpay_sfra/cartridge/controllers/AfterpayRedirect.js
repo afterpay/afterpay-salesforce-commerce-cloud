@@ -25,13 +25,11 @@ server.get('PrepareRedirect', server.middleware.https, function (req, res, next)
     var invalidEmailError = Resource.msg('afterpay.email.invalid.response', 'afterpay', null);
 
     var apBrand = apBrandUtilities.getBrand();
-    var scriptURL = apBrandUtilities.getBrandSettings().javaScriptUrl;
     var countryCodeValue = apBrandUtilities.getCountryCode();
 
     if ((afterPayToken !== 'undefined') && countryCodeValue) {
         res.render('checkout/afterpayRedirect', {
             apBrand: apBrand,
-            apJavascriptURL: scriptURL,
             apToken: afterPayToken,
             countryCode: countryCodeValue
         });

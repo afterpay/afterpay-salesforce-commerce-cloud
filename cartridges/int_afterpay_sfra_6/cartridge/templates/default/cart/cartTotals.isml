@@ -55,9 +55,9 @@
         <div class="afterpay-widget">
             <isafterpaymessage
                 classname="${pdict.classname}"
-                brand="${pdict.apBrand}"
                 totalprice="${pdict.totalPrice}"
                 eligible="${pdict.apEligible}"
+                mpid="${pdict.apMpid}"
             />
         </div>
     </div>    

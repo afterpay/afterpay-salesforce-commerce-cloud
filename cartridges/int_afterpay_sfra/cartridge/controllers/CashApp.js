@@ -14,7 +14,6 @@ var OrderMgr = require('dw/order/OrderMgr');
 var Money = require('dw/value/Money');
 var Transaction = require('dw/system/Transaction');
 var apCheckoutUtilities = require('*/cartridge/scripts/util/afterpayUtilities').checkoutUtilities;
-var apBrandUtilities = require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities;
 var thresholdUtilities = require('*/cartridge/scripts/util/thresholdUtilities');
 var paymentMethodName = apCheckoutUtilities.getPaymentMethodName(true);
 
@@ -159,8 +158,7 @@ server.get('HandleResponse', server.middleware.https, function (req, res, next) 
 server.get('HandleMobileResponse', server.middleware.https, function (req, res, next) {
     var cashRequestId = req.querystring.cash_request_id;
     if (!empty(cashRequestId)) {
-        var scriptURL = apBrandUtilities.getBrandSettings().javaScriptUrl;
-        res.render('checkout/cashAppMobile', { apJavascriptURL: scriptURL });
+        res.render('checkout/cashAppMobile');
     } else {
         res.redirect(URLUtils.url('Checkout-Begin', 'stage', 'payment', 'afterpayErrorMessage', Resource.msg('afterpay.api.cancelled', 'afterpay', null)));
     }

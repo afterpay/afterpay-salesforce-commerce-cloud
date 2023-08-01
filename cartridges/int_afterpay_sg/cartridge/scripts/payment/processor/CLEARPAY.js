@@ -59,12 +59,11 @@ function Handle(args) {
             AfterpayRedirectUrl: redirectURL
         }).render('checkout/redirect');
     }
-    var scriptURL = brandUtilities.getBrandSettings().javaScriptUrl;
+
     var countryCode = brandUtilities.getCountryCode();
 
     app.getView({
         apBrand: brandUtilities.getBrand(),
-        apJavascriptURL: scriptURL,
         apToken: afterPayToken,
         countryCode: countryCode
     }).render('checkout/afterpayredirect');

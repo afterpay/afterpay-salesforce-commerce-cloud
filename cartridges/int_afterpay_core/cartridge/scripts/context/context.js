@@ -9,7 +9,7 @@ var Context = function () {
     this.actionEndpointMap = {
         getPayment: 'payments/{0}',
         directCapturePayment: 'payments/capture',
-        getConfiguration: 'configuration?include=cbt',
+        getConfiguration: 'configuration?include=cbt&include=publicId',
         createRefund: 'payments/{0}/refund',
         authorise: 'payments/auth',
         createOrders: 'checkouts',

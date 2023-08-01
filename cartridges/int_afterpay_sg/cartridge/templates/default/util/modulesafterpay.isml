@@ -9,7 +9,7 @@
     attribute="eligible"
     attribute="classname"
     attribute="totalprice"
-    attribute="brand"
+    attribute="mpid"
 />
 
 <ismodule template="product/components/afterpaywidget"

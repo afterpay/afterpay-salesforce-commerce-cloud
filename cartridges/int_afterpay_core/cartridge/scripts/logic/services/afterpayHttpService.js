@@ -38,6 +38,8 @@ function getAfterpayHttpService() {
     var Site = require('dw/system/Site');
     var Resource = require('dw/web/Resource');
     var serviceID = getServiceID();
+    var prefix = request.getLocale();
+    var mpid = session.privacy[prefix + 'mpid'] || null;
 
     var afterpayHttpService = LocalServiceRegistry.createService(serviceID, {
         createRequest: function (service, endPointUrl, requestBody) {
@@ -47,7 +49,7 @@ function getAfterpayHttpService() {
             service.setRequestMethod(requestBody.requestMethod);
             service.addHeader('Content-Type', 'application/json');
 
-            var afterpayCartridge = 'AfterpayCartridge/23.3.0';
+            var afterpayCartridge = 'AfterpayCartridge/23.4.0';
             var merchantID = service.configuration.credential.user;
             var siteURL = URLUtils.httpsHome().toString();
             var storeFront = Site.getCurrent().getID();
@@ -66,6 +68,7 @@ function getAfterpayHttpService() {
                 storeFront + '/' + storefrontVersion,
                 'CompatibilityMode/' + compatibilityMode,
                 'Merchant/' + merchantID,
+                'MPID/' + mpid,
                 'CashAppEnabled/' + cashAppEnabled
             ].join('; ');
 

@@ -14,8 +14,8 @@ function createAfterpayWidget() {
             },
             onChange: function (event) {
                 if (!event.data.isValid) {
-                    var widgetErrorUrl = $('#afterpay-express-url-widgeterror').val() + '?error=' + encodeURIComponent(event.data.error);
-                    window.location.assign(widgetErrorUrl);
+                    // var widgetErrorUrl = $('#afterpay-express-url-widgeterror').val() + '?error=' + encodeURIComponent(event.data.error);
+                    // window.location.assign(widgetErrorUrl);
                     // Need to clear the session
                 }
             // Fires after each update and on any other state changes.

@@ -1,8 +1,8 @@
 <script>//common/scripts.isml</script>
-<script defer type="text/javascript" src="${URLUtils.staticURL('/js/main.js')}"></script>
+<script defer="defer" src="${URLUtils.staticURL('/js/main.js')}"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <isloop items="${ require('*/cartridge/scripts/assets.js').scripts }" var="script">
-    <script defer type="text/javascript" src="${script.src}"
+    <script defer="defer" src="${script.src}"
     <isif condition="${script.integrity != null}">integrity="${script.integrity}" crossorigin="anonymous"></isif>
     >
     </script>

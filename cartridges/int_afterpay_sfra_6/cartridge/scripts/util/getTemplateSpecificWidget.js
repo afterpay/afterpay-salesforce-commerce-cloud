@@ -8,6 +8,7 @@ var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHe
 var apBrandUtilities = require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities;
 var apSitePreferences = require('*/cartridge/scripts/util/afterpayUtilities').sitePreferencesUtilities;
 
+var priceContext = {};
 var getTemplateSpecificWidget = {};
 
 /**
@@ -19,7 +20,6 @@ var getTemplateSpecificWidget = {};
  * @returns {string} - request JSON
  */
 getTemplateSpecificWidget.getWidgetData = function (productObject, className, currencyCode, locale) {
-    var priceContext;
     var totalPrice = null;
 
     apBrandUtilities.initBrand(locale);
@@ -50,7 +50,6 @@ getTemplateSpecificWidget.getWidgetData = function (productObject, className, cu
         var afterpayLimits = thresholdUtilities.checkThreshold(totalPrice);
 
         var isEligible = apBrandUtilities.isAfterpayApplicable();
-        var apBrand = apBrandUtilities.getBrand();
         var isWithinThreshold = afterpayLimits.status;
         var reqProductID = productObject.id;
 
@@ -59,8 +58,8 @@ getTemplateSpecificWidget.getWidgetData = function (productObject, className, cu
         }
 
         priceContext.apEligible = isEligible;
+        priceContext.apMpid = afterpayLimits.mpid;
         priceContext.apApplicable = isEligible && isWithinThreshold;
-        priceContext.apBrand = apBrand;
     }
 
     return priceContext;
@@ -69,9 +68,7 @@ getTemplateSpecificWidget.getWidgetData = function (productObject, className, cu
 getTemplateSpecificWidget.getWidgetDataForSet = function (productObject, className, currencyCode) {
     var thresholdUtilities = require('*/cartridge/scripts/util/thresholdUtilities');
     var totalPrice = null;
-
     if (productObject.productType === 'set') {
-        var afterpayWidgetData = {};
         for (var i = 0; i < productObject.individualProducts.length; i++) {
             var singleSetProduct = productObject.individualProducts[i];
             if (singleSetProduct.price.sales) {
@@ -88,7 +85,7 @@ getTemplateSpecificWidget.getWidgetDataForSet = function (productObject, classNa
                 totalPrice = new Money(totalPrice, currencyCode);
             }
 
-            afterpayWidgetData = {
+            var afterpayWidgetData = {
                 classname: className,
                 quickview: false
             };
@@ -96,7 +93,6 @@ getTemplateSpecificWidget.getWidgetDataForSet = function (productObject, classNa
             var afterpayLimits = thresholdUtilities.checkThreshold(totalPrice);
 
             var isEligible = apBrandUtilities.isAfterpayApplicable();
-            var apBrand = apBrandUtilities.getBrand();
             var reqProductID = singleSetProduct.id;
 
             if (reqProductID != null && AfterpayCOHelpers.checkRestrictedProducts(reqProductID)) {
@@ -104,9 +100,9 @@ getTemplateSpecificWidget.getWidgetDataForSet = function (productObject, classNa
             }
             var isWithinThreshold = afterpayLimits.status;
 
-            priceContext.apEligible = isEligible;
+            afterpayWidgetData.apEligible = isEligible;
+            afterpayWidgetData.apMpid = afterpayLimits.mpid;
             afterpayWidgetData.apApplicable = isEligible && isWithinThreshold;
-            afterpayWidgetData.apBrand = apBrand;
 
             getTemplateSpecificWidget.pushWidgetDataToProduct(singleSetProduct, afterpayWidgetData);
         }
@@ -131,8 +127,6 @@ getTemplateSpecificWidget.getCheckoutWidgetData = function (currentBasket, class
     var cartProductExcluded = AfterpayCOHelpers.checkRestrictedCart();
     apBrandUtilities.initBrand(locale);
 
-    var priceContext = {};
-
     if (!currentBasket) {
         return priceContext;
     }
@@ -144,17 +138,15 @@ getTemplateSpecificWidget.getCheckoutWidgetData = function (currentBasket, class
     priceContext.classname = className;
     priceContext.totalPrice = totalPrice.value;
 
-    var apBrand = apBrandUtilities.getBrand();
-
     var afterpayLimits = thresholdUtilities.checkThreshold(totalPrice);
     var isEligible = apBrandUtilities.isAfterpayApplicable() && !cartProductExcluded;
     var iscashAppApplicable = apSitePreferences.isCashAppEnabled();
     var isWithinThreshold = afterpayLimits.status;
 
     priceContext.apEligible = isEligible;
+    priceContext.apMpid = afterpayLimits.mpid;
     priceContext.apApplicable = isEligible && isWithinThreshold;
     priceContext.cashAppApplicable = iscashAppApplicable && isWithinThreshold;
-    priceContext.apBrand = apBrand;
 
     return priceContext;
 };
