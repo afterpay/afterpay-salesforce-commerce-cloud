@@ -14,7 +14,6 @@ var OrderMgr = require('dw/order/OrderMgr');
 var Money = require('dw/value/Money');
 var Transaction = require('dw/system/Transaction');
 var apCheckoutUtilities = require('*/cartridge/scripts/util/afterpayUtilities').checkoutUtilities;
-var thresholdUtilities = require('*/cartridge/scripts/util/thresholdUtilities');
 var paymentMethodName = apCheckoutUtilities.getPaymentMethodName(true);
 
 /**
@@ -66,10 +65,7 @@ server.get('CreateToken', server.middleware.https, function (req, res, next) {
 
     var grandTotal = parsePrice(basketModel.totals.grandTotal);
     var checkoutPrice = new Money(grandTotal, currentBasket.currencyCode);
-    var isWithinThreshold = thresholdUtilities.checkThreshold(checkoutPrice);
-    if (!isWithinThreshold.status) {
-        return returnJsonError(res, next, Resource.msg('cashapppay.error.invalidamount', 'afterpay', null));
-    }
+
     // Create the payment instrument
     Transaction.wrap(function () {
         AfterpayRefArchCOHelpers.removeAllNonGiftCertificatePayments(currentBasket);

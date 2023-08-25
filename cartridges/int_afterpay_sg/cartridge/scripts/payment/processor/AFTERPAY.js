@@ -62,8 +62,7 @@ function Handle(args) {
     var countryCode = brandUtilities.getCountryCode();
 
     app.getView({
-        apBrand: brandUtilities.getBrand(),
-        apToken: afterPayToken,
+        apToken: afterPayToken.apToken,
         countryCode: countryCode
     }).render('checkout/afterpayredirect');
 

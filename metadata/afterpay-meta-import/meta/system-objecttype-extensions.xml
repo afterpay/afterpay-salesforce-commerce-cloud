@@ -193,7 +193,15 @@
             </attribute-definition>
             <attribute-definition attribute-id="apDisplayPdpInfo">
                 <display-name xml:lang="x-default">Afterpay Display Product Details Page Information</display-name>
-                <description xml:lang="x-default">Determines if the Afterpay product information is display on the product details page</description>
+                <description xml:lang="x-default">Determines if the Afterpay information is display on the product details page</description>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>true</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="apDisplayCartInfo">
+                <display-name xml:lang="x-default">Afterpay Display Cart Page Information</display-name>
+                <description xml:lang="x-default">Determines if the Afterpay information is display on the cart page</description>
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -201,7 +209,7 @@
             </attribute-definition>
             <attribute-definition attribute-id="apDisplayPlpInfo">
                 <display-name xml:lang="x-default">Afterpay Display Product List Page Information</display-name>
-                <description xml:lang="x-default">Determines if the Afterpay product information is display on the product tile</description>
+                <description xml:lang="x-default">Determines if the Afterpay information is display on the product tile</description>
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -287,6 +295,13 @@
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
+            <attribute-definition attribute-id="apJavaScript">
+                <display-name xml:lang="x-default">Afterpay JavaScript URL</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
             <attribute-group group-id="Integration_Afterpay">
@@ -294,8 +309,10 @@
                 <attribute attribute-id="enableAfterpay"/>
                 <attribute attribute-id="enableCashAppPay"/>
                 <attribute attribute-id="apBrandSettings"/>
+                <attribute attribute-id="apJavaScript"/>
                 <attribute attribute-id="apDisplayPdpInfo"/>
                 <attribute attribute-id="apDisplayPlpInfo"/>
+                <attribute attribute-id="apDisplayCartInfo"/>
                 <attribute attribute-id="apPaymentMode"/>
                 <attribute attribute-id="apControllerCartridgeName"/>
                 <attribute attribute-id="apCoreCartridge"/>

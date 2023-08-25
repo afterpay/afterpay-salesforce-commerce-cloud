@@ -7,12 +7,17 @@ var BasketMgr = require('dw/order/BasketMgr');
 /* Script Modules */
 var server = require('server');
 var apUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
-var apBrandUtilities = apUtilities.brandUtilities;
 var thresholdUtilities = require('*/cartridge/scripts/util/thresholdUtilities');
 
 server.get('IncludeAfterpayLibrary', server.middleware.https, server.middleware.include, function (req, res, next) {
-    if (apUtilities.sitePreferencesUtilities.isAfterpayEnabled()) {
-        res.render('util/afterpayLibraryInclude');
+    var apSitePreferencesUtilities = apUtilities.sitePreferencesUtilities;
+    if (apSitePreferencesUtilities.isAfterpayEnabled()) {
+        var scope = {
+            apJavascriptURL: apSitePreferencesUtilities.getJavascriptURL() || null
+        };
+        if (scope.apJavascriptURL) {
+            res.render('util/afterpayLibraryInclude', scope);
+        }
     }
     next();
 });
@@ -28,6 +33,7 @@ server.get('GetUpdatedWidget', server.middleware.https, function (req, res, next
     var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
     var reqProductID = req.querystring.productID;
     var isWithinThreshold = AfterpayCOHelpers.isPDPBasketAmountWithinThreshold();
+    var apBrandUtilities = apUtilities.brandUtilities;
 
     var currencyCode = req.session.currency.currencyCode;
     var apEligible = apBrandUtilities.isAfterpayApplicable();

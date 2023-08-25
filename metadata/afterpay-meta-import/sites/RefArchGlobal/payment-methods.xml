@@ -6,23 +6,13 @@
         <enabled-flag>true</enabled-flag>
         <processor-id>AFTERPAY_CREDIT</processor-id>
         <countries>
-            <country country-code="ES"/>
-            <country country-code="FR"/>
             <country country-code="GB"/>
-            <country country-code="IT"/>
         </countries>
         <currencies>
-            <currency>EUR</currency>
             <currency>GBP</currency>
         </currencies>
         <ranges>
-            <range currency="EUR">
-                <min-purchase-amount>0.03</min-purchase-amount>
-                <max-purchase-amount>800</max-purchase-amount>
-            </range>
             <range currency="GBP">
-                <min-purchase-amount>0.03</min-purchase-amount>
-                <max-purchase-amount>1000</max-purchase-amount>
             </range>
         </ranges>
     </payment-method>
@@ -46,20 +36,12 @@
         </currencies>
         <ranges>
             <range currency="AUD">
-                <min-purchase-amount>0.03</min-purchase-amount>
-                <max-purchase-amount>2000</max-purchase-amount>
             </range>
             <range currency="CAD">
-                <min-purchase-amount>0.03</min-purchase-amount>
-                <max-purchase-amount>2000</max-purchase-amount>
             </range>
             <range currency="NZD">
-                <min-purchase-amount>0.03</min-purchase-amount>
-                <max-purchase-amount>2000</max-purchase-amount>
             </range>
             <range currency="USD">
-                <min-purchase-amount>0.03</min-purchase-amount>
-                <max-purchase-amount>1000</max-purchase-amount>
             </range>
         </ranges>
     </payment-method>
@@ -77,8 +59,6 @@
         </currencies>
         <ranges>
             <range currency="USD">
-                <min-purchase-amount>0.03</min-purchase-amount>
-                <max-purchase-amount>1000</max-purchase-amount>
             </range>
         </ranges>
     </payment-method>

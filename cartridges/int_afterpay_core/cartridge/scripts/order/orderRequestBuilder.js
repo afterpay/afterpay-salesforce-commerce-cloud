@@ -5,7 +5,7 @@
 var Resource = require('dw/web/Resource');
 var TaxMgr = require('dw/order/TaxMgr');
 var Builder = require('../util/builder');
-var checkoutUtilities = require('*/cartridge/scripts/util/afterpayUtilities').checkoutUtilities;
+var apCheckoutUtilities = require('*/cartridge/scripts/util/afterpayUtilities').checkoutUtilities;
 var brandUtilities = require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities;
 var sitePreferencesUtilities = require('*/cartridge/scripts/util/afterpayUtilities').sitePreferencesUtilities;
 var Order = require('*/cartridge/scripts/order/order');
@@ -69,7 +69,7 @@ OrderRequestBuilder.prototype._buildAddress = function (type, address) {
  * @returns {dw.order.PaymentTransaction} - payment transaction associated with provided basket
  */
 OrderRequestBuilder.prototype._getPaymentTransaction = function (basket, isCashAppPay) {
-    var paymentMethod = checkoutUtilities.getPaymentMethodName(isCashAppPay);
+    var paymentMethod = apCheckoutUtilities.getPaymentMethodName(isCashAppPay);
 
     if (!paymentMethod) {
         return null;
@@ -248,7 +248,7 @@ OrderRequestBuilder.prototype.buildItems = function (basket) {
             item.price.currency = product.getPriceModel().getPrice().currencyCode;
         }
         item.quantity = li.getQuantity().value;
-        item.price.amount = (li.adjustedPrice.value / item.quantity).toString();
+        item.price.amount = li.adjustedPrice.value >= 0 ? (li.adjustedPrice.value / item.quantity).toString() : '0.00';
         return item;
     });
     return this;

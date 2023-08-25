@@ -1,5 +1,4 @@
 <iscontent type="text/html" charset="UTF-8" compact="true"/>
-<isinclude template="util/afterpayLibraryInclude" />
 <isif condition="${afterpayExpressCheckoutEnabled && (pdict.pagetype != 'product_detail' || afterpayExpressCheckoutPdpEnabled)}">
     <input id="afterpay-express-countrycode" type="hidden" value="${countrycode}" />
     <input id="afterpay-express-storepickup" type="hidden" value="${afterpayExpressPickupEnabled}" />

@@ -26,9 +26,9 @@ function parsePreapprovalResult(parameter) {
  * @param {Object} parameterMap - parameters objects
  */
 function updatePreapprovalStatus(preapprovalModel, lineItemCtnr, parameterMap) {
-    var checkoutUtilities = require('*/cartridge/scripts/util/afterpayUtilities').checkoutUtilities;
+    var apCheckoutUtilities = require('*/cartridge/scripts/util/afterpayUtilities').checkoutUtilities;
     var isCashAppPayment = parameterMap.isCashAppPay || false;
-    var paymentMethodName = checkoutUtilities.getPaymentMethodName(isCashAppPayment);
+    var paymentMethodName = apCheckoutUtilities.getPaymentMethodName(isCashAppPayment);
     var paymentInstrument = lineItemCtnr.getPaymentInstruments(paymentMethodName)[0];
     var paymentTransaction = paymentInstrument ? paymentInstrument.getPaymentTransaction() : null;
     if (paymentTransaction) {

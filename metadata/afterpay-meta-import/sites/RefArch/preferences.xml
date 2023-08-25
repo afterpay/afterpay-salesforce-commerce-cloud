@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <preferences xmlns="http://www.demandware.com/xml/impex/preferences/2007-03-31">
     <custom-preferences>
-        <all-instances/>
-        <development>
+        <all-instances>
             <preference preference-id="apBrandSettings">{
                 "US": {
                     "brand": "afterpay",
-                    "service": "afterpay.service.US.v2",
+                    "service": "afterpay.service.US.v2"
                 }
             }</preference>
             <preference preference-id="apDisplayPdpInfo">true</preference>
             <preference preference-id="apDisplayPlpInfo">false</preference>
+            <preference preference-id="apDisplayCartInfo">true</preference>
             <preference preference-id="apPaymentMode">DIRECT_CAPTURE</preference>
             <preference preference-id="enableAfterpay">false</preference>
             <preference preference-id="enableCashAppPay">false</preference>
@@ -19,9 +19,16 @@
             <preference preference-id="apEnableExpressCheckoutBuyNow">true</preference>
             <preference preference-id="apStorePickupDescription">Available for next-day pickup</preference>
             <preference preference-id="apEnableExpressCheckoutPdp">false</preference>
+        </all-instances>
+        <development>
+            <preference preference-id="apJavaScript">https://js-sandbox.squarecdn.com/square-marketplace.js</preference>
         </development>
-        <staging/>
-        <production/>
+        <staging>
+            <preference preference-id="apJavaScript">https://js-sandbox.squarecdn.com/square-marketplace.js</preference>
+        </staging>
+        <production>
+            <preference preference-id="apJavaScript">https://js.squarecdn.com/square-marketplace.js</preference>
+        </production>
     </custom-preferences>
 </preferences>
 

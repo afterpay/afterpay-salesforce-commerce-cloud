@@ -123,12 +123,12 @@
                             </div>
 
                             <iscomment>Afterpay</iscomment>
-                            <input type="hidden" class="updated-widget" value="${URLUtils.https('AfterpayWidget-GetUpdatedWidget')}">
                             <isscript>
                                 var sitePreferences = require("*/cartridge/scripts/util/afterpayUtilities.js").sitePreferencesUtilities;
-                                var afterpayPDPEnable = sitePreferences.isDisplayPdpInfo();
+                                var afterpayPDPEnable = sitePreferences.isDisplayPdpInfo() && sitePreferences.isAfterpayEnabled();
                             </isscript>
                             <isif condition="${afterpayPDPEnable}">
+                                <input type="hidden" class="updated-widget" value="${URLUtils.https('AfterpayWidget-GetUpdatedWidget')}">
                                 <div class="afterpay-widget">
                                     <isinclude url="${URLUtils.url('AfterpayWidget-IncludeAfterpayMessage', 'pid', product.id)}" />
                                 </div>

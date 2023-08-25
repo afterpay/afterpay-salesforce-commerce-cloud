@@ -1,4 +1,4 @@
-<!--- TEMPLATENAME: homelanding.isml --->
+<iscomment> TEMPLATENAME: homelanding.isml </iscomment>
 <isdecorate template="application/MenuFrame">
  
 <iscontent type="text/html" charset="UTF-8" /> 
@@ -32,7 +32,7 @@
       </tr>
    </tbody>
 </table>
-<iselse>
+<iselse/>
     <table width="100%" border="0" cellspacing="0" cellpadding="0" id="filtertableProjects">
         <tbody>
               <tr>
@@ -46,7 +46,7 @@
             <isloop items="${pdict.orders}" var="order" status="loopstate">
                 <tr class="list-table">
                     <td class="table_detail w e s" nowrap="nowrap">
-                        <a href="${URLUtils.url('AfterPay-OrderDetails', 'OrderNo', order.orderNo)}" target="_blank">${order.orderNo}</a>
+                        <a rel="noopener" href="${URLUtils.url('AfterPay-OrderDetails', 'OrderNo', order.orderNo)}" target="_blank">${order.orderNo}</a>
                     </td>
                     <isloop items="${order.getPaymentInstruments()}" var="paymentInstr" status="loopstate">
                         <isif condition="${paymentInstr.paymentMethod == 'AFTERPAY' || paymentInstr.paymentMethod == 'CLEARPAY'}">

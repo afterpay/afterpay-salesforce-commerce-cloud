@@ -1,1 +1,1 @@
-<script src="https://js-sandbox.squarecdn.com/square-marketplace.js" async="async"></script>
+<script src="${pdict.apJavascriptURL}" async="async"></script>

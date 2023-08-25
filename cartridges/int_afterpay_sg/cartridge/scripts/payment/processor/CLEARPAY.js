@@ -53,7 +53,7 @@ function Handle(args) {
         var errorMessage = require('*/cartridge/scripts/util/afterpayErrors').getErrorResponses(responseCode, true);
         Logger.error('Error while generating Token : '
             + require('*/cartridge/scripts/util/afterpayErrors').getErrorResponses(responseCode));
-        var redirectURL = URLUtils.https('COBilling-Start', 'afterpay', errorMessage);
+        var redirectURL = URLUtils.https('COBilling-Start', 'clearpay', errorMessage);
 
         app.getView({
             AfterpayRedirectUrl: redirectURL
@@ -63,8 +63,7 @@ function Handle(args) {
     var countryCode = brandUtilities.getCountryCode();
 
     app.getView({
-        apBrand: brandUtilities.getBrand(),
-        apToken: afterPayToken,
+        apToken: afterPayToken.apToken,
         countryCode: countryCode
     }).render('checkout/afterpayredirect');
 

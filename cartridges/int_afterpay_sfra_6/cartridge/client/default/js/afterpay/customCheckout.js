@@ -111,7 +111,7 @@ var exports = {
             }
 
             // Call handleStage with new stage whenever afterpay payment tab is pressed
-            var tabelem = document.querySelector('.afterpay-tab') ? document.querySelector('.afterpay-tab') : document.querySelector('.clearpay-tab');
+            var tabelem = document.querySelector('.afterpay-tab') || document.querySelector('.cashapppay-tab') || document.querySelector('.clearpay-tab');
             if (window.MutationObserver) {
                 var tabelemObserver = new MutationObserver(function () {
                     if ($('.afterpay-tab').hasClass('active') || $('.clearpay-tab').hasClass('active')) {

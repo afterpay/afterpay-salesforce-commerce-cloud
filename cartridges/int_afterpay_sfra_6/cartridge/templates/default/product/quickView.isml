@@ -119,16 +119,22 @@
                 </div>
 
                 <iscomment>Afterpay</iscomment>
-                <input type="hidden" class="updated-widget" value="${URLUtils.https('AfterpayWidget-GetUpdatedWidget')}">
-                <div class="afterpay-widget">
-                    <isinclude template="util/modulesAfterpay"/>
+                 <isscript>
+                    var sitePreferences = require("*/cartridge/scripts/util/afterpayUtilities.js").sitePreferencesUtilities;
+                    var afterpayPDPEnable = sitePreferences.isDisplayPdpInfo() && sitePreferences.isAfterpayEnabled();
+                </isscript>
+                <isif condition="${afterpayPDPEnable == true}">
+                    <input type="hidden" class="updated-widget" value="${URLUtils.https('AfterpayWidget-GetUpdatedWidget')}">
+                    <div class="afterpay-widget">
+                        <isinclude template="util/modulesAfterpay"/>
                         <isafterpaymessage
                             classname="${pdict.classname}"
                             totalprice="${pdict.totalPrice}"
                             eligible="${pdict.apEligible}"
                             mpid="${pdict.apMpid}"
                         />
-                </div>
+                    </div>
+                </isif>
 
                 <!-- Cart and [Optionally] Apple Pay -->
                 <isif condition="${pdict.addToCartUrl}">

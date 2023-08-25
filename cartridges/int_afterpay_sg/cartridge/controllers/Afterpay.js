@@ -60,7 +60,12 @@ function renderMessage() {
  */
 function includeAfterpayLibrary() {
     if (SitePreferences.isAfterpayEnabled()) {
-        app.getView().render('util/afterpayLibraryInclude');
+        var apJavascriptURL = SitePreferences.getJavascriptURL();
+        if (!empty(apJavascriptURL)) {
+            app.getView({
+                apJavascriptURL: apJavascriptURL
+            }).render('util/afterpayLibraryInclude');
+        }
     }
 }
 

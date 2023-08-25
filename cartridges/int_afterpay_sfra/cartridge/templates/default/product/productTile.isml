@@ -15,7 +15,7 @@
         </isif>
         <isscript>
             var sitePreferences = require("*/cartridge/scripts/util/afterpayUtilities.js").sitePreferencesUtilities;
-            var afterpayPLPEnable = sitePreferences.isDisplayPlpInfo();
+            var afterpayPLPEnable = sitePreferences.isDisplayPlpInfo()  && sitePreferences.isAfterpayEnabled();
         </isscript>
         <isif condition="${afterpayPLPEnable}">
             <isinclude template="util/modulesAfterpay" />

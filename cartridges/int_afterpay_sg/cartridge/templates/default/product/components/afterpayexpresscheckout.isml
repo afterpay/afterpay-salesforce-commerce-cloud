@@ -48,6 +48,6 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     <input id="afterpayurl-continuefinalize" type="hidden" value="${URLUtils.url('AfterpayExpress-ContinueFinalize')}" />
     <script src="${URLUtils.staticURL('/lib/jquery/jquery.min.js')}"></script>
     <script src="${URLUtils.staticURL('/lib/jquery/ui/jquery-ui.min.js')}"></script>
-    <isinclude template="util/afterpayLibraryInclude" />
+    <isinclude url="${URLUtils.url('Afterpay-IncludeAfterpayLibrary')}" />
     <script src="${URLUtils.staticURL('/js/afterpayExpress.js')}"></script>
 </isif>

@@ -4,7 +4,6 @@ var configurationService = require('*/cartridge/scripts/logic/services/afterpayC
 var LogUtils = require('*/cartridge/scripts/util/afterpayLogUtils');
 var Logger = LogUtils.getLogger('thresholdUtilities');
 var brandUtilities = require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities;
-var afterpayBrand = brandUtilities.getBrand();
 var result = {
     status: false
 };
@@ -54,7 +53,7 @@ var thresholdUtilities = {
 
         return configuration;
     },
-    getThresholdAmounts: function (brand) {
+    getThresholdAmounts: function () {
         var thresholdResult = {};
 
         var prefix = request.getLocale();
@@ -77,12 +76,12 @@ var thresholdUtilities = {
             }
 
             thresholdResult = this.parseConfigurationResponse(thresholdResponse);
-            this.saveThresholds(brand, thresholdResult);
+            this.saveThresholds(thresholdResult);
         }
 
         return thresholdResult;
     },
-    saveThresholds: function (brand, thresholds) {
+    saveThresholds: function (thresholds) {
         var prefix = request.getLocale();
 
         if (thresholds.minAmount) {
@@ -98,13 +97,13 @@ var thresholdUtilities = {
         session.privacy[prefix + 'mpid'] = thresholds.mpid || '';
     },
     checkThreshold: function (price) {
-        if (afterpayBrand && (price && price.value)) {
+        if (price && price.value) {
             result = this.getThresholdResult(price.value);
         }
         return result;
     },
     checkPriceThreshold: function (price) {
-        if (afterpayBrand && price) {
+        if (price) {
             result = this.getThresholdResult(price);
         }
         return result;
@@ -113,7 +112,7 @@ var thresholdUtilities = {
         result.status = false;
 
         if (price) {
-            var threshold = this.getThresholdAmounts(afterpayBrand);
+            var threshold = this.getThresholdAmounts();
             var isApplicable = brandUtilities.isAfterpayApplicable();
             if (isApplicable) {
                 result.minThresholdAmount = threshold.minAmount;

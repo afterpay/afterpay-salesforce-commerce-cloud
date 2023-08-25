@@ -18,7 +18,6 @@ var Order = require('dw/order/Order');
 var Money = require('dw/value/Money');
 var Transaction = require('dw/system/Transaction');
 var apUtilities = require('*/cartridge/scripts/util/afterpayUtilities');
-var apBrandUtilities = apUtilities.brandUtilities;
 var thresholdUtilities = require('*/cartridge/scripts/util/thresholdUtilities');
 var sitePreferences = apUtilities.sitePreferencesUtilities;
 var afterpayEnabled = sitePreferences.isAfterpayEnabled();
@@ -227,8 +226,7 @@ server.get('ContinueFinalize', server.middleware.https, function (req, res, next
     AfterpayRefArchCOHelpers.calculateAndSetPaymentAmount(currentBasket);
     var payAmt = AfterpayCOHelpers.getCurrentAfterpayPaymentAmount(currentBasket);
     if (!AfterpayCOHelpers.isPriceWithinThreshold(payAmt)) {
-        var brand = apBrandUtilities.getBrand();
-        var threshold = thresholdUtilities.getThresholdAmounts(brand);
+        var threshold = thresholdUtilities.getThresholdAmounts();
         redirectToErrorDisplay(res, Resource.msgf('minimum.threshold.message', 'afterpay', null, new Money(threshold.minAmount, currentBasket.currencyCode), new Money(sitePreferences.maxAmount, currentBasket.currencyCode)));
         return next();
     }
@@ -338,7 +336,7 @@ server.get('CancelOrder', server.middleware.https, function (req, res, next) {
     if (req.querystring.afterpayerror) {
         res.redirect(URLUtils.url('Cart-Show', 'afterpayerror', req.querystring.afterpayerror));
     } else {
-        res.redirect(URLUtils.url('Cart-Show'));
+        res.redirect(URLUtils.url('Cart-Show', 'afterpayerror', Resource.msg('apierror.flow.default', 'afterpay', null)));
     }
     return next();
 });

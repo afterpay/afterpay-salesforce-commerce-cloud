@@ -144,7 +144,7 @@ OrderRequestBuilder.prototype.buildItems = function (basket) {
             item.price.currency = product.getPriceModel().getPrice().currencyCode;
         }
         item.quantity = li.getQuantity().value;
-        item.price.amount = (li.adjustedPrice.value / item.quantity).toString();
+        item.price.amount = li.adjustedPrice.value >= 0 ? (li.adjustedPrice.value / item.quantity).toString() : '0.00';
         return item;
     });
 

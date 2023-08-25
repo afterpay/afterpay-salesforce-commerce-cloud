@@ -1,20 +1,14 @@
 <iscontent type="text/html" charset="UTF-8" compact="true"/>
 <isdecorate template="checkout/pt_checkout"/>
-    <isinclude template="util/afterpayLibraryInclude" />
+    <isinclude url="${URLUtils.url('Afterpay-IncludeAfterpayLibrary')}" />
     <script src="${URLUtils.staticURL('/lib/jquery/jquery.min.js')}"></script>
     <script>
-        var brand = '${pdict.apBrand}';
         var countryCode = '${pdict.countryCode}';
 
         window.onload = function () {
             $(".loader-image").fadeOut("slow");
-            if (brand === 'clearpay' && countryCode !== 'GB') {
-                Clearpay.initialize({countryCode: countryCode});
-                Clearpay.redirect({token: '${pdict.apToken.apToken}'});
-            } else {
-                AfterPay.initialize({countryCode: countryCode});
-                AfterPay.redirect({token: '${pdict.apToken.apToken}'});
-            }
+            AfterPay.initialize({countryCode: countryCode});
+            AfterPay.redirect({token: '${pdict.apToken}'});
         }
     </script>
     <div class="loader-image"></div>

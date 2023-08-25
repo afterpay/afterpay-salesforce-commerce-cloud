@@ -1,4 +1,4 @@
-<!--- TEMPLATENAME: afterpayorder.isml --->
+<iscomment> TEMPLATENAME: afterpayorder.isml </iscomment>
 <isdecorate template="application/MenuFrame"> 
     <iscontent type="text/html" charset="UTF-8" /> 
     <isinclude template="custom/modules" /> 
@@ -47,7 +47,7 @@
         <tr>
             <td class="table_detail left e w s" nowrap="nowrap"><label class="item-label" for="">${Resource.msg('transaction.status','afterpay',null)}</label></td>
             <isloop items="${order.getPaymentInstruments()}" var="paymentInstr" status="loopstate">
-                <isif condition="${paymentInstr.paymentMethod == 'AFTERPAY' || paymentInstr.paymentMethod == 'CLEARPAY'}">
+                <isif condition="${paymentInstr.paymentMethod == 'AFTERPAY' || paymentInstr.paymentMethod == 'CLEARPAY' || paymentInstr.paymentMethod == 'CASHAPPPAY'}">
                     <isset name="paymentInstrument" value="${paymentInstr}" scope="page"/>
                 </isif>
             </isloop>
@@ -134,11 +134,24 @@
             <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for="">${currentStatus}</label></td>
         </tr>
         <tr>
-            <td class="table_detail left e w s" nowrap="nowrap"><label class="item-label" for="">${Resource.msg('payment.billing.address','afterpay',null)}</label></td>
+            <td class="table_detail left e w s" nowrap="nowrap" rowspan="4"><label class="item-label" for="">${Resource.msg('payment.billing.address','afterpay',null)}</label></td>
             <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for=""></label>
-                ${order.getBillingAddress().firstName+' '+order.getBillingAddress().lastName}<br>
-                ${order.getBillingAddress().address1}<br>${order.getBillingAddress().address2 ? order.getBillingAddress().address2 : ''}
-                ${order.getBillingAddress().city+' '+order.getBillingAddress().stateCode+' '+order.getBillingAddress().postalCode}<br>
+                ${order.getBillingAddress().firstName+' '+order.getBillingAddress().lastName}
+            </td>        
+        </tr>
+        <tr>
+            <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for=""></label>
+               ${order.getBillingAddress().address1}
+            </td>        
+        </tr>
+          <tr>
+            <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for=""></label>
+               ${order.getBillingAddress().address2 ? order.getBillingAddress().address2 : ''}
+               ${order.getBillingAddress().city+' '+order.getBillingAddress().stateCode+' '+order.getBillingAddress().postalCode}
+            </td>        
+        </tr>
+        <tr>
+            <td class="table_detail left e s" nowrap="nowrap" width="75%"><label class="item-label" for=""></label>
                 ${order.getBillingAddress().countryCode}
             </td>        
         </tr>
@@ -158,14 +171,14 @@
                 <tr>
                     <td class="center" colspan="2">
                         <button name="submit" class="button">${Resource.msg('operations.submit.label','afterpay',null)}</button>
-                        <input type="hidden" name="orderno" value="${orderNo}">
-                        <input type="hidden" name="amount" value="${afterpayTotalAmount}">
+                        <input type="hidden" name="orderno" value="${orderNo}" />
+                        <input type="hidden" name="amount" value="${afterpayTotalAmount}" />
                     </td>
                 </tr>
             </table>
         </div>
     </div>
-<iselse>
+<iselse/>
     <button class="button" disabled>
         ${Resource.msg('operations.no.actions','afterpay',null)}
     </button>

@@ -140,13 +140,12 @@ getTemplateSpecificWidget.getCheckoutWidgetData = function (currentBasket, class
 
     var afterpayLimits = thresholdUtilities.checkThreshold(totalPrice);
     var isEligible = apBrandUtilities.isAfterpayApplicable() && !cartProductExcluded;
-    var iscashAppApplicable = apSitePreferences.isCashAppEnabled();
     var isWithinThreshold = afterpayLimits.status;
 
     priceContext.apEligible = isEligible;
     priceContext.apMpid = afterpayLimits.mpid;
     priceContext.apApplicable = isEligible && isWithinThreshold;
-    priceContext.cashAppApplicable = iscashAppApplicable && isWithinThreshold;
+    priceContext.cashAppApplicable = apSitePreferences.isCashAppEnabled();
 
     return priceContext;
 };

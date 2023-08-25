@@ -19,6 +19,13 @@ var sitePreferencesUtilities = {
         }
     },
 
+    isCountrySupported: function () {
+        var suppportedLocales = ['AU', 'US', 'GB', 'NZ', 'CA'];
+        // eslint-disable-next-line no-use-before-define
+        var currentLocale = brandUtilities.getCountryCode();
+        return suppportedLocales.indexOf(currentLocale) >= 0;
+    },
+
     getPaymentMode: function () {
         return Site.current.preferences.custom.apPaymentMode;
     },
@@ -31,6 +38,10 @@ var sitePreferencesUtilities = {
         return Site.getCurrent().getCustomPreferenceValue('apDisplayPlpInfo');
     },
 
+    isDisplayCartInfo: function () {
+        return Site.getCurrent().getCustomPreferenceValue('apDisplayCartInfo');
+    },
+
     getControllerCartridgeName: function () {
         return Site.getCurrent().getCustomPreferenceValue('apControllerCartridgeName');
     },
@@ -40,12 +51,12 @@ var sitePreferencesUtilities = {
     },
 
     isAfterpayEnabled: function () {
-        return Site.getCurrent().getCustomPreferenceValue('enableAfterpay') || false;
+        return (Site.getCurrent().getCustomPreferenceValue('enableAfterpay') && this.isCountrySupported()) || false;
     },
 
     isCashAppEnabled: function () {
         // eslint-disable-next-line no-use-before-define
-        return (Site.getCurrent().getCustomPreferenceValue('enableCashAppPay') && brandUtilities.getCountryCode() == 'US') || false;
+        return (Site.getCurrent().getCustomPreferenceValue('enableCashAppPay') && this.isAfterpayEnabled() && brandUtilities.getCountryCode() == 'US') || false;
     },
 
     getBrandSettings: function () {
@@ -53,11 +64,7 @@ var sitePreferencesUtilities = {
     },
 
     isExpressCheckoutEnabled: function () {
-        var expressSuppportedLocales = ['AU', 'US', 'GB', 'NZ', 'CA'];
-        // eslint-disable-next-line no-use-before-define
-        var currentLocale = brandUtilities.getCountryCode();
-        var isLocaleSupported = expressSuppportedLocales.indexOf(currentLocale) >= 0;
-        return Site.getCurrent().getCustomPreferenceValue('apEnableExpressCheckout') && isLocaleSupported;
+        return Site.getCurrent().getCustomPreferenceValue('apEnableExpressCheckout') && this.isCountrySupported();
     },
 
     getExpressCheckoutShippingStrategy: function () {
@@ -80,7 +87,6 @@ var sitePreferencesUtilities = {
     isExpressCheckoutPdpEnabled: function () {
         return Site.getCurrent().getCustomPreferenceValue('apEnableExpressCheckoutPdp');
     },
-
     getRestrictedProducts: function () {
         var excludedProducts = Site.getCurrent().getCustomPreferenceValue('apRestrictedProducts');
         var afterpayRestrictedProducts = [];
@@ -91,6 +97,9 @@ var sitePreferencesUtilities = {
             });
         }
         return afterpayRestrictedProducts;
+    },
+    getJavascriptURL: function () {
+        return Site.getCurrent().getCustomPreferenceValue('apJavaScript');
     }
 };
 

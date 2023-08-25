@@ -24,7 +24,7 @@ var responseUtils = require('*/cartridge/scripts/util/Response');
 var apBrandUtilities = AfterpayUtilities.brandUtilities;
 var thresholdUtilities = require('*/cartridge/scripts/util/thresholdUtilities');
 var brand = apBrandUtilities.getBrand();
-var threshold = thresholdUtilities.getThresholdAmounts(brand);
+var threshold = thresholdUtilities.getThresholdAmounts();
 var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
 var AfterpaySGCOHelpers = require('*/cartridge/scripts/checkout/afterpaySGCheckoutHelpers');
 

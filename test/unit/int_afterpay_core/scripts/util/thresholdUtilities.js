@@ -40,9 +40,6 @@ var Logger = {
 
 var utilitiesMock = {
     brandUtilities: {
-        getBrand: function () {
-            return 'afterpay'
-        },
         getCountryCode: function () {
             return 'US';
         },

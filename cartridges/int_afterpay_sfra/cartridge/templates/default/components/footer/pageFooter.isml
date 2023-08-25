@@ -11,7 +11,7 @@
                 <isset name="apBrand" value="${pdict.CurrentSession.privacy.afterpayBrand}" scope="page"/>
                 <isif condition="${pdict.CurrentSession.privacy.afterpayApplicable && apBrand}">
                     <div>
-                        <h2 class="title d-none d-sm-block">${Resource.msg('footer.paymetns', 'afterpay', null)}</h2>
+                        <h2 class="title d-none d-sm-block">${Resource.msg('footer.payments', 'afterpay', null)}</h2>
                     </div>
                     <img class="afterpay-image"
                         src="${URLUtils.httpStatic('/images/logo-' + apBrand + '-black.png')}"

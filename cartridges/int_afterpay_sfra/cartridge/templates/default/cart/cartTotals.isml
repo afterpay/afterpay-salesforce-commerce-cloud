@@ -48,20 +48,23 @@
 </div>
 
 <!--- Afterpay Widget --->
-<div class="row">
-    <div class="col-12">
-        <isinclude template="util/modulesAfterpay"/>
-        <input type="hidden" class="updated-widget" value="${URLUtils.https('AfterpayWidget-GetUpdatedWidget')}" />
-        <div class="afterpay-widget">
-            <isafterpaymessage
-                classname="${pdict.classname}"
-                totalprice="${pdict.totalPrice}"
-                eligible="${pdict.apEligible}"
-                mpid="${pdict.apMpid}"
-            />
-        </div>
-    </div>    
-</div>
-
-
-
+ <isscript>
+    var sitePreferences = require("*/cartridge/scripts/util/afterpayUtilities.js").sitePreferencesUtilities;
+    var afterpayPDPEnable = sitePreferences.isDisplayCartInfo() && sitePreferences.isAfterpayEnabled();
+</isscript>
+<isif condition="${afterpayPDPEnable == true}">
+    <div class="row">
+        <div class="col-12">
+            <isinclude template="util/modulesAfterpay"/>
+            <input type="hidden" class="updated-widget" value="${URLUtils.https('AfterpayWidget-GetUpdatedWidget')}" />
+            <div class="afterpay-widget">
+                <isafterpaymessage
+                    classname="${pdict.classname}"
+                    totalprice="${pdict.totalPrice}"
+                    eligible="${pdict.apEligible}"
+                    mpid="${pdict.apMpid}"
+                />
+            </div>
+        </div>    
+    </div>
+</isif>

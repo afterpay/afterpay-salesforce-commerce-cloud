@@ -38,7 +38,7 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
             buttonClass += ' afterpay-hide';
         }
     </isscript>
-    <div class="col-12 pdp-checkout-button">
+    <div class="col-12">
         <isif condition="${isExpressCheckoutFinalize}">
             <button id="afterpay-continue-finalize-button" class="${buttonClass}"
                 data-toggle="modal"
