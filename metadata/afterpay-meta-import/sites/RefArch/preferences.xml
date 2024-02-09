@@ -19,6 +19,7 @@
             <preference preference-id="apEnableExpressCheckoutBuyNow">true</preference>
             <preference preference-id="apStorePickupDescription">Available for next-day pickup</preference>
             <preference preference-id="apEnableExpressCheckoutPdp">false</preference>
+            <preference preference-id="apEnableExpressCheckoutCart">true</preference>
         </all-instances>
         <development>
             <preference preference-id="apJavaScript">https://js-sandbox.squarecdn.com/square-marketplace.js</preference>

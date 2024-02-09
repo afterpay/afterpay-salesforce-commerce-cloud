@@ -120,14 +120,14 @@ describe('thresholdUtilities', function () {
         '*/cartridge/scripts/util/afterpayLogUtils': customLogger
     });
 
-    it('detect that provided price is below an actual threshold', function () {
+    it('detect that provided price is within threshold', function () {
         var afterPayIsRangeAvailable = session.privacy.set('afterpayIsRangeAvailable', true);
         var afterPayMinAmount = session.privacy.set('afterpayMinAmount', 100);
         var afterPayMaxAmount = session.privacy.set('afterpayMaxAmount', 1000);
         var result = thresholdUtilities.checkThreshold({
             value: 1
         });
-        assert.equal(result && result.minThresholdAmount, 5);
+        assert.equal(result.status, false);
     });
 });
 

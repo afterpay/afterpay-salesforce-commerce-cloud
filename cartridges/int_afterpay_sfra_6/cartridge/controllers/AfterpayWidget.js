@@ -17,9 +17,9 @@ server.get('IncludeAfterpayLibrary', server.middleware.https, server.middleware.
         };
         if (scope.apJavascriptURL) {
             res.render('util/afterpayLibraryInclude', scope);
+            next();
         }
     }
-    next();
 });
 
 /**
@@ -31,7 +31,7 @@ server.get('GetUpdatedWidget', server.middleware.https, function (req, res, next
     var priceContext;
     var totalPrice;
     var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
-    var reqProductID = req.querystring.productID;
+    var reqProductID = '';
     var isWithinThreshold = AfterpayCOHelpers.isPDPBasketAmountWithinThreshold();
     var apBrandUtilities = apUtilities.brandUtilities;
 
@@ -47,8 +47,10 @@ server.get('GetUpdatedWidget', server.middleware.https, function (req, res, next
         apEligible = !AfterpayCOHelpers.checkRestrictedProducts(reqProductID);
     } else if (req.querystring.className === 'cart-afterpay-message') {
         var currentBasket = BasketMgr.getCurrentBasket();
+        var cartData = AfterpayCOHelpers.getCartData();
         totalPrice = currentBasket.totalGrossPrice;
-        apEligible = !AfterpayCOHelpers.checkRestrictedCart();
+        apEligible = cartData.apCartEligible;
+        reqProductID = cartData.apProductIDs;
     }
     var afterpayLimits = thresholdUtilities.checkThreshold(totalPrice);
 
@@ -56,7 +58,8 @@ server.get('GetUpdatedWidget', server.middleware.https, function (req, res, next
         classname: req.querystring.className,
         totalprice: totalPrice.value ? totalPrice.value : totalPrice,
         eligible: apEligible,
-        mpid: afterpayLimits.mpid
+        mpid: afterpayLimits.mpid,
+        approductids: reqProductID
     };
 
     var updatedWidget = renderTemplateHelper.getRenderedHtml(
@@ -66,6 +69,33 @@ server.get('GetUpdatedWidget', server.middleware.https, function (req, res, next
 
     res.json({
         apApplicable: (isWithinThreshold && afterpayLimits.status) && apEligible,
+        error: false,
+        updatedWidget: updatedWidget
+    });
+
+    next();
+});
+
+server.get('updateCheckoutWidget', server.middleware.https, function (req, res, next) {
+    var renderTemplateHelper = require('*/cartridge/scripts/renderTemplateHelper');
+    var updatedTemplate = 'util/afterpayMessage';
+    var priceContext;
+    var currentBasket = BasketMgr.getCurrentBasket();
+    var totalPrice = currentBasket.totalGrossPrice;
+    var afterpayLimits = thresholdUtilities.checkThreshold(totalPrice);
+
+    priceContext = {
+        totalprice: totalPrice.value ? totalPrice.value : totalPrice,
+        mpid: afterpayLimits.mpid,
+        classname: 'checkout-afterpay-message'
+    };
+
+    var updatedWidget = renderTemplateHelper.getRenderedHtml(
+        priceContext,
+        updatedTemplate
+    );
+
+    res.json({
         error: false,
         updatedWidget: updatedWidget
     });

@@ -60,6 +60,7 @@ getTemplateSpecificWidget.getWidgetData = function (productObject, className, cu
         priceContext.apEligible = isEligible;
         priceContext.apMpid = afterpayLimits.mpid;
         priceContext.apApplicable = isEligible && isWithinThreshold;
+        priceContext.apProductIDs = reqProductID;
     }
 
     return priceContext;
@@ -103,6 +104,7 @@ getTemplateSpecificWidget.getWidgetDataForSet = function (productObject, classNa
             afterpayWidgetData.apEligible = isEligible;
             afterpayWidgetData.apMpid = afterpayLimits.mpid;
             afterpayWidgetData.apApplicable = isEligible && isWithinThreshold;
+            afterpayWidgetData.apProductIDs = reqProductID;
 
             getTemplateSpecificWidget.pushWidgetDataToProduct(singleSetProduct, afterpayWidgetData);
         }
@@ -124,7 +126,7 @@ getTemplateSpecificWidget.pushWidgetDataToProduct = function (singleSetProduct, 
  * @returns {string} - request JSON
  */
 getTemplateSpecificWidget.getCheckoutWidgetData = function (currentBasket, className, locale) {
-    var cartProductExcluded = AfterpayCOHelpers.checkRestrictedCart();
+    var cartData = AfterpayCOHelpers.getCartData();
     apBrandUtilities.initBrand(locale);
 
     if (!currentBasket) {
@@ -139,13 +141,14 @@ getTemplateSpecificWidget.getCheckoutWidgetData = function (currentBasket, class
     priceContext.totalPrice = totalPrice.value;
 
     var afterpayLimits = thresholdUtilities.checkThreshold(totalPrice);
-    var isEligible = apBrandUtilities.isAfterpayApplicable() && !cartProductExcluded;
+    var isEligible = apBrandUtilities.isAfterpayApplicable() && cartData.apCartEligible;
     var isWithinThreshold = afterpayLimits.status;
 
     priceContext.apEligible = isEligible;
     priceContext.apMpid = afterpayLimits.mpid;
     priceContext.apApplicable = isEligible && isWithinThreshold;
     priceContext.cashAppApplicable = apSitePreferences.isCashAppEnabled();
+    priceContext.apProductIDs = cartData.apProductIDs;
 
     return priceContext;
 };

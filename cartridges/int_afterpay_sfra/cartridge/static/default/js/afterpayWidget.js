@@ -2,7 +2,7 @@
  * Creates checkout widget for Afterpay
  */
 function createAfterpayWidget() {
-    if (typeof AfterPay != 'undefined') {
+    if ($('#afterpay-widget-amount').length != 0) {
         window.afterpayWidget = new AfterPay.Widgets.PaymentSchedule({
             token: $('#afterpay-token').val(),
             amount: { amount: $('#afterpay-widget-amount').val(), currency: $('#afterpay-widget-currency').val() },

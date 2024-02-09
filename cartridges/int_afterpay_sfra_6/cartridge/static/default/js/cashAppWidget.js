@@ -36,8 +36,8 @@ function initCashAppPay(afterpaytoken) {
     }
     sleep(commenceDelay).then(() => {
         $('#cash-app-pay').css('display','block');
-        $.spinner().stop();
         AfterPay.initializeForCashAppPay({countryCode: "US", token: afterpaytoken, cashAppPayOptions});
+        $.spinner().stop();
     });
     
 }

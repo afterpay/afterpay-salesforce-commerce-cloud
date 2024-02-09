@@ -25,6 +25,7 @@
                 totalprice="${pdict.totalPrice}"
                 eligible="${pdict.apEligible}"
                 mpid="${pdict.apMpid}"
+                approductids="${pdict.apProductIDs}"
             />
         </isif>
 

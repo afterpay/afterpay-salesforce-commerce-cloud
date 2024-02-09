@@ -13,8 +13,8 @@
                     <div>
                         <h2 class="title d-none d-sm-block">${Resource.msg('footer.payments', 'afterpay', null)}</h2>
                     </div>
-                    <img class="afterpay-image"
-                        src="${URLUtils.httpStatic('/images/logo-' + apBrand + '-black.png')}"
+                    <img class="${apBrand}-image"
+                        height="32"
                         alt="${apBrand}"
                     />
                 </isif>

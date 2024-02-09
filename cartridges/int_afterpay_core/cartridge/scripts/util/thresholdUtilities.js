@@ -50,7 +50,6 @@ var thresholdUtilities = {
                 configuration.mpid = thresholdResponse.publicId;
             }
         }
-
         return configuration;
     },
     getThresholdAmounts: function () {
@@ -109,14 +108,10 @@ var thresholdUtilities = {
         return result;
     },
     getThresholdResult: function (price) {
-        result.status = false;
-
         if (price) {
             var threshold = this.getThresholdAmounts();
             var isApplicable = brandUtilities.isAfterpayApplicable();
             if (isApplicable) {
-                result.minThresholdAmount = threshold.minAmount;
-                result.maxThresholdAmount = threshold.maxAmount;
                 result.mpid = threshold.mpid;
 
                 if (price >= threshold.minAmount && price <= threshold.maxAmount) {

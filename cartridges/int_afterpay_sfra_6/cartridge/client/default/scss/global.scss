@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-@import "~base/homePage";
+@import "~base/global";
 
 .afterpay-checkout-button {
     background-color: #000;
@@ -24,5 +24,19 @@
 
 .afterpay-hide {
     display: none !important;
+}
+
+img.afterpay-image {
+    vertical-align: middle;
+    width: 7em;
+    margin: 5px 0;
+    content: url('https://static.afterpay.com/integration/product-page/logo-afterpay-colour.png');
+}
+
+img.clearpay-image {
+    vertical-align: middle;
+    width: 7em;
+    margin: 5px 0;
+    content: url('https://static.afterpay.com/integration/product-page/logo-clearpay-colour.png');
 }
 

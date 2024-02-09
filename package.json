@@ -1,6 +1,6 @@
 {
   "name": "Afterpay",
-  "version": "23.4.1",
+  "version": "24.1.0",
   "description": "Afterpay's official cartridge for SFRA and controllers-based SiteGenesis ",
   "main": "index.js",
   "engines": {

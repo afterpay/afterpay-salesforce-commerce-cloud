@@ -87,6 +87,11 @@ var sitePreferencesUtilities = {
     isExpressCheckoutPdpEnabled: function () {
         return Site.getCurrent().getCustomPreferenceValue('apEnableExpressCheckoutPdp');
     },
+
+    isExpressCheckoutCartEnabled: function () {
+        return Site.getCurrent().getCustomPreferenceValue('apEnableExpressCheckoutCart');
+    },
+
     getRestrictedProducts: function () {
         var excludedProducts = Site.getCurrent().getCustomPreferenceValue('apRestrictedProducts');
         var afterpayRestrictedProducts = [];

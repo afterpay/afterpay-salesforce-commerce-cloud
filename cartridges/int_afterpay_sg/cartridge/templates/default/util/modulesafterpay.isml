@@ -10,6 +10,7 @@
     attribute="classname"
     attribute="totalprice"
     attribute="mpid"
+    attribute="approductids"
 />
 
 <ismodule template="product/components/afterpaywidget"

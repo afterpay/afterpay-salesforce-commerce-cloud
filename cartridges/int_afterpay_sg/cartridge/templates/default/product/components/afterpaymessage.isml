@@ -11,14 +11,13 @@
 
 <isif condition="${pdict.totalprice}">
     <isif condition="${pdict.classname == 'checkout-afterpay-message'}">
-        	<div class="afterpay-paymethod-widget-div">
-				<div id="afterpay-widget-container"></div>
-			</div>
-        <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            createAfterpayWidget();
-        });
-        </script>
+        <square-placement
+            data-type="payment-schedule"
+            data-mpid="${pdict.mpid}"
+            data-currency="${session.currency.getCurrencyCode()}"
+            data-amount="${pdict.totalprice}"
+            data-platform="SFCC/SiteGenesis"
+        ></square-placement>
     <iselse/>
         <isif condition="${pdict.classname == 'cart-afterpay-message'}">
             <isset name="pageType" value="cart" scope ="page"/>
@@ -36,6 +35,8 @@
             data-mpid="${pdict.mpid}"
             data-currency="${session.currency.getCurrencyCode()}"
             data-page-type="${pageType}"
+            data-platform="SFCC/SiteGenesis"
+            data-item-skus="${pdict.approductids}"
         ></square-placement>
     </isif>
 </isif>

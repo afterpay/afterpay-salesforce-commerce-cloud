@@ -34,26 +34,24 @@
     // session since we're obviously not the normal express checkout flow
     AfterpaySession.clearSession(); // clear session. widget will not be displayed since checked flags will return false.
   }
-  
 </isscript>
 <isif condition="${afterpayExpressCheckoutEnabled && isExpressCheckoutFinalize}">
-  <input id="afterpay-widget-amount" type="hidden" value="${afterpayAmount.value}" />
-  <input id="afterpay-widget-currency" type="hidden" value="${afterpayAmount.currencyCode}" />
-  <input id="afterpay-widget-locale" type="hidden" value="${request.getLocale()}" />
-  <input id="afterpay-token" type="hidden" value="${afterpayToken}" />
-  <input id="afterpay-express-url-cartstatus" type="hidden" value="${URLUtils.url('AfterpayExpress-CartStatus')}" />
-  <input id="afterpay-express-url-widgeterror" type="hidden" value="${URLUtils.url('AfterpayExpress-WidgetError')}" />
-  <input id="afterpay-express-url-placeorder" type="hidden" value="${URLUtils.url('AfterpayExpress-FinalizeOrder')}" />
-  <input id="afterpay-express-url-cancelorder" type="hidden" value="${URLUtils.url('AfterpayExpress-CancelOrder')}" />
-<iselse/>
-    <iscomment>For non-express-checkout Afterpay tab, show new widget. Note that in this case,
-    AFTERPAY_PBI has not been added to the basket yet, so amount should be 0. However, the amounts
-    will be updated via client-side Javascript for this case
-    </iscomment>
-    <input id="afterpay-express-checkout-finalize" type="hidden" value="false" />
-    <input id="afterpay-widget-amount" type="hidden" value="${afterpayOrdertotal}" />
-    <input id="afterpay-widget-currency" type="hidden" value="${session.currency.getCurrencyCode()}" />
+    <input id="afterpay-express-checkout-finalize" type="hidden" value="true" />
+    <input id="afterpay-widget-amount" type="hidden" value="${afterpayAmount.value}" />
     <input id="afterpay-widget-locale" type="hidden" value="${request.getLocale()}" />
+    <input id="afterpay-widget-currency" type="hidden" value="${afterpayAmount.currencyCode}" />
+    <input id="afterpay-token" type="hidden" value="${afterpayToken}" />
+    <input id="afterpay-express-url-cancelorder" type="hidden" value="${URLUtils.url('AfterpayExpress-CancelOrder')}" />
+    <input id="afterpay-express-url-finalize" type="hidden" value="${URLUtils.url('AfterpayExpress-FinalizeOrder')}" />
+    <input id="afterpay-express-url-cartstatus" type="hidden" value="${URLUtils.url('AfterpayExpress-CartStatus')}" />
+    <input id="afterpay-express-url-shippingrequired" type="hidden" value="${URLUtils.url('AfterpayExpress-GetShippingRequired')}" />
+    <input id="afterpay-express-url-widgeterror" type="hidden" value="${URLUtils.url('AfterpayExpress-WidgetError')}" />
+<iselse/>
+    <iscomment>For non-express-checkout Afterpay tab, show new widget. </iscomment>
+    <input id="afterpay-express-checkout-finalize" type="hidden" value="false" />
+    <input id="afterpay-widget-amount" type="hidden" value="${afterpayAmount.value}" />
+    <input id="afterpay-widget-locale" type="hidden" value="${request.getLocale()}" />
+    <input id="afterpay-widget-currency" type="hidden" value="${afterpayAmount.currencyCode}" />
     <input id="afterpay-token" type="hidden" value="" />
 </isif>
 <script src="${URLUtils.staticURL('/js/afterpayWidget.js')}"></script>

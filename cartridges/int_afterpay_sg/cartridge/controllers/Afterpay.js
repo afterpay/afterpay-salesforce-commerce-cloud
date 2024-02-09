@@ -27,6 +27,7 @@ function renderMessage() {
     var totalprice = parseFloat(params.totalprice.stringValue);
     var classname = params.classname.stringValue;
     var applyCaching;
+    var reqProductID = '';
 
     if (totalprice && !(totalprice.isNaN)) {
         totalprice = new Money(totalprice, session.currency);
@@ -36,12 +37,14 @@ function renderMessage() {
 
     var afterpayApplicable = BrandUtilities.isAfterpayApplicable();
     var isEligible = true;
-    if (classname !== 'cart-afterpay-message') {
-        applyCaching = true;
-        var reqProductID = params.productID.stringValue;
-        isEligible = !AfterpayCOHelpers.checkRestrictedProducts(reqProductID);
+    if (classname === 'cart-afterpay-message' || classname === 'checkout-afterpay-message') {
+        var cartData = AfterpayCOHelpers.getCartData();
+        isEligible = cartData.apCartEligible;
+        reqProductID = cartData.apProductIDs;
     } else {
-        isEligible = !AfterpayCOHelpers.checkRestrictedCart();
+        applyCaching = true;
+        reqProductID = params.productID.stringValue;
+        isEligible = !AfterpayCOHelpers.checkRestrictedProducts(reqProductID);
     }
     var afterpayLimits = thresholdUtilities.checkThreshold(totalprice);
     if (afterpayApplicable) {
@@ -50,7 +53,8 @@ function renderMessage() {
             eligible: isEligible,
             classname: classname,
             mpid: afterpayLimits.mpid,
-            totalprice: totalprice.value
+            totalprice: totalprice.value,
+            approductids: reqProductID
         }).render('product/components/afterpaymessage');
     }
 }

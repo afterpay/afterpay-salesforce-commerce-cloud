@@ -18,7 +18,7 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     var afterpayEnabled = sitePreferences.isAfterpayEnabled();
     var afterpayExpressCheckoutEnabled = afterpayEnabled ? sitePreferences.isExpressCheckoutEnabled() : false;
     var isExpressCheckoutFinalize = require('*/cartridge/scripts/util/afterpaySession').isExpressCheckoutFinalizeFlow();
-    var afterpayExpressCheckoutPdpEnabled = sitePreferences.isExpressCheckoutPdpEnabled();
+    var afterpayExpressCheckoutCartEnabled = sitePreferences.isExpressCheckoutCartEnabled();
     var AfterpayCOHelpers = require('*/cartridge/scripts/checkout/afterpayCheckoutHelpers');
     var afterpayExpressPickupEnabled = require('~/cartridge/scripts/checkout/afterpayRefArchCheckoutHelpers').shouldEnableExpressPickupMode();
     var afterpayExpressCheckoutBuyNowEnabled = sitePreferences.isExpressCheckoutBuyNowEnabled();
@@ -43,7 +43,7 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
             <a href="${URLUtils.url('AfterpayExpress-ContinueFinalize')}" class="${checkoutButtonClass} btn btn-block checkout-btn ${pdict.valid.error ? 'disabled' : ''}">
             &nbsp;
             </a>
-        <iselse/>
+        <iselseif condition="${afterpayExpressCheckoutCartEnabled}" />
             <a id="afterpay-express-button" class="${checkoutButtonClass} btn btn-block checkout-btn ${pdict.valid.error ? 'disabled' : ''}" role="button">
             &nbsp;
             </a>

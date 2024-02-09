@@ -32,7 +32,7 @@ function getWidget(updatedProductID, updatedPrice, className, $productContainer)
 /**
  * @description Update widget for PDP specifically
  */
-function updatePpdWidget() {
+function updatePdpWidget() {
     var productID = $('.product-id').text();
     var productPrice = $('.prices-add-to-cart-actions .prices .price .sales .value').attr('content');
     var productContainer = $('.product-detail');
@@ -67,7 +67,7 @@ $(document).ready(function () {
     var cartTotal = '';
 
     $('body').on('product:afterAttributeSelect', function () {
-        updatePpdWidget();
+        updatePdpWidget();
     });
 
     $(document).ajaxStart(function () {

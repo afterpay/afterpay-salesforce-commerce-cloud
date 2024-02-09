@@ -21,12 +21,6 @@ $screen_width : 767px;
     font-size: 0.85em;
 }
 
-.afterpay-image {
-    vertical-align: middle;
-    width: 7em;
-    margin: 5px 0;
-}
-
 .pdp-afterpay-message {
     padding-top: 0.625em;
     padding-bottom: 1.0625em;
@@ -271,5 +265,13 @@ $screen_width : 767px;
 .cart-and-ipay .add-to-cart {
     width: 100%;
     display: block;
+}
+
+img.afterpay-checkout-logo {
+    content: url('https://static.afterpay.com/integration/checkout/logo-afterpay-colour-154x32.png');
+}
+
+img.clearpay-checkout-logo {
+    content: url('https://static.afterpay.com/integration/checkout/logo-clearpay-colour-131x25.png');
 }
 

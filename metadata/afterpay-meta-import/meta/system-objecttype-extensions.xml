@@ -169,7 +169,7 @@
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
             <attribute-definition attribute-id="apControllerCartridgeName">
-                <display-name xml:lang="x-default">Default Controller Cartridge Name</display-name>
+                <display-name xml:lang="x-default">Default Controller Cartridge Name (SiteGenesis Only)</display-name>
                 <description xml:lang="x-default">Name of default storefront controller cartridge</description>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
@@ -178,7 +178,7 @@
                 <default-value>app_storefront_controllers</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="apCoreCartridge">
-                <display-name xml:lang="x-default">Default Core Cartridge</display-name>
+                <display-name xml:lang="x-default">Default Core Cartridge (SiteGenesis Only)</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -281,12 +281,20 @@
                 <default-value>Available for next-day pickup</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="apEnableExpressCheckoutPdp">
-                <display-name xml:lang="x-default">Enable Express Checkout option on product details page.</display-name>
+                <display-name xml:lang="x-default">Enable Express Checkout option on product details</display-name>
                 <description xml:lang="x-default">Enable Express Checkout option on product details page.</description>
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <default-value>false</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="apEnableExpressCheckoutCart">
+                <display-name xml:lang="x-default">Enable Express Checkout option on cart</display-name>
+                <description xml:lang="x-default">Enable Express Checkout option on cart and minicart(SFRA) page.</description>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>true</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="apRestrictedProducts">
                 <display-name xml:lang="x-default">Restricted Products</display-name>
@@ -323,6 +331,7 @@
                 <attribute attribute-id="apEnableExpressCheckoutBuyNow"/>
                 <attribute attribute-id="apStorePickupDescription"/>
                 <attribute attribute-id="apEnableExpressCheckoutPdp"/>
+                <attribute attribute-id="apEnableExpressCheckoutCart"/>
                 <attribute attribute-id="apRestrictedProducts"/>
             </attribute-group>
         </group-definitions>

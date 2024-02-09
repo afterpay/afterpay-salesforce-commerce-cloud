@@ -238,7 +238,7 @@ $laptop : 960px;
 .afterpay-paynow-button {
     width: 246px !important;
     height: 37px;
-    background-image: url('../images/afterpay-buynow.png');
+    background-image: url('https://static.afterpay.com/button/buy-now-with-afterpay/white-on-black.svg');
     background-size: cover;
     margin-left: 10px;
     background-color: #000 !important;
@@ -247,8 +247,25 @@ $laptop : 960px;
 .afterpay-checkout-button {
     width: 246px !important;
     height: 37px;
-    background-image: url('../images/afterpay-checkout.png');
+    background-image: url('https://static.afterpay.com/button/checkout-with-afterpay/white-on-black.svg');
     background-size: cover;
+    background-color: #000 !important;
+}
+
+.clearpay-checkout-button {
+    width: 246px !important;
+    height: 37px;
+    background-image: url('https://static.afterpay.com/button/checkout-with-clearpay/white-on-black.svg');
+    background-size: cover;
+    background-color: #000 !important;
+}
+
+.clearpay-paynow-button {
+    width: 246px !important;
+    height: 37px;
+    background-image: url('https://static.afterpay.com/button/buy-now-with-clearpay/white-on-black.svg');
+    background-size: cover;
+    margin-left: 10px;
     background-color: #000 !important;
 }
 
@@ -291,13 +308,32 @@ $laptop : 960px;
     margin-bottom: 25px;
 }
 
-.payment-method .afterpay-placeorder-button {
+.afterpay-placeorder-button {
     text-align: center;
     align-items: flex-start;
     width: 246px !important;
     height: 37px;
-    background-image: url("../images/afterpay-placeorder.png");
+    background-image: url('https://static.afterpay.com/button/place-order-with-afterpay/white-on-black.svg');
     background-size: cover;
     background-color: #000 !important;
     border: none;
+}
+
+.clearpay-placeorder-button {
+    text-align: center;
+    align-items: flex-start;
+    width: 246px !important;
+    height: 37px;
+    background-image: url('https://static.afterpay.com/button/place-order-with-clearpay/white-on-black.svg');
+    background-size: cover;
+    background-color: #000 !important;
+    border: none;
+}
+
+img.afterpay-checkout-logo {
+    content: url('https://static.afterpay.com/integration/checkout/logo-afterpay-colour-154x32.png');
+}
+
+img.clearpay-checkout-logo {
+    content: url('https://static.afterpay.com/integration/checkout/logo-clearpay-colour-131x25.png');
 }

@@ -10,6 +10,7 @@
     attribute="totalprice"
     attribute="eligible"
     attribute="mpid"
+    attribute="approductids"
 />
 
 <ismodule template="product/components/addToCartButtonExtension"

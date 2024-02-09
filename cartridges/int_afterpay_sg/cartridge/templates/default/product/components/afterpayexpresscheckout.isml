@@ -32,7 +32,7 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     </isscript>
 <iselse/>
     <isscript>
-        disableAfterpayPaymentMethod =  disableAfterpayPaymentMethod || AfterpayCOHelpers.checkRestrictedCart();
+        disableAfterpayPaymentMethod =  disableAfterpayPaymentMethod || !AfterpayCOHelpers.getCartData().apCartEligible;
     </isscript>
 </isif>
 <isif condition="${afterpayExpressCheckoutEnabled && !disableAfterpayPaymentMethod && (pdict.pagetype != 'product_detail' || afterpayExpressCheckoutPdpEnabled)}">

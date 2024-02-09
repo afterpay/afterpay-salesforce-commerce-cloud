@@ -33,7 +33,6 @@ if (countrycode === 'GB') {
     buttonPlaceOrderClass = 'clearpay-placeorder-button';
 }
 </isscript>
-
 <isif condition="${afterpayExpressCheckoutEnabled && isExpressCheckoutFinalize}">
     <input id="afterpay-express-checkout-finalize" type="hidden" value="true" />
     <input id="afterpay-widget-amount" type="hidden" value="${afterpayAmount.value}" />
@@ -46,14 +45,12 @@ if (countrycode === 'GB') {
     <input id="afterpay-express-url-shippingrequired" type="hidden" value="${URLUtils.url('AfterpayExpress-GetShippingRequired')}" />
     <input id="afterpay-express-url-widgeterror" type="hidden" value="${URLUtils.url('AfterpayExpress-WidgetError')}" />
 <iselse/>
-    <iscomment>For non-express-checkout Afterpay tab, show new widget. Note that in this case,
-    AFTERPAY_PBI has not been added to the basket yet, so amount should be 0. However, the amounts
-    will be updated via client-side Javascript for this case
-    </iscomment>
+    <iscomment>For non-express-checkout Afterpay tab, show new widget. </iscomment>
     <input id="afterpay-express-checkout-finalize" type="hidden" value="false" />
     <input id="afterpay-widget-amount" type="hidden" value="${afterpayAmount.value}" />
     <input id="afterpay-widget-locale" type="hidden" value="${request.getLocale()}" />
     <input id="afterpay-widget-currency" type="hidden" value="${afterpayAmount.currencyCode}" />
     <input id="afterpay-token" type="hidden" value="" />
 </isif>
+<isset name="ecFinalize" value="${isExpressCheckoutFinalize}" scope="page" />
 <script src="${URLUtils.staticURL('/js/afterpayWidget.js')}"></script>

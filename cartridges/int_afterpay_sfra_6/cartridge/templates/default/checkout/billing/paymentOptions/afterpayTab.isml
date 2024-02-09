@@ -1,11 +1,22 @@
 <li class="nav-item" data-method-id="${paymentOption.ID}">
     <a class="nav-link ${paymentOption.ID.toLowerCase() + '-tab'}" data-toggle="tab" href="${'#' + paymentOption.ID.toLowerCase() + '-content'}" role="tab">
-        <isprint value="${paymentOption.name.substring(0,8)}"/>
-        <img class="${paymentOption.ID.toLowerCase() + '-option'}"
-            src="${URLUtils.staticURL('/images/logo-afterpay-colour.png')}"
-            height="32"
-            alt="${paymentOption.name}"
-            title="${paymentOption.name}"
-        >
+        <isscript>
+            var apBrandUtilities = require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities;
+            var countryCodeValue = apBrandUtilities.getCountryCode();
+        </isscript>
+        <isif condition="${countryCodeValue == 'US'}">
+            <square-placement
+            data-mpid="${pdict.priceContext.apMpid}"
+            data-type="logo"
+            data-page-type="checkout"
+            data-currency="${session.currency.getCurrencyCode()}"
+            ></square-placement>
+        <iselse/>
+            <img class="${paymentOption.ID.toLowerCase() + '-option afterpay-checkout-logo'}"
+                height="32"
+                alt="${paymentOption.name}"
+                title="${paymentOption.name}"
+            />
+        </isif>
     </a>
 </li>

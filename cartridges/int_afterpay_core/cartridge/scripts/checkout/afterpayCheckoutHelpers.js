@@ -159,7 +159,7 @@ var checkoutTools = {
 
         if (basket && basket.getAllProductLineItems().length > 0) {
             var orderTotal = basket.totalGrossPrice.available ? basket.totalGrossPrice : basket.getAdjustedMerchandizeTotalPrice(true).add(basket.giftCertificateTotalPrice);
-            withinTheshold = thresholdUtilities.checkThreshold(orderTotal).status && !this.checkRestrictedCart();
+            withinTheshold = thresholdUtilities.checkThreshold(orderTotal).status && this.getCartData().apCartEligible;
         }
 
         return withinTheshold;
@@ -171,7 +171,7 @@ var checkoutTools = {
         }
         var orderTotal = basket.totalGrossPrice.available ? basket.totalGrossPrice : basket.getAdjustedMerchandizeTotalPrice(true).add(basket.giftCertificateTotalPrice);
 
-        return thresholdUtilities.checkThreshold(orderTotal).status && !this.checkRestrictedCart();
+        return thresholdUtilities.checkThreshold(orderTotal).status && this.getCartData().apCartEligible;
     },
     // compute a checksum from the Afterpay Response
     // if anything changed
@@ -192,8 +192,14 @@ var checkoutTools = {
         Logger.debug('Final Checksum' + cksum);
         return cksum;
     },
-    checkRestrictedCart: function () {
+    getCartData: function () {
         var currentBasket = BasketMgr.getCurrentBasket();
+        var cartData = {
+            apCartEligible: true
+        };
+
+        var cartProductIds = [];
+
         if (currentBasket && currentBasket.getAllProductLineItems().length > 0) {
             var productLineItems = currentBasket.getAllProductLineItems().iterator();
             var ProductMgr = require('dw/catalog/ProductMgr');
@@ -207,14 +213,15 @@ var checkoutTools = {
                 }
 
                 if (product) {
-                    var reqProductID = product.ID;
-                    if (this.checkRestrictedProducts(reqProductID)) {
-                        return true;
+                    if (cartData.apCartEligible && this.checkRestrictedProducts(product.ID)) {
+                        cartData.apCartEligible = false;
                     }
+                    cartProductIds.push(product.ID);
                 }
             }
         }
-        return false;
+        cartData.apProductIDs = cartProductIds.join(',');
+        return cartData;
     },
     checkRestrictedProducts: function (reqProductID) {
         var apSitePreferences = require('*/cartridge/scripts/util/afterpayUtilities').sitePreferencesUtilities;

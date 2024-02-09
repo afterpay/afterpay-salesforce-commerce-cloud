@@ -51,10 +51,20 @@ function handleStateChange() {
         } else {
             $('.ap-checkout-pay-notab-noecf').removeClass('afterpay-hide');
         }
+        $(document).ajaxComplete(function () {
+            if (ecFinalize) {
+                if (typeof createAfterpayWidget === 'function' && typeof AfterPay != 'undefined' && !('afterpayWidget' in window)) {
+                    createAfterpayWidget();
+                }
+            }
+        });
     } else if (stage === 'placeOrder') {
         var isAfterpayPayment = $('#afterpay-payment-shown').length;
 
         hideAllStates();
+        if (typeof createAfterpayWidget === 'function' && typeof AfterPay != 'undefined' && !('afterpayWidget' in window)) {
+            createAfterpayWidget();
+        }
         if (isAfterpayPayment) {
             $('.ap-checkout-po-ecf').removeClass('afterpay-hide');
         } else {
@@ -118,10 +128,6 @@ var exports = {
                     handleStateChange();
                 });
                 tabelemObserver.observe(tabelem, { attributes: true });
-            }
-
-            if (typeof createAfterpayWidget === 'function') {
-                createAfterpayWidget();
             }
 
             // Handle place-order button click

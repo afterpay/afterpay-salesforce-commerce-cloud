@@ -17,6 +17,16 @@
             data-mpid="${pdict.mpid}"
             data-currency="${session.currency.getCurrencyCode()}"
             data-page-type="${pageType}"
+            data-platform="SFCC/SFRA"
+            data-item-skus="${pdict.approductids}"
+        ></square-placement>
+    <iselse/>
+        <square-placement
+            data-type="payment-schedule"
+            data-mpid="${pdict.mpid}"
+            data-platform="SFCC/SFRA"
+            data-currency="${session.currency.getCurrencyCode()}"
+            data-amount="${pdict.totalprice}"
         ></square-placement>
     </isif>
 </isif>

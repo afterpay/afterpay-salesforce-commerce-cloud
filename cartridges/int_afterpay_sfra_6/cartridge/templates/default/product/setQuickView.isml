@@ -40,6 +40,7 @@
                             classname="${pdict.classname}"
                             eligible="${pdict.apEligible}"
                             mpid="${pdict.apMpid}"
+                            approductids="${pdict.apProductIDs}"
                         />
                     </div>
                 </isif>
