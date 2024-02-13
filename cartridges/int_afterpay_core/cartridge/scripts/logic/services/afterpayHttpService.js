@@ -49,7 +49,7 @@ function getAfterpayHttpService() {
             service.setRequestMethod(requestBody.requestMethod);
             service.addHeader('Content-Type', 'application/json');
 
-            var afterpayCartridge = 'AfterpayCartridge/24.1.0';
+            var afterpayCartridge = 'AfterpayCartridge/24.1.1';
             var merchantID = service.configuration.credential.user;
             var siteURL = URLUtils.httpsHome().toString();
             var storeFront = Site.getCurrent().getID();
