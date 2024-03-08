@@ -4,19 +4,12 @@
             var apBrandUtilities = require('*/cartridge/scripts/util/afterpayUtilities').brandUtilities;
             var countryCodeValue = apBrandUtilities.getCountryCode();
         </isscript>
-        <isif condition="${countryCodeValue == 'US'}">
-            <square-placement
+        <square-placement
             data-mpid="${pdict.priceContext.apMpid}"
             data-type="logo"
+            data-amount="${pdict.priceContext.totalPrice}"
             data-page-type="checkout"
             data-currency="${session.currency.getCurrencyCode()}"
             ></square-placement>
-        <iselse/>
-            <img class="${paymentOption.ID.toLowerCase() + '-option afterpay-checkout-logo'}"
-                height="32"
-                alt="${paymentOption.name}"
-                title="${paymentOption.name}"
-            />
-        </isif>
     </a>
 </li>
