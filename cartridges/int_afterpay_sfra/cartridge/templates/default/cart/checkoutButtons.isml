@@ -14,6 +14,7 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
 <isscript>
     var BrandUtilities = require("*/cartridge/scripts/util/afterpayUtilities.js").brandUtilities;
     var countrycode = BrandUtilities.getCountryCode();
+    var apBrand = BrandUtilities.getBrand();
     var sitePreferences = require("*/cartridge/scripts/util/afterpayUtilities.js").sitePreferencesUtilities;
     var afterpayEnabled = sitePreferences.isAfterpayEnabled();
     var afterpayExpressCheckoutEnabled = afterpayEnabled ? sitePreferences.isExpressCheckoutEnabled() : false;
@@ -26,13 +27,11 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     var disableAfterpayPaymentMethod = ! AfterpayCOHelpers.isBasketAmountWithinThreshold();
 
     var checkoutButtonClass = 'afterpay-checkout-button';
-    if (countrycode === 'GB') {
-        checkoutButtonClass = 'clearpay-checkout-button';
-    }
 
     if (disableAfterpayPaymentMethod) {
         checkoutButtonClass += " afterpay-hide";
     }
+   var buttonUrl = "https://static.afterpay.com/" + request.getLocale().replace('_', '-') + "/integration/button/checkout-with-"+ apBrand + "/white-on-black.svg";
 </isscript>
 <iscomment>Start of Afterpay</iscomment>
 <isif condition="${afterpayExpressCheckoutEnabled}">
@@ -40,11 +39,13 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     <isinclude template="product/components/afterpayexpresscheckout" />
     <div class="mb-sm-3">
         <isif condition="${isExpressCheckoutFinalize}">
-            <a href="${URLUtils.url('AfterpayExpress-ContinueFinalize')}" class="${checkoutButtonClass} btn btn-block checkout-btn ${pdict.valid.error ? 'disabled' : ''}">
+            <a href="${URLUtils.url('AfterpayExpress-ContinueFinalize')}" class="${checkoutButtonClass} btn btn-block checkout-btn ${pdict.valid.error ? 'disabled' : ''}"
+            style="background-image: url('${buttonUrl}');">
             &nbsp;
             </a>
         <iselseif condition="${afterpayExpressCheckoutCartEnabled}" />
-            <a id="afterpay-express-button" class="${checkoutButtonClass} btn btn-block checkout-btn ${pdict.valid.error ? 'disabled' : ''}" role="button">
+            <a id="afterpay-express-button" class="${checkoutButtonClass} btn btn-block checkout-btn ${pdict.valid.error ? 'disabled' : ''}" 
+            role="button" style="background-image: url('${buttonUrl}');">
             &nbsp;
             </a>
         </isif>

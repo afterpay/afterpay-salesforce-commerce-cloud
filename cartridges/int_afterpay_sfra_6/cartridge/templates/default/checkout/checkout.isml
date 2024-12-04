@@ -142,8 +142,13 @@
                                 <iscomment>End of CashAppPay</iscomment>
                             <iscomment>Start of Afterpay</iscomment>
                             </div>
+                            <isset name="apBrand" value="${pdict.CurrentSession.privacy.afterpayBrand}" scope="page" />
+                            <isscript>
+                            var buttonUrl = "https://static.afterpay.com/" + request.getLocale().replace('_', '-') + "/integration/button/place-order-with-" + apBrand + "/white-on-black.svg";
+                            </isscript>
                             <input id="afterpay-placeorder-button" class="afterpay-widget-hideuntilready ${buttonPlaceOrderClass} btn btn-block ap-checkout-pay-tab-ecf ap-checkout-po-ecf"
-                                    type="button">&nbsp;
+                                type="button" style="background-image: url('${buttonUrl}');">
+                                &nbsp;
                             </input>
                             <iscomment>End of Afterpay</iscomment>
                         </div>

@@ -193,17 +193,6 @@ $screen_width : 767px;
 .afterpay-checkout-button {
     background-color: #000;
     color: #fff !important;
-    background-image: url('https://static.afterpay.com/button/checkout-with-afterpay/white-on-black.svg');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position-x: center;
-    background-position-y: center;
-}
-
-.clearpay-checkout-button {
-    background-color: #000;
-    color: #fff !important;
-    background-image: url('https://static.afterpay.com/button/checkout-with-clearpay/white-on-black.svg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position-x: center;
@@ -213,18 +202,6 @@ $screen_width : 767px;
 .afterpay-buynow-button {
     background-color: #000;
     color: #fff !important;
-    background-image: url('https://static.afterpay.com/button/buy-now-with-afterpay/white-on-black.svg');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position-x: center;
-    background-position-y: center;
-    min-width: 250px;
-}
-
-.clearpay-buynow-button {
-    background-color: #000;
-    color: #fff !important;
-    background-image: url('https://static.afterpay.com/button/buy-now-with-clearpay/white-on-black.svg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position-x: center;
@@ -235,18 +212,6 @@ $screen_width : 767px;
 .afterpay-placeorder-button {
     background-color: #000;
     color: #fff !important;
-    background-image: url('https://static.afterpay.com/button/place-order-with-afterpay/white-on-black.svg');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position-x: center;
-    background-position-y: center;
-    min-width: 250px;
-}
-
-.clearpay-placeorder-button {
-    background-color: #000;
-    color: #fff !important;
-    background-image: url('https://static.afterpay.com/button/place-order-with-clearpay/white-on-black.svg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position-x: center;
@@ -265,13 +230,5 @@ $screen_width : 767px;
 .cart-and-ipay .add-to-cart {
     width: 100%;
     display: block;
-}
-
-img.afterpay-checkout-logo {
-    content: url('https://static.afterpay.com/integration/checkout/logo-afterpay-colour-154x32.png');
-}
-
-img.clearpay-checkout-logo {
-    content: url('https://static.afterpay.com/integration/checkout/logo-clearpay-colour-131x25.png');
 }
 

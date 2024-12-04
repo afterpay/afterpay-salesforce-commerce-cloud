@@ -29,9 +29,6 @@ var afterpayExpressCheckoutEnabled = afterpayEnabled && sitePreferences.isExpres
 var BrandUtilities = require("*/cartridge/scripts/util/afterpayUtilities.js").brandUtilities;
 var countrycode = BrandUtilities.getCountryCode();
 var buttonPlaceOrderClass = 'afterpay-placeorder-button';
-if (countrycode === 'GB') {
-    buttonPlaceOrderClass = 'clearpay-placeorder-button';
-}
 </isscript>
 <isif condition="${afterpayExpressCheckoutEnabled && isExpressCheckoutFinalize}">
     <input id="afterpay-express-checkout-finalize" type="hidden" value="true" />

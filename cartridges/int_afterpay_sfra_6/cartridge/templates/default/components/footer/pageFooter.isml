@@ -8,14 +8,16 @@
                 <iscontentasset aid="footer-account" />
             </div>
             <div class="footer-item col-sm-2 collapsible-xs">
-                <isset name="apBrand" value="${pdict.CurrentSession.privacy.afterpayBrand}" scope="page"/>
+                <isset name="apBrand" value="${pdict.CurrentSession.privacy.afterpayBrand}" scope="page" />
+                <isset name="merchantLocale" value="${request.getLocale().replace('_', '-')}" scope="page" />
                 <isif condition="${pdict.CurrentSession.privacy.afterpayApplicable && apBrand}">
                     <div>
                         <h2 class="title d-none d-sm-block">${Resource.msg('footer.payments', 'afterpay', null)}</h2>
                     </div>
-                    <img class="${apBrand}-image"
+                    <img class="ap-footer-image"
                         height="32"
                         alt="${apBrand}"
+                        src="https://static.afterpay.com/${merchantLocale}/integration/logo/lockup/color-black-32.svg"
                     />
                 </isif>
             </div>

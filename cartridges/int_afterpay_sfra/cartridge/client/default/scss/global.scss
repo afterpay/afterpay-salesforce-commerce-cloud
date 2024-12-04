@@ -4,18 +4,6 @@
 
 .afterpay-checkout-button {
     background-color: #000;
-    color: #fff !important;
-    background-image: url('https://static.afterpay.com/button/checkout-with-afterpay/white-on-black.svg');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position-x: center;
-    background-position-y: center;
-}
-
-.clearpay-checkout-button {
-    background-color: #000;
-    color: #fff !important;
-    background-image: url('https://static.afterpay.com/button/checkout-with-clearpay/white-on-black.svg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position-x: center;
@@ -26,17 +14,10 @@
     display: none !important;
 }
 
-img.afterpay-image {
+img.ap-footer-image {
     vertical-align: middle;
     width: 7em;
+    max-width: 100px;
     margin: 5px 0;
-    content: url('https://static.afterpay.com/integration/product-page/logo-afterpay-colour.png');
-}
-
-img.clearpay-image {
-    vertical-align: middle;
-    width: 7em;
-    margin: 5px 0;
-    content: url('https://static.afterpay.com/integration/product-page/logo-clearpay-colour.png');
 }
 

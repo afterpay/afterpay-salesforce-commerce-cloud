@@ -8,6 +8,7 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
 <isscript>
     var BrandUtilities = require("*/cartridge/scripts/util/afterpayUtilities.js").brandUtilities;
     var countrycode = BrandUtilities.getCountryCode();
+    var apBrand = BrandUtilities.getBrand();
     var sitePreferences = require("*/cartridge/scripts/util/afterpayUtilities.js").sitePreferencesUtilities;
     var afterpayEnabled = sitePreferences.isAfterpayEnabled();
     var afterpayExpressCheckoutEnabled = afterpayEnabled ? sitePreferences.isExpressCheckoutEnabled() : false;
@@ -18,9 +19,6 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
     var AfterpayRefArchCOHelpers = require('~/cartridge/scripts/checkout/afterpayRefArchCheckoutHelpers');
     var afterpayExpressPickupEnabled = AfterpayRefArchCOHelpers.shouldEnableExpressPickupMode();
     var buttonClass = 'afterpay-buynow-button add-to-cart btn';
-    if (countrycode === 'GB') {
-        buttonClass = 'clearpay-buynow-button add-to-cart btn';
-    }
 </isscript>
 <isif condition="${afterpayExpressCheckoutEnabled && afterpayExpressCheckoutPdpEnabled}">
     <isset name="afterpayExpressCheckoutPage" value="product_detail" scope="page" />
@@ -37,22 +35,23 @@ afterpayExpressPickupEnabled - does the current cart and selected ship method in
         if (disableAfterpayPaymentMethod) {
             buttonClass += ' afterpay-hide';
         }
+        var buttonUrl = "https://static.afterpay.com/" + request.getLocale().replace('_', '-') + "/integration/button/buy-now-with-"+ apBrand + "/white-on-black.svg";
     </isscript>
-    <div class="col-12 pdp-checkout-button">
         <isif condition="${isExpressCheckoutFinalize}">
             <button id="afterpay-continue-finalize-button" class="${buttonClass}"
                 data-toggle="modal"
                 data-pid="${product.id}"
-                ${!product.readyToOrder || !product.available ? "disabled" : ""}>
+                ${!product.readyToOrder || !product.available ? "disabled" : ""}
+                style="background-image: url('${buttonUrl}');">
                 &nbsp;
             </button>            
         <iselse/>
             <button id="afterpay-express-pdp-button" class="${buttonClass}"
                 data-toggle="modal"
                 data-pid="${product.id}"
-                ${!product.readyToOrder || !product.available ? "disabled" : ""}>
+                ${!product.readyToOrder || !product.available ? "disabled" : ""}
+                style="background-image: url('${buttonUrl}');">
                 &nbsp;
             </button>
         </isif>
-    </div>
 </isif>
